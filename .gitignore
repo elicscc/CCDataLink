@@ -1,0 +1,6 @@
+/.idea/
+*.log
+/.vscode/
+/node_modules/
+/build/*
+/logs/

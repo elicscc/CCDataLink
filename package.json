@@ -1,0 +1,40 @@
+{
+  "name": "CCDataLink",
+  "version": "1.0.0",
+  "author": "cc",
+  "license": "UNLICENSED",
+  "description": "CC数据库连接工具",
+  "main": "main.js",
+  "scripts": {
+    "start": "chcp 65001 && electron main.js",
+    "build": "electron-builder --dir",
+    "buildZip": "electron-builder --windows zip"
+  },
+  "build": {
+    "productName": "update",
+    "appId": "www.cc.cn",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "requestedExecutionLevel": "highestAvailable",
+      "icon": "static/logo/buildLogo.ico"
+    },
+    "extraResources": [
+      {
+        "from": "static/",
+        "to": "../static/"
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^9.1.0",
+    "electron-builder": "^22.10.0"
+  },
+  "dependencies": {
+    "log4js": "^6.3.0"
+  }
+}
