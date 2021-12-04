@@ -8,18 +8,15 @@ import { getUrI, sortParam } from './signUtil'
 const appId = 'DLT'
 const version = '5.0'
 const appSecret = '30c722c6acc64306a88dd93a814c9f0a'
-const remote = electron.remote
-const token = remote.getGlobal('TOKEN')
-const configBaseUrl = remote.getGlobal('BASE_API')
-global.BASE_API = configBaseUrl
+
 const axiosInstance = axios.create({
   maxContentLength: 1024 * 1024 * 1024 * 1024 * 1024,
   maxBodyLength: 1024 * 1024 * 1024 * 1024 * 1024,
-  baseURL: configBaseUrl,
+  baseURL: '',
   timeout: 60000 * 1000 // request timeout
 })
 axiosInstance.defaults.crossDomain = true
-axiosInstance.defaults.headers.token = token
+axiosInstance.defaults.headers.token = null
 
 // request interceptor
 axiosInstance.interceptors.request.use(
