@@ -3,6 +3,7 @@ import { AxiosInstance } from 'axios'
 import { cmptAxios, cmptAxiosGbk, get, post } from './app/utils/axiosForExecutor'
 import path from 'path'
 import stringUtil from './app/utils/stringUtil'
+import java from 'java'
 
 declare global {
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -47,6 +48,8 @@ declare global {
         }
     }
 }
+const javaLangSystem = java.import('java.lang.System')
+javaLangSystem.out.printlnSync('----node_java start-----')
 global.cmptAxios = cmptAxios
 global.cmptAxiosGbk = cmptAxiosGbk
 app.whenReady().then(createWindow)
