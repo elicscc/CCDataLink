@@ -7,13 +7,13 @@
 </template>
 
 <script>
-import ElectronTitle from './views/title/title'
-import electron from 'electron'
+// import ElectronTitle from './views/title/title'
+// import electron from 'electron'
 export default {
-  name: 'cc',
-  components: {
-    ElectronTitle
-  }
+  name: 'cc'
+  // components: {
+  //   ElectronTitle
+  // }
 
 }
 </script>

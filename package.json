@@ -8,8 +8,8 @@
   "scripts": {
     "build": "cross-env INDUSTRY=tob node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis",
     "build32": "cross-env INDUSTRY=tob node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis:ia32",
-    "build:ToC": "cross-env INDUSTRY=toc TOC_URL=https://dltclient.dataqiao.cn node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis",
-    "build32:ToC": "cross-env INDUSTRY=toc TOC_URL=https://dltclient.dataqiao.cn node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis:ia32",
+    "build:ToC": "cross-env INDUSTRY=toc TOC_URL=https://www.qq.com node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis",
+    "build32:ToC": "cross-env INDUSTRY=toc TOC_URL=https://www.qq.com node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis:ia32",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:zip": "node .electron-vue/build.js && electron-builder --windows zip",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
@@ -37,7 +37,7 @@
     ],
     "win": {
       "requestedExecutionLevel": "highestAvailable",
-      "icon": "static/logo/logo.ico"
+      "icon": "static/logo/buildIco.ico"
     },
     "nsis": {
       "allowElevation": false,

@@ -177,9 +177,9 @@ function greeting () {
 
 function init () {
   try{
-    let result = childProcess.execSync("cd javasrc && mvn clean package ")
-
-    console.log(result.toString())
+    //let result = childProcess.execSync("cd javasrc && mvn clean package ")
+    let result
+    // console.log(result.toString())
     result = childProcess.execSync("copy javasrc\\target\\dataLinkDB.jar static\\dlt_db\\")
     result.toLocaleString()
     console.log(result.toString())

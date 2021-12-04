@@ -75,34 +75,8 @@ function createWindow () {
     autoHideMenuBar: true,
     show: false
   })
-  loginWindow.show()
-
-  loginWindow.loadURL(winURL).then()
-}
-
-function createsWindow (): void {
-  const url = process.env.TOC_URL
-  const width = 1020
-  const height = 690
-  console.log('login url is ', url)
-  new BrowserWindow({
-    useContentSize: true,
-    frame: false,
-    width: width,
-    height: height,
-    title: 'ccc',
-    icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
-    webPreferences: {
-      webSecurity: false,
-      nodeIntegration: true,
-      enableRemoteModule: true,
-      nodeIntegrationInWorker: true
-    }, // 解决require 异常
-    center: true,
-    maximizable: false, // 窗口是否可以最大化
-    resizable: false, // 窗口是否可以改变尺寸
-    movable: true, // 窗口是否可以移动
-    show: false,
-    autoHideMenuBar: true// 自动隐藏窗口菜单栏，正式的时候去掉
-  }).loadURL(url)
+  loginWindow.loadURL(winURL)
+  loginWindow.on('ready-to-show', function () {
+    loginWindow.show() // 初始化后再显示
+  })
 }
