@@ -1,0 +1,27 @@
+// 等待时长0.5秒
+const WAIT_HALF_SECOND = 500
+// 等待时长1秒
+const WAIT_1_SECOND = 1000
+// 等待时长1.5秒
+const WAIT_1_POINT_5_SECOND = 1500
+// 等待时长2秒
+const WAIT_2_SECOND = 2000
+// 等待时长3秒
+const WAIT_3_SECOND = 3000
+// 等待时长3.5秒
+const WAIT_3_POINT_5_SECOND = 3500
+// 等待时长5秒
+const WAIT_5_SECOND = 5000
+// 等待时长15秒
+const WAIT_15_SECOND = 15000
+
+export default {
+  WAIT_HALF_SECOND,
+  WAIT_1_SECOND,
+  WAIT_1_POINT_5_SECOND,
+  WAIT_2_SECOND,
+  WAIT_3_SECOND,
+  WAIT_3_POINT_5_SECOND,
+  WAIT_5_SECOND,
+  WAIT_15_SECOND
+}

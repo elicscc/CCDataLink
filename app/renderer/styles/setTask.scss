@@ -1,0 +1,28 @@
+.header {
+    color: #657180;
+    padding-bottom: 6px;
+    font-size: 16px;
+    border-bottom: 1px solid #D8E3EF;
+}
+
+.setTitle {
+    font-size: 14px;
+    color: #657180;
+    text-align: right;
+    height: 32px;
+    line-height: 32px;
+}
+
+.left {
+    font-size: 14px;
+    color: #657180;
+    text-align: left;
+    height: 32px;
+    line-height: 32px;
+}
+#line{
+    // position: fixed;
+    width: 100%;
+    // top: 65vh;
+    z-index: 30;
+}

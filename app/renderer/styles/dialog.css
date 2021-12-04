@@ -1,0 +1,42 @@
+ /* 对话框样式重定义 */
+ .el-dialog__header{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: #2DA9FA;
+  padding: 15px 10px 15px 25px;
+}
+.dialogTitle{
+  color: white;
+  font-size: 14px;
+}
+.dialogTop{
+  color: #333;
+  font-size: 18px;
+  height: 50px;
+  width: 100%;
+  z-index: 2;
+  line-height: 50px;
+  background-color: #F2F2F2;
+  font-weight: 600;
+  -webkit-app-region:drag;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+}
+.el-dialog__headerbtn{
+  top: 15px;
+}
+.el-dialog{
+  border-radius: 10px !important;
+}
+.el-dialog__body{
+  padding: 0 10px 0 10px;
+  overflow: auto;
+}
+.el-dialog__body::-webkit-scrollbar{
+  width: 5px !important;
+  border-radius: 3px;
+}
+.el-icon-close:before{
+  color: white;
+}

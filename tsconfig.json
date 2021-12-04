@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "allowJs": true,
+    "target": "es5",
+    // Don't emit; allow Babel to transform files.
+    "noEmit": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "./app/**/*",
+    "./main.ts"
+  ]
+}

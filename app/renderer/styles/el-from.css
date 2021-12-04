@@ -1,0 +1,13 @@
+.el-form-item >>>.el-form-item__content{
+  line-height: 28px;
+}
+.el-form-item{
+	margin-bottom: 0 !important;
+}
+.require{
+  font-size: 12px;
+  line-height: 28px;
+  text-align: right;
+  margin-right: 3px;
+  color: red;
+}
