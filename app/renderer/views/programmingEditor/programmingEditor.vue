@@ -98,7 +98,7 @@
 import MonacoEditor from '../../components/MonacoEditor'
 import * as monaco from 'monaco-editor'
 import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
-// import sqlAutocompleteParser from 'gethue/parse/sql/hive/hiveAutocompleteParser'
+import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
 
 export default {
   components: { MonacoEditor },
@@ -172,13 +172,12 @@ export default {
           console.log(
             'before:' + sqlBeforeCursor + 'after:' + sqlAfterCursor + 'end'
           )
-          // const suggestInfo = sqlAutocompleteParser.parseSql(
-          //   sqlBeforeCursor,
-          //   sqlAfterCursor,
-          //   'hive',
-          //   true
-          // )
-          const suggestInfo = null
+          const suggestInfo = sqlAutocompleteParser.parseSql(
+            sqlBeforeCursor,
+            sqlAfterCursor,
+            'hive',
+            true
+          )
           console.log('suggest info' + JSON.stringify(suggestInfo, null, 2))
           const columnSuggestion = self.resolveSuggestion(suggestInfo)
           return { suggestions: columnSuggestion }
