@@ -4,7 +4,9 @@ import { cmptAxios, cmptAxiosGbk, get, post } from './app/utils/axiosForExecutor
 import path from 'path'
 import stringUtil from './app/utils/stringUtil'
 import java from 'java'
-
+import Store from 'electron-store'
+// @ts-ignore
+Store.initRenderer()
 declare global {
 // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace NodeJS {
@@ -48,6 +50,7 @@ declare global {
         }
     }
 }
+
 const javaLangSystem = java.import('java.lang.System')
 javaLangSystem.out.printlnSync('----node_java start-----')
 global.cmptAxios = cmptAxios

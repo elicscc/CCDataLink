@@ -68,7 +68,7 @@
 </template>
 <script>
 import Store from 'electron-store'
-// const store = new Store()
+const store = new Store()
 export default {
   data () {
     return {
@@ -107,8 +107,7 @@ export default {
       tableFilter: '',
       colCols: [], // 表结构列
       curUser: {},
-      users: [],
-      // users: (store.get('users') ? store.get('users') : []),
+      users: (store.get('users') ? store.get('users') : []),
       tableName: '',
       linkSelectedValue: '',
       codemirror: undefined,
@@ -139,21 +138,21 @@ export default {
       this.storeConfig(user)
     },
     storeConfig (user) { // 保存配置
-      // const users = (store.get('users') ? store.get('users') : [])
-      // if (users && users.length > 0) {
-      //   for (let index = 0; index < users.length; index++) {
-      //     const ele = users[index]
-      //     if (ele.desc !== user.desc) {
-      //       users.push(user)
-      //     } else {
-      //       users[index] = user
-      //     }
-      //   }
-      // } else {
-      //   users.push(user)
-      // }
-      // this.users = users
-      // store.set('users', users)
+      const users = (store.get('users') ? store.get('users') : [])
+      if (users && users.length > 0) {
+        for (let index = 0; index < users.length; index++) {
+          const ele = users[index]
+          if (ele.desc !== user.desc) {
+            users.push(user)
+          } else {
+            users[index] = user
+          }
+        }
+      } else {
+        users.push(user)
+      }
+      this.users = users
+      store.set('users', users)
     },
     queryTables () { // 查询库中所有的表
       const $this = this
