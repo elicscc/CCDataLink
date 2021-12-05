@@ -6,14 +6,14 @@ import store from './store'
 
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-//
-// import ViewUI from 'view-design'
-// import 'view-design/dist/styles/iview.css'
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import '@/css/login.css'
 
 import { server } from '../utils/axios'
 
 Vue.use(Element)
-
+Vue.use(VueCodemirror)
 Vue.prototype.$axios = server
 
 // Vue.prototype.$webContents = { value: '11' }
