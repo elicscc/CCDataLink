@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   parser: 'vue-eslint-parser',
   parserOptions: {
+    warnOnUnsupportedTypeScriptVersion: false,
     sourceType: 'module',
     parser: '@typescript-eslint/parser' // 解析 .ts 文件
   },

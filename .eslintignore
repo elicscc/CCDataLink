@@ -1,5 +1,3 @@
 build/*.js
 src/renderer/assets/**
 dist/**
-static/login/**
-app/lib
