@@ -5,6 +5,7 @@ import path from 'path'
 import stringUtil from './app/utils/stringUtil'
 import java from 'java'
 import Store from 'electron-store'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Store.initRenderer()
 declare global {
@@ -67,8 +68,8 @@ function createWindow () {
     icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
     useContentSize: true,
     frame: true,
-    width: 1020,
-    height: 690,
+    width: 1200,
+    height: 763,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,

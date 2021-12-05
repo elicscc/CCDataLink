@@ -67,22 +67,22 @@ function build () {
   });
 
   // 生成忽略更新版本文件
-  const ignoreVersionsPath=resolve('./')+"/static/ignoreVersions.json"
-  const ignoreVersions={
-    ignoreVersions:[]
-  }
-  fs.writeFileSync(ignoreVersionsPath, JSON.stringify(ignoreVersions))
-
-  //生成更新的下载地址文件
-  const downloadUrl=resolve('./')+"/static/updateInfo.json"
-  fs.writeFileSync(downloadUrl, '')
+  // const ignoreVersionsPath=resolve('./')+"/static/ignoreVersions.json"
+  // const ignoreVersions={
+  //   ignoreVersions:[]
+  // }
+  // fs.writeFileSync(ignoreVersionsPath, JSON.stringify(ignoreVersions))
+  //
+  // //生成更新的下载地址文件
+  // const downloadUrl=resolve('./')+"/static/updateInfo.json"
+  // fs.writeFileSync(downloadUrl, '')
 
 
   //读取文件内容
 // const buffer= fs.readFileSync(resolve('./')+"/static/buildTime.txt")
 // process.stdout.write("FileString="+String(buffer))
 
-  //packageJava()
+  packageJava()
   greeting()
 
   del.sync(['dist/electron/*', '!.gitkeep'])

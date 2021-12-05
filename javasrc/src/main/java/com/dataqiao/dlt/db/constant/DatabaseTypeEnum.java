@@ -20,6 +20,8 @@ public enum DatabaseTypeEnum {
 
     Oracle("3", "Oracle"),
 
+    MariaDB("4", "MariaDB"),
+
     ;
     private final String code;
     private final String name;

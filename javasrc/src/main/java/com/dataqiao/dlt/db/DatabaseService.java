@@ -28,11 +28,14 @@ public interface DatabaseService {
         String type = databaseInfo.getDatabaseType();
         if (DatabaseTypeEnum.MySQL.getCode().equals(type)) {
             url = "jdbc:mysql://" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName()
-                    + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
+                    + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true";
+        } else if (DatabaseTypeEnum.MariaDB.getCode().equals(type)) {
+            url = "jdbc:mariadb://" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName()
+                    + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true";
         } else if (DatabaseTypeEnum.SQLServer.getCode().equals(type)) {
             url = "jdbc:sqlserver://" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + ";database=" + databaseInfo.getDatabaseName();
         } else if (DatabaseTypeEnum.Oracle.getCode().equals(type)) {
-            url = "jdbc:oracle:thin:@//" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName();
+            url = "jdbc:oracle:thin:@//" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName() + "?allowMultiQueries=true";
         } else {
             throw new IllegalStateException("Unexpected value: " + databaseInfo.getDatabaseType());
         }
