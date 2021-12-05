@@ -11,6 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 const UglifyJsPlugin = require('terser-webpack-plugin')
 const ESLintWebpackPlugin = require('eslint-webpack-plugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -103,6 +104,7 @@ let rendererConfig = {
     __filename: process.env.NODE_ENV !== 'production'
   },
   plugins: [
+    new MonacoWebpackPlugin({ languages: ['python', 'sql'] }),
     new ESLintWebpackPlugin({
       extensions: ['js', 'ts', 'vue'],
       fix: true,

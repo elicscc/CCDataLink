@@ -1,9 +1,6 @@
 <template>
   <el-container>
     <el-aside width="200px">
-      <el-input placeholder="过滤" clearable v-model="tableFilter" class="input-with-select" style="margin-bottom:5px" @input="filterTable">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
       <!-- 库中的所有表 -->
       <el-table :data="tableData" border stripe highlight-current-row :max-height="700" @cell-dblclick="tableDblClick">
         <el-table-column prop="table_name" label="表" width="190"></el-table-column>
@@ -39,7 +36,7 @@
         <el-form-item label="IP地址：" :label-width="formLabelWidth">
           <el-input v-model="form.host" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="库：" :label-width="formLabelWidth">
+        <el-form-item label="库名：" :label-width="formLabelWidth">
           <el-input v-model="form.database" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="端口：" :label-width="formLabelWidth">
@@ -157,16 +154,18 @@ export default {
     queryTables () { // 查询库中所有的表
       const $this = this
       console.log('queryTables : ' + this.tableSql + this.curUser.database)
-      this.connection.query(
-        this.tableSql + "'" + this.curUser.database + "'",
-        function (err, results, fields) {
-          if (err) {
-            $this.msg(err)
-          }
-          $this.tableData = results
-          $this.tableDataTemp = results
-        }
-      )
+      $this.tableData = ['sd', 'sd']
+      $this.tableDataTemp = []
+      // this.connection.query(
+      //   this.tableSql + "'" + this.curUser.database + "'",
+      //   function (err, results, fields) {
+      //     if (err) {
+      //       $this.msg(err)
+      //     }
+      //     $this.tableData = results
+      //     $this.tableDataTemp = results
+      //   }
+      // )
     },
     queryTableCols (tableName) { // 查询表结构
       const $this = this
