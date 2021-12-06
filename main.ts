@@ -5,6 +5,7 @@ import path from 'path'
 import stringUtil from './app/utils/stringUtil'
 import java from 'java'
 import Store from 'electron-store'
+import InitEnvVariable from './app/script/initEnvVariable'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Store.initRenderer()
@@ -51,7 +52,7 @@ declare global {
         }
     }
 }
-
+InitEnvVariable.initJava()
 const javaLangSystem = java.import('java.lang.System')
 javaLangSystem.out.printlnSync('----node_java start-----')
 global.cmptAxios = cmptAxios

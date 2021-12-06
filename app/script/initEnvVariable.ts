@@ -14,18 +14,18 @@ export default class InitEnvVariable {
    * 初始化node-java,并加上全局变量,只初始化一次
    */
   public static initJava ():void {
-    // if (global.initJavaSuccess !== 1) {
-    //   let baseDir:string
-    //   if (process.env.EXECUTOR || process.env.NODE_ENV === 'development') {
-    //     baseDir = path.join(stringUtil.getStaticPath(), 'dlt_db')
-    //   } else {
-    //     baseDir = path.join('C:\\Program Files\\DLTOpenJDK\\dlt_db')
-    //   }
-    //   const dependencies = fs.readdirSync(baseDir)
-    //   dependencies.forEach(function (dependency:string) {
-    //     java.classpath.push(baseDir + '/' + dependency)
-    //   })
-    //   global.initJavaSuccess = 1
-    // }
+    if (global.initJavaSuccess !== 1) {
+      let baseDir:string
+      if (process.env.EXECUTOR || process.env.NODE_ENV === 'development') {
+        baseDir = path.join(stringUtil.getStaticPath(), 'dlt_db')
+      } else {
+        baseDir = path.join('C:\\Program Files\\DLTOpenJDK\\dlt_db')
+      }
+      const dependencies = fs.readdirSync(baseDir)
+      dependencies.forEach(function (dependency:string) {
+        java.classpath.push(baseDir + '/' + dependency)
+      })
+      global.initJavaSuccess = 1
+    }
   }
 }

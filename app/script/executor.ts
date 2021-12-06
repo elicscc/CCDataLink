@@ -2,7 +2,6 @@ import log4j from '../utils/log4j'
 import express from 'express'
 
 import InitEnvVariable from './initEnvVariable'
-import { get } from '../utils/axiosForExecutor'
 
 const logger = log4j.getLogger()
 // 产品类型 toc tob
