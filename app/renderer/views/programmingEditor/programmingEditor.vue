@@ -149,7 +149,16 @@ export default {
   created () {
     this.getTreeList()
     this.initTableColumn()
-    this.addEditor(this.$route.query, this.type)
+    // this.addEditor(this.$route.query, this.type)
+    this.showCloseTab = false
+    const uuid = this.getUUID()
+    this.editorTabs.push({
+      title: '数据分析',
+      name: uuid,
+      code: '',
+      language: 'sql'
+    })
+    this.currentTabsName = uuid
     // 只能初始化一次,避免重复初始化自动提示的内容
 
     console.log('suggestionsInitial', this.$store.state.monaco.suggestionsInitial)

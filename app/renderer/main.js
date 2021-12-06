@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import '@/css/login.css'
-
+import './icons' // icon
 import { server } from '../utils/axios'
 
 Vue.use(Element)
