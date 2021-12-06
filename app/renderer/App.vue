@@ -8,18 +8,17 @@
 
 <script>
 // import ElectronTitle from './views/title/title'
-// import electron from 'electron'
+
+import electron from 'electron'
 
 export default {
   name: 'cc',
   // components: {
   //   ElectronTitle
   // }
-  created () {
-    // const javaLangSystem = java.import('java.lang.System')
-    // javaLangSystem.out.printlnSync('Hello World')
+  mounted () {
+    electron.ipcRenderer.send('close-loading-window', false)
   }
-
 }
 </script>
 

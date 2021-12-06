@@ -1,20 +1,16 @@
 import Vue from 'vue'
-
 import App from './App'
 import router from './router'
 import store from './store'
-
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import '@/css/login.css'
 import './icons' // icon
-import { server } from '../utils/axios'
 
 Vue.use(Element)
 Vue.use(VueCodemirror)
-Vue.prototype.$axios = server
 
 // Vue.prototype.$webContents = { value: '11' }
 // Vue.config.productionTip = false

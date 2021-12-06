@@ -26,6 +26,8 @@ export default class InitEnvVariable {
         java.classpath.push(baseDir + '/' + dependency)
       })
       global.initJavaSuccess = 1
+      const javaLangSystem = java.import('java.lang.System')
+      javaLangSystem.out.printlnSync('----node_java start-----')
     }
   }
 }

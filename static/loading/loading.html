@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CC数据库工具</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    body, html{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-color: rgba(0, 0, 0, 0);
+    }
+    .content{
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        border-radius: 20px;
+        border: 1px solid #e3e3e3;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .topView{
+        height: 70%;
+        background-color: #f0f2f5;
+        display: flex;
+        flex-direction: column;
+    }
+    .topView .header{
+        margin: 2%;
+        height: 10%;
+        display: flex;
+        justify-content: space-between;
+    }
+    .topView .header .left{
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: Microsoft YaHei, Microsoft YaHei-Bold;
+    }
+    .topView .header .left img{
+        width: 5%;
+        height: auto;
+        margin-right: 8px;
+    }
+    .topView .header .right img{
+        cursor: pointer;
+    }
+    .topView .header .right .close img{
+        width: 14px;
+        height: 14px;
+    }
+    .topView .section{
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+    .topView .section .left{
+        display: flex;
+        align-items: center;
+    }
+    .topView .section .left img{
+        width: 100%;
+    }
+    .topView .section .right{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        margin-left: 30px;
+    }
+    .topView .section .right .b{
+        font-family: Microsoft YaHei, Microsoft YaHei-Regular;
+        font-weight: 400;
+        text-align: left;
+        color: #333333;
+        font-size: 24px;
+    }
+    .topView .section .right .s{
+        margin-top: 10px;
+        color: #8e8e8e;
+        font-size: 17px;
+    }
+    .bottomView{
+        flex: 1;
+        padding: 0 20px;
+        display: flex;
+        width: calc(100% - 40px);
+        align-items: center;
+    }
+    .bottomView .progressBar{
+        width: 100%;
+    }
+    .bottomView .progressBar .text{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        font-family: Microsoft YaHei, Microsoft YaHei-Regular;
+        font-weight: 400;
+        color: #393939;
+    }
+    .bottomView .progressBar .barBg{
+        margin-top: 20px;
+        width: 100%;
+        background: #EDF1F5;
+        height: 5px;
+        position: relative;
+    }
+    .bottomView #progressBar .bar{
+        width: 0;
+        background-color: #4AB5AD;
+        height: 5px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .bottomView #error{
+        display: none;
+    }
+    .bottomView #error .bar{
+        width: 100%;
+        background-color: #FF436F;
+        height: 5px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+<body>
+<div class="content">
+    <div class="topView">
+        <div class="header">
+            <div class="left">
+                <img src="./img/logo.png" alt="CC">
+                <span>CC数据库工具</span>
+            </div>
+            <div class="right">
+                <div class="close" onclick="quit()">
+                    <img src="./img/close.png" alt="关闭">
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="left">
+                <img src="./img/loading_img.png" alt="玩">
+            </div>
+            <div class="right">
+                <p class="b">CC</p>
+                <p class="s">666</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottomView">
+        <div class="progressBar" id="progressBar">
+            <div class="text">
+                <div class="left">正在启动 客户端 ...</div>
+                <div class="right">请耐心等待几秒</div>
+            </div>
+            <div class="barBg">
+                <div class="bar"></div>
+            </div>
+        </div>
+        <div class="progressBar" id="error">
+            <div class="text">
+                <div class="left">加载失败！</div>
+                <div class="right">请退出重试</div>
+            </div>
+            <div class="barBg">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    let interval = null
+    function createInterval () {
+      const progressBar = document.querySelector('#progressBar .bar')
+      const error = document.querySelector('#error')
+      const bar = document.querySelector('#progressBar')
+      let time = 0
+      const frequency = 1000 / 60
+      interval = setInterval(function () {
+        time += frequency
+        if (time > 10000) {
+          error.style.display = 'block'
+          bar.style.display = 'none'
+          time = 0
+          clearInterval(interval)
+        } else {
+          progressBar.style.width = time / 100 + '%'
+        }
+      }, frequency)
+    }
+    function quit () {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const electron = require('electron')
+      electron.ipcRenderer.send('close-loading-window', true)
+    }
+    window.onload = function () {
+      // createInterval()
+    }
+</script>
+</body>
+</html>
