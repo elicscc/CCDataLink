@@ -6,7 +6,6 @@ import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
-import '@/css/login.css'
 import './icons' // icon
 
 Vue.use(Element)

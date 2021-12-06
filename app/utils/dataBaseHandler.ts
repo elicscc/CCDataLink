@@ -1,6 +1,5 @@
 import java from 'java'
-import tempLogUtil from './tempLogUtil'
-import EncryptUtil from './encryptUtil'
+
 import log4j from './log4j'
 
 const logger = log4j.getLogger()

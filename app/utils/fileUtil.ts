@@ -1,8 +1,6 @@
-
 import fs from 'fs'
 import https from 'https'
 import http from 'http'
-import { post } from './axiosForExecutor'
 import compressing from 'compressing'
 import pipe from 'multipipe'
 import log4j from './log4j'
@@ -73,22 +71,6 @@ export default {
         }
       })
     })
-  },
-
-  /**
-   * 文件重命名
-   * @param name
-   */
-  getFileName: async function (name: string): Promise<string> {
-    const response = await post('/api/taskInfo/getFileName', { fileName: name })
-      .catch(err => {
-        logger.error('invoke interface(getFileName) err', err)
-      })
-    if (response && response.data) {
-      return response.data.resultData
-    } else {
-      return null
-    }
   },
 
   /**
