@@ -9,16 +9,16 @@
 <script>
 // import ElectronTitle from './views/title/title'
 
-import electron from 'electron'
+// import electron from 'electron'
 
 export default {
-  name: 'cc',
+  name: 'cc'
   // components: {
   //   ElectronTitle
   // }
-  mounted () {
-    electron.ipcRenderer.send('close-loading-window', false)
-  }
+  // mounted () {
+  //   electron.ipcRenderer.send('close-loading-window', false)
+  // }
 }
 </script>
 

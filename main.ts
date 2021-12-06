@@ -23,17 +23,7 @@ if (!getLock) {
   app.quit()
 } else {
   app.on('ready', () => {
-    WindowUtil.createLoadingWindow()
     WindowUtil.createMainWindow()
-    ipcMain.on('close-loading-window', (event, quitApp) => {
-      console.log('receive close window ipc', quitApp)
-      if (quitApp) {
-        app.quit()
-      } else {
-        global.mainWindow.show()
-        global.loadingWindow.close()
-      }
-    })
     // if (process.env.NODE_ENV === 'development' && fs.existsSync('C:\\vue-tools')) {
     //   electron.session.defaultSession.loadExtension('C:\\vue-tools').then((r) => {
     //     console.log(r)
