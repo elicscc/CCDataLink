@@ -151,6 +151,8 @@ export default {
     this.initTableColumn()
     this.addEditor(this.$route.query, this.type)
     // 只能初始化一次,避免重复初始化自动提示的内容
+
+    console.log('suggestionsInitial', this.$store.state.monaco.suggestionsInitial)
     const self = this
     if (this.suggestionsInitial === false) {
       this.$store.dispatch('monaco/setSuggestionsInitial', true)
