@@ -147,6 +147,7 @@ export default {
   },
 
   created () {
+    // SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'mx' ORDER BY TABLE_SCHEMA, TABLE_NAME
     this.getTreeList()
     this.initTableColumn()
     // this.addEditor(this.$route.query, this.type)

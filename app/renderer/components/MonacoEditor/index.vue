@@ -213,7 +213,7 @@ export default {
       }
     }
   },
-  async mounted () {
+  mounted () {
     this.languageCopy = this.language
     this.codeCopy = this.code
     this.initEditor()
