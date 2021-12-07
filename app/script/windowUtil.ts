@@ -8,6 +8,7 @@ export default class WindowUtil {
     global.mainWindow = new BrowserWindow({
       icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
       useContentSize: true,
+      title: 'CC数据库连接工具',
       frame: true,
       width: 1200,
       height: 763,
@@ -20,14 +21,14 @@ export default class WindowUtil {
       maximizable: true, // 窗口是否可以最大化
       resizable: true, // 窗口是否可以改变尺寸
       movable: true, // 窗口是否可以移动
-      show: false
+      show: true
     })
     process.env.NODE_ENV === 'development'
       ? global.mainWindow.loadURL('http://localhost:9080')
       : global.mainWindow.loadFile(`${__dirname}/index.html`)
-    global.mainWindow.once('ready-to-show', function () {
-      global.mainWindow.show() // 初始化后再显示
-    })
+    // global.mainWindow.once('ready-to-show', function () {
+    //   global.mainWindow.show() // 初始化后再显示
+    // })
     global.mainWindow.on('closed', function () {
       global.mainWindow = null
     })
