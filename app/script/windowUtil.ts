@@ -15,6 +15,7 @@ export default class WindowUtil {
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
+        enableRemoteModule: true,
         nodeIntegrationInWorker: true
       }, // 解决require 异常
       center: true,

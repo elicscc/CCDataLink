@@ -1,3 +1,1 @@
-import InitEnvVariable from './initEnvVariable'
-
-InitEnvVariable.initJava()
+// 无用

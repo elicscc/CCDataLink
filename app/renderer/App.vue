@@ -13,12 +13,6 @@
 
 export default {
   name: 'cc'
-  // components: {
-  //   ElectronTitle
-  // }
-  // mounted () {
-  //   electron.ipcRenderer.send('close-loading-window', false)
-  // }
 }
 </script>
 

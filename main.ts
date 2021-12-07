@@ -2,7 +2,8 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import Store from 'electron-store'
 import InitEnvVariable from './app/script/initEnvVariable'
 import WindowUtil from './app/script/windowUtil'
-
+import dataBaseHandler from './app/utils/dataBaseHandler'
+global.dataBaseHandler = dataBaseHandler
 declare global {
 // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace NodeJS {

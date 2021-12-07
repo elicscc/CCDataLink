@@ -3,15 +3,34 @@
     <el-row :gutter="20"  >
       <!--左侧-->
       <el-col :span="5" :xs="24">
-        <div class="head-container" style="padding-top:15px">
-          <el-input
-            v-model="proName"
-            placeholder="搜索表名"
-            clearable
-            prefix-icon="el-icon-search"
-            style="margin-bottom: 20px"
-          />
-        </div>
+        <div style="margin-top:5px">
+
+            <el-row :gutter="3" >
+              <el-col :span="1.5">
+                <el-button
+                    icon="el-icon-plus"
+                    size="mini"
+                    type="primary"
+                    @click="addDataBaseDialogVisible=true"
+                />
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                    icon="el-icon-search"
+                    size="mini"
+                    type="primary"
+                />
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    type="primary"
+                    @click="getTreeList"
+                />
+              </el-col>
+            </el-row>
+          </div>
         <div class="head-container">
           <div class="tree">
             <!-- 转换的列表 -->
@@ -91,17 +110,19 @@
         </el-tabs>
       </el-col>
     </el-row>
+    <data-base-dialog  :isVisible.sync="addDataBaseDialogVisible" />
   </div>
 </template>
 
 <script>
+import DataBaseDialog from '../../components/dialog/addDataBaseDialog'
 import MonacoEditor from '../../components/MonacoEditor'
 import * as monaco from 'monaco-editor'
 import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
 
 export default {
-  components: { MonacoEditor },
+  components: { MonacoEditor, DataBaseDialog },
   props: {
     type: {
       type: Number,
@@ -110,6 +131,7 @@ export default {
   },
   data () {
     return {
+      addDataBaseDialogVisible: false,
       // 定义点击次数,默认0次
       treeClickCount: 0,
       insertTableName: '',
@@ -123,8 +145,7 @@ export default {
       currentTabsName: null,
       editorTabs: [],
       treeExpandedKeys: [],
-      // 搜索分组输入框值
-      proName: null,
+
       // 树结构配置
       defaultProps: {
         children: 'children',
@@ -139,12 +160,6 @@ export default {
       return this.$store.state.monaco.suggestionsInitial
     }
   },
-  watch: {
-    // 根据名称筛选项目树
-    proName (val) {
-      this.$refs.tree.filter(val)
-    }
-  },
 
   created () {
     // SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'mx' ORDER BY TABLE_SCHEMA, TABLE_NAME
@@ -154,7 +169,7 @@ export default {
     this.showCloseTab = false
     const uuid = this.getUUID()
     this.editorTabs.push({
-      title: '数据分析',
+      title: 'sql1',
       name: uuid,
       code: '',
       language: 'sql'
@@ -408,6 +423,12 @@ export default {
 }
 </script>
 <style  lang='scss' scoped>
+.left_title {
+  font-weight: 650;
+  font-size: 18px;
+  margin-bottom: 20px;
+  text-align: center;
+}
 .el-tree {
   min-width: 100%;
   font-size: 14px;
