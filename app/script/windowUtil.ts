@@ -72,4 +72,19 @@ export default class WindowUtil {
   //     }
   //   })
   // }
+
+  // 创建隐藏window
+  public static createTaskWindow (): void {
+    global.mainWindow = new BrowserWindow({
+      width: 500,
+      height: 500,
+      show: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true
+      }
+    })
+    global.mainWindow.loadFile('xxxxxx')
+  }
 }

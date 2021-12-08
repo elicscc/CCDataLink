@@ -155,19 +155,19 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          const handler = electron.remote.getGlobal('dataBaseHandler')
-          try {
-            handler.testConnect(this.dataBaseInfo)
-            return this.$message.success('连接成功')
-          } catch (err) {
-            return this.$message.error('连接失败')
-          }
-        } else {
-          this.$message.error('请将信息填写完整')
-        }
-      })
+      // this.$refs[name].validate((valid) => {
+      //   if (valid) {
+      //     const handler = electron.remote.getGlobal('dataBaseHandler')
+      //     try {
+      //       handler.testConnect(this.dataBaseInfo)
+      //       return this.$message.success('连接成功')
+      //     } catch (err) {
+      //       return this.$message.error('连接失败')
+      //     }
+      //   } else {
+      //     this.$message.error('请将信息填写完整')
+      //   }
+      // })
     }
   },
   computed: {
