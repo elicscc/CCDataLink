@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import Store from 'electron-store'
 import InitEnvVariable from './app/script/initEnvVariable'
 import WindowUtil from './app/script/windowUtil'
@@ -25,6 +25,7 @@ if (!getLock) {
 } else {
   app.on('ready', () => {
     WindowUtil.createMainWindow()
+    WindowUtil.createTaskWindow()
     // if (process.env.NODE_ENV === 'development' && fs.existsSync('C:\\vue-tools')) {
     //   electron.session.defaultSession.loadExtension('C:\\vue-tools').then((r) => {
     //     console.log(r)
@@ -35,6 +36,7 @@ if (!getLock) {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       WindowUtil.createMainWindow()
+      WindowUtil.createTaskWindow()
     }
   })
 

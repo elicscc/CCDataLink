@@ -75,6 +75,7 @@ export default class WindowUtil {
 
   // 创建隐藏window
   public static createTaskWindow (): void {
+    const url = stringUtil.getStaticPath() + '/loading/loading.html'
     global.mainWindow = new BrowserWindow({
       width: 500,
       height: 500,
@@ -85,6 +86,6 @@ export default class WindowUtil {
         enableRemoteModule: true
       }
     })
-    global.mainWindow.loadFile('xxxxxx')
+    global.mainWindow.loadFile(url)
   }
 }
