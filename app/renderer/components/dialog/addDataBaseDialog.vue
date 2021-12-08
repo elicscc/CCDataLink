@@ -95,7 +95,9 @@
 </template>
 <script>
 
-import electron from 'electron'
+import { ipcRenderer } from 'electron'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { MessageChannel } = require('electron-re')// 渲染进程
 export default {
   data () {
     return {
@@ -155,6 +157,10 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
+      // ipcRenderer.on('test_replay', (event, rsp) => {
+      //   console.log(rsp)
+      // })
+      MessageChannel.send('app', 'test_java', this.dataBaseInfo)
       // this.$refs[name].validate((valid) => {
       //   if (valid) {
       //     const handler = electron.remote.getGlobal('dataBaseHandler')

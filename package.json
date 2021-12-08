@@ -82,6 +82,7 @@
     "@vue/component-compiler-utils": "^3.2.0",
     "agentkeepalive": "^4.1.4",
     "axios": "0.21.1",
+    "electron-re": "1.1.0",
     "vue-codemirror": "^4.0.4",
     "electron-store": "^8.0.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
