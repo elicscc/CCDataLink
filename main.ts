@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import Store from 'electron-store'
 import InitEnvVariable from './app/script/initEnvVariable'
 import WindowUtil from './app/script/windowUtil'
+import cluster from 'child_process'
 import dataBaseHandler from './app/utils/dataBaseHandler'
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -16,6 +17,7 @@ declare global {
             EXECUTOR_BASE_API: string,
             BASE_API: string,
             initJavaSuccess: number,
+            son:any
         }
     }
 }
@@ -24,20 +26,25 @@ const getLock = app.requestSingleInstanceLock()
 if (!getLock) {
   app.quit()
 } else {
-  app.on('ready', () => {
-    const appService = new BrowserService('app', path.join(__dirname, 'app/script/taskMain.js'), {
-      webContents: {
-        webSecurity: false
-      }
-    })
-    console.log(appService)
+  app.on('ready', async () => {
+    // const appService = new BrowserService('app', path.join(__dirname, 'app/script/taskMain.js'), {
+    //   webContents: {
+    //     webSecurity: false
+    //   }
+    // })
+    // console.log(appService)
     WindowUtil.createMainWindow()
+    // await appService.connected()
+    // appService.openDevTools()
+    // MessageChannel.send('app', 'test_java', { test: 'test' })
     // WindowUtil.createTaskWindow()
     // if (process.env.NODE_ENV === 'development' && fs.existsSync('C:\\vue-tools')) {
     //   electron.session.defaultSession.loadExtension('C:\\vue-tools').then((r) => {
     //     console.log(r)
     //   })
     // }
+
+    global.son = cluster.fork(path.join(__dirname, 'app/script/taskMain.js'))
   })
 
   app.on('activate', () => {

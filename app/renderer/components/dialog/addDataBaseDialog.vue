@@ -95,7 +95,9 @@
 </template>
 <script>
 
-import { ipcRenderer } from 'electron'
+import electron from 'electron'
+const remote = electron.remote
+const son = remote.getGlobal('son')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { MessageChannel } = require('electron-re')// 渲染进程
 export default {
@@ -129,8 +131,10 @@ export default {
     }
   },
   mounted () {
-    MessageChannel.on('test_replay', (event, rsp) => {
-      console.log(rsp)
+    // 接收子线程的消息
+    son.on('message', (message) => {
+      console.log(message.code)
+      console.log(message.result)
     })
   },
 
@@ -163,7 +167,8 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
-      MessageChannel.send('app', 'test_java', this.dataBaseInfo)
+      son.send(this.dataBaseInfo)
+      // MessageChannel.send('app', 'test_java', this.dataBaseInfo)
       // MessageChannel.send('app', 'test', this.dataBaseInfo)
       // this.$refs[name].validate((valid) => {
       //   if (valid) {
