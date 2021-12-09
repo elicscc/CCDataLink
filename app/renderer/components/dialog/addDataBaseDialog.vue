@@ -79,7 +79,7 @@
         </Col>
       </Row>
       <Row style="margin-left:12.5%;">
-          <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')">连接测试</el-button>
+          <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')" :loading="testConnectShow">连接测试</el-button>
       </Row>
     </Form>
     <el-row class="bottomSide rowPadding">
@@ -94,13 +94,13 @@
   </el-dialog>
 </template>
 <script>
-
 import electron from 'electron'
 const son = electron.remote.getGlobal('son')
 
 export default {
   data () {
     return {
+      testConnectShow: false,
       dataBaseInfo: {
         connectName: '',
         databaseType: '1',
@@ -157,29 +157,16 @@ export default {
     close () {
       this.showDialog = false
     },
-    connectTest (name) {
-      // electron.ipcRenderer.send('tet', this.dataBaseInfo.connectName)
-      son.send('test1', this.dataBaseInfo).then((s) => {
-        console.log(s.result)
-      })
-      // console.log(son)
-      // const r = await son.send('test1', this.dataBaseInfo, '1115')
-      // console.log(r)
-      // MessageChannel.send('app', 'test_java', this.dataBaseInfo)
-      // MessageChannel.send('app', 'test', this.dataBaseInfo)
-      // this.$refs[name].validate((valid) => {
-      //   if (valid) {
-      //     const handler = electron.remote.getGlobal('dataBaseHandler')
-      //     try {
-      //       handler.testConnect(this.dataBaseInfo)
-      //       return this.$message.success('连接成功')
-      //     } catch (err) {
-      //       return this.$message.error('连接失败')
-      //     }
-      //   } else {
-      //     this.$message.error('请将信息填写完整')
-      //   }
-      // })
+    async  connectTest (name) {
+      this.testConnectShow = true
+      const res = await son.send('connectTest', this.dataBaseInfo)
+      if (res.result.code === 20000) {
+        this.$message.success('连接成功')
+      } else {
+        // console.log(res.result.result)
+        this.$message.error(res.result.result)
+      }
+      this.testConnectShow = false
     }
   },
   computed: {

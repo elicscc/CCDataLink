@@ -47,9 +47,6 @@ if (!getLock) {
       path: u,
       max: 3
     })
-    // console.log(await global.son.send('test1', {}))
-
-    // global.son = cluster.fork(path.join(__dirname, 'app/script/taskMain.js'))
   })
 
   app.on('activate', () => {
