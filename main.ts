@@ -3,10 +3,9 @@ import Store from 'electron-store'
 import InitEnvVariable from './app/script/initEnvVariable'
 import WindowUtil from './app/script/windowUtil'
 import cluster from 'child_process'
-import dataBaseHandler from './app/utils/dataBaseHandler'
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { MessageChannel, BrowserService } = require('electron-re')
+const { ChildProcessPool } = require('electron-re')
 declare global {
 // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace NodeJS {
@@ -43,8 +42,15 @@ if (!getLock) {
     //     console.log(r)
     //   })
     // }
+    const u = path.resolve(__dirname, './app/script/testChild.js')
+    console.log(u)
+    global.son = new ChildProcessPool({
+      path: u,
+      max: 3
+    })
+    global.son.send('test1', {})
 
-    global.son = cluster.fork(path.join(__dirname, 'app/script/taskMain.js'))
+    // global.son = cluster.fork(path.join(__dirname, 'app/script/taskMain.js'))
   })
 
   app.on('activate', () => {
@@ -67,10 +73,3 @@ if (!getLock) {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Store.initRenderer()
-InitEnvVariable.initJava()
-
-//
-// // 接收来自标识为asynchronous-message的消息
-ipcMain.on('test_replay', function (event, arg) {
-  console.log('Sd')
-})

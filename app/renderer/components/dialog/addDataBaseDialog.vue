@@ -96,10 +96,8 @@
 <script>
 
 import electron from 'electron'
-const remote = electron.remote
-const son = remote.getGlobal('son')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { MessageChannel } = require('electron-re')// 渲染进程
+const son = electron.remote.getGlobal('son')
+
 export default {
   data () {
     return {
@@ -129,13 +127,6 @@ export default {
         { label: 'Oracle', value: '3' }
       ]
     }
-  },
-  mounted () {
-    // 接收子线程的消息
-    son.on('message', (message) => {
-      console.log(message.code)
-      console.log(message.result)
-    })
   },
 
   methods: {
@@ -167,7 +158,11 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
-      son.send(this.dataBaseInfo)
+      electron.ipcRenderer.send('tet', this.dataBaseInfo.connectName)
+      // son.send(this.dataBaseInfo)
+      // console.log(son)
+      // const r = await son.send('test1', this.dataBaseInfo, '1115')
+      // console.log(r)
       // MessageChannel.send('app', 'test_java', this.dataBaseInfo)
       // MessageChannel.send('app', 'test', this.dataBaseInfo)
       // this.$refs[name].validate((valid) => {

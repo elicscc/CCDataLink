@@ -1,4 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const { ProcessHost } = require('electron-re')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const java = require('java')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -16,10 +18,6 @@ dependencies.forEach(function (dependency) {
 })
 
 function getStaticPath () {
-  /**
-   * Set `__static` path to static files in production
-   * __static开发环境就是同目录下的static,prod环境就是跟resources目录同级的一个static目录
-   */
   if (process.env.EXECUTOR) {
     return path.resolve(path.join('.', '/static')).replace(/\\/g, '\\\\')
   } else if (process.env.NODE_ENV === 'production') {
@@ -48,17 +46,25 @@ function getStaticPath () {
 // })
 
 // 获取主线程中的消息
-process.on('message', (args) => {
-  console.log(args)
+// process.on('message', (args) => {
+//   try {
+//     test(args)
+//     process.send({ code: 20000, result: '成功' })
+//   } catch (e) {
+//     console.log(e)
+//     process.send({ code: 50000, result: e })
+//   }
+// })
+ProcessHost.registry('test1', (args) => {
   try {
-    console.log('1')
-    const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
-    console.log('2')
-    const service = new TableInputService()
-    service.testConnectSync(JSON.stringify(args))
-    process.send({ code: 20000, result: '成功' })
+    test(args)
+    return { code: 20000, result: '成功' }
   } catch (e) {
-    console.log(e)
-    process.send({ code: 50000, result: e })
+    return { code: 50000, result: e }
   }
 })
+function test (arg) {
+  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const service = new TableInputService()
+  service.testConnectSync(JSON.stringify(arg))
+}
