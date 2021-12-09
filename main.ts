@@ -1,9 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Store from 'electron-store'
-import InitEnvVariable from './app/script/initEnvVariable'
 import WindowUtil from './app/script/windowUtil'
-import cluster from 'child_process'
 import path from 'path'
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ChildProcessPool } = require('electron-re')
 declare global {
@@ -25,7 +24,7 @@ const getLock = app.requestSingleInstanceLock()
 if (!getLock) {
   app.quit()
 } else {
-  app.on('ready', async () => {
+  app.on('ready', () => {
     // const appService = new BrowserService('app', path.join(__dirname, 'app/script/taskMain.js'), {
     //   webContents: {
     //     webSecurity: false
@@ -42,13 +41,13 @@ if (!getLock) {
     //     console.log(r)
     //   })
     // }
-    const u = path.resolve(__dirname, './app/script/testChild.js')
+    const u = path.resolve(__dirname, './app/script/taskMain.js')
     console.log(u)
     global.son = new ChildProcessPool({
       path: u,
       max: 3
     })
-    global.son.send('test1', {})
+    // console.log(await global.son.send('test1', {}))
 
     // global.son = cluster.fork(path.join(__dirname, 'app/script/taskMain.js'))
   })

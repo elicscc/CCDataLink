@@ -158,8 +158,10 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
-      electron.ipcRenderer.send('tet', this.dataBaseInfo.connectName)
-      // son.send(this.dataBaseInfo)
+      // electron.ipcRenderer.send('tet', this.dataBaseInfo.connectName)
+      son.send('test1', this.dataBaseInfo).then((s) => {
+        console.log(s.result)
+      })
       // console.log(son)
       // const r = await son.send('test1', this.dataBaseInfo, '1115')
       // console.log(r)

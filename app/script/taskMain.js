@@ -6,6 +6,7 @@ const java = require('java')
 const fs = require('fs')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
+
 let baseDir
 if (process.env.EXECUTOR || process.env.NODE_ENV === 'development') {
   baseDir = path.join(getStaticPath(), 'dlt_db')
@@ -60,6 +61,7 @@ ProcessHost.registry('test1', (args) => {
     test(args)
     return { code: 20000, result: '成功' }
   } catch (e) {
+    console.log(e)
     return { code: 50000, result: e }
   }
 })
