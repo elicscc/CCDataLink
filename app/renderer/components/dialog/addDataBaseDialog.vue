@@ -128,6 +128,12 @@ export default {
       ]
     }
   },
+  mounted () {
+    MessageChannel.on('test_replay', (event, rsp) => {
+      console.log(rsp)
+    })
+  },
+
   methods: {
     saveDatabaseInfo (name) {
       this.$refs[name].validate((valid) => {
@@ -157,10 +163,8 @@ export default {
       this.showDialog = false
     },
     connectTest (name) {
-      // ipcRenderer.on('test_replay', (event, rsp) => {
-      //   console.log(rsp)
-      // })
       MessageChannel.send('app', 'test_java', this.dataBaseInfo)
+      // MessageChannel.send('app', 'test', this.dataBaseInfo)
       // this.$refs[name].validate((valid) => {
       //   if (valid) {
       //     const handler = electron.remote.getGlobal('dataBaseHandler')

@@ -30,6 +30,7 @@ if (!getLock) {
         webSecurity: false
       }
     })
+    console.log(appService)
     WindowUtil.createMainWindow()
     // WindowUtil.createTaskWindow()
     // if (process.env.NODE_ENV === 'development' && fs.existsSync('C:\\vue-tools')) {
@@ -63,12 +64,6 @@ InitEnvVariable.initJava()
 
 //
 // // 接收来自标识为asynchronous-message的消息
-// ipcMain.on('asynchronous-message', function (event, arg) {
-//   // 返回标识为asynchronous-reply的消息'pong'
-//   try {
-//     dataBaseHandler.testConnect(arg)
-//     event.sender.send('asynchronous-reply', { code: 20000, message: '成功' })
-//   } catch (e) {
-//     event.sender.send('asynchronous-reply', { code: 5000, message: e })
-//   }
-// })
+ipcMain.on('test_replay', function (event, arg) {
+  console.log('Sd')
+})
