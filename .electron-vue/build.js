@@ -36,7 +36,6 @@ function clean () {
 
 function packageJava () {
   let result = childProcess.execSync("cd javasrc && mvn clean package ")
-
   console.log(result.toString())
   result = childProcess.execSync("copy javasrc\\target\\dataLinkDB.jar static\\dlt_db\\")
   result.toLocaleString()
@@ -56,45 +55,21 @@ function build () {
     day = "0"+day
   }
   const  type = process.env.INDUSTRY === 'tob'?'B':'C'
-  const buildTime = '5.5.' + month + '' + day + type
+  const buildTime = '1.0.' + month + '' + day + type
   const filespec=resolve('./')+"/static/buildTime.txt"
-
-
-
   fs.writeFile(filespec, buildTime, 'utf8', (err) => {
     if (err) throw err;
     console.log('success done');
   });
-
-  // 生成忽略更新版本文件
-  // const ignoreVersionsPath=resolve('./')+"/static/ignoreVersions.json"
-  // const ignoreVersions={
-  //   ignoreVersions:[]
-  // }
-  // fs.writeFileSync(ignoreVersionsPath, JSON.stringify(ignoreVersions))
-  //
-  // //生成更新的下载地址文件
-  // const downloadUrl=resolve('./')+"/static/updateInfo.json"
-  // fs.writeFileSync(downloadUrl, '')
-
-
-  //读取文件内容
-// const buffer= fs.readFileSync(resolve('./')+"/static/buildTime.txt")
-// process.stdout.write("FileString="+String(buffer))
-
   packageJava()
   greeting()
-
   del.sync(['dist/electron/*', '!.gitkeep'])
-
   const tasks = ['main', 'renderer']
   const m = new Multispinner(tasks, {
     preText: 'building',
     postText: 'process'
   })
-
   let results = ''
-
   m.on('success', () => {
     process.stdout.write('\x1B[2J\x1B[0f')
     console.log(`\n\n${results}`)

@@ -2,8 +2,11 @@
 const fs = require('fs')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
-const u1 = path.join(__dirname, '..', '..', 'app', 'node_modules', 'electron-re')
-const u2 = path.join(__dirname, '..', '..', 'app', 'node_modules', 'java')
+
+const b = process.env.NODE_ENV === 'production'
+
+const u1 = b ? path.join(__dirname, '..', '..', 'app', 'node_modules', 'electron-re') : 'electron-re'
+const u2 = b ? path.join(__dirname, '..', '..', 'app', 'node_modules', 'java') : 'java'
 // const re = require('C:\\Program Files\\cc_data_link\\resources\\app\\node_modules\\electron-re')//dynamicallyRequire('electron-re')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const re = require(u1)
@@ -11,7 +14,7 @@ const ProcessHost = re.ProcessHost
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const java = require(u2)
 
-const baseDir = path.join('C:\\Program Files\\DLTOpenJDK\\', 'dlt_db')
+const baseDir = b ? path.join('C:\\Program Files\\DLTOpenJDK\\', 'dlt_db') : path.join(__dirname, '..', '..', 'static', 'dlt_db').replace(/\\/g, '\\\\')
 
 const dependencies = fs.readdirSync(baseDir)
 dependencies.forEach(function (dependency) {

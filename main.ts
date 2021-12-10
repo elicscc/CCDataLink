@@ -50,5 +50,6 @@ Store.initRenderer()
 const u = path.join(stringUtil.getStaticPath(), 'java/taskMain.js')
 global.son = new ChildProcessPool({
   path: u,
-  max: 3
+  max: 3,
+  env: { NODE_ENV: process.env.NODE_ENV }
 })
