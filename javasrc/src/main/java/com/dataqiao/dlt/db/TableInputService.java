@@ -31,7 +31,7 @@ public class TableInputService {
         try (Connection conn = getConnection(databaseInfo)) {
             conn.isValid(30);
         } catch (SQLException e) {
-            throw new RuntimeException("连接失败： " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -272,7 +272,7 @@ public class TableInputService {
             p.setProperty("useInformationSchema", "true");
             return DriverManager.getConnection(url, p);
         } catch (SQLException e) {
-            throw new RuntimeException("数据库连接失败" + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
