@@ -59,13 +59,11 @@
               :props="defaultProps"
               :expand-on-click-node="false"
               :filter-node-method="filterNode"
-              :default-expanded-keys="treeExpandedKeys"
-              node-key="id"
               @node-click="handleNodeClick"
             >
-              <span slot-scope="{ node, data }" class="custom-tree-node" :title="data.connectName">
+              <span slot-scope="{ node, data }"  :title="data.connectName">
                 <svg-icon icon-class="project" />
-                {{ node.connectName }}
+                {{ data.connectName }}
               </span>
             </el-tree>
           </div>
@@ -153,7 +151,7 @@ export default {
       // 树结构配置
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'connectName'
       },
       // 侧边栏数据
       proOptions: []
@@ -376,8 +374,7 @@ export default {
     },
     // 获取侧边栏树
     getTreeList () {
-      const list = store.get('databaseList') ? store.get('databaseList') : []
-      this.proOptions = list
+      this.proOptions = store.get('databaseList') ? store.get('databaseList') : []
       console.log(this.proOptions)
     },
     // 筛选节点

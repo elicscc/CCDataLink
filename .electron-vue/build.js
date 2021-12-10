@@ -54,8 +54,7 @@ function build () {
   if(day < 10){
     day = "0"+day
   }
-  const  type = process.env.INDUSTRY === 'tob'?'B':'C'
-  const buildTime = '1.0.' + month + '' + day + type
+  const buildTime = '1.0.' + month + '' + day
   const filespec=resolve('./')+"/static/buildTime.txt"
   fs.writeFile(filespec, buildTime, 'utf8', (err) => {
     if (err) throw err;

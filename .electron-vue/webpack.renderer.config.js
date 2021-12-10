@@ -30,6 +30,14 @@ let rendererConfig = {
   module: {
     rules: [
       {
+        test: /\.svg$/,
+        loader: 'svg-sprite-loader',
+        include: [path.resolve(__dirname, '../app/renderer/icons')],
+        options: {
+          symbolId: 'icon-[name]'
+        }
+      },
+      {
         test: /\.[jt]sx?$/,
         use: 'babel-loader',
         exclude: /node_modules/
@@ -70,7 +78,7 @@ let rendererConfig = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|ico)(\?.*)?$/,
-        // exclude: [path.join(__dirname, '../app/renderer/icons')],
+        exclude: [path.resolve(__dirname, '../app/renderer/icons')],
         use: {
           loader: 'url-loader',
           options: {
