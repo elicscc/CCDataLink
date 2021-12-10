@@ -63,9 +63,9 @@
               node-key="id"
               @node-click="handleNodeClick"
             >
-              <span slot-scope="{ node, data }" class="custom-tree-node" :title="data.comment">
-                <svg-icon :icon-class="data.icon" />
-                {{ node.label }}
+              <span slot-scope="{ node, data }" class="custom-tree-node" :title="data.connectName">
+                <svg-icon icon-class="project" />
+                {{ node.connectName }}
               </span>
             </el-tree>
           </div>
@@ -378,6 +378,7 @@ export default {
     getTreeList () {
       const list = store.get('databaseList') ? store.get('databaseList') : []
       this.proOptions = list
+      console.log(this.proOptions)
     },
     // 筛选节点
     filterNode (value, data) {
