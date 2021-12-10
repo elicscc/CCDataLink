@@ -33,25 +33,6 @@
           </div>
         <div class="head-container">
           <div class="tree">
-            <!-- 转换的列表 -->
-            <!-- <el-tree
-              v-if="type === 1"
-              ref="tree"
-              highlight-current
-              :data="proOptions"
-              :props="defaultProps"
-              :expand-on-click-node="false"
-              :filter-node-method="filterNode"
-              default-expand-all
-              @node-click="handleNodeClick"
-            >
-              <span slot-scope="{ node, data }" class="custom-tree-node">
-                <svg-icon v-if="data.children" icon-class="project" />
-                <svg-icon v-else icon-class="job" />
-                {{ node.label }}
-              </span>
-            </el-tree> -->
-            <!-- 数据分析的列表 -->
             <el-tree
               ref="tree"
               highlight-current
@@ -62,7 +43,7 @@
               @node-click="handleNodeClick"
             >
               <span slot-scope="{ node, data }"  :title="data.connectName">
-                <svg-icon icon-class="project" />
+                <svg-icon icon-class="db" />
                 {{ data.connectName }}
               </span>
             </el-tree>
@@ -84,9 +65,10 @@
             :lazy="true"
             :label="item.title"
             :name="item.name"
+            :closable="item.close || false"
           >
             <monaco-editor
-              v-if="type === 1"
+              v-if="item.key !== -1"
               :id="item.name"
               :code="item.code"
               :language="item.language"
@@ -94,16 +76,8 @@
               style="padding-bottom:10px"
               :insert-table-name="insertTableName"
             />
-            <monaco-editor
-              v-else
-              :id="item.name"
-              :type="2"
-              :code="item.code"
-              :language="item.language"
-              :name="item.title"
-              style="padding-bottom:10px"
-              :insert-table-name="insertTableName"
-            />
+            <div v-else>{{tableList}}</div>
+
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -133,6 +107,7 @@ export default {
   },
   data () {
     return {
+      tableList: null,
       addDataBaseDialogVisible: false,
       // 定义点击次数,默认0次
       treeClickCount: 0,
@@ -169,13 +144,15 @@ export default {
     this.initTableColumn()
     // this.addEditor(this.$route.query, this.type)
     this.showCloseTab = false
-    const uuid = this.getUUID()
+
     this.editorTabs.push({
-      title: 'sql1',
-      name: uuid,
-      code: '',
-      language: 'sql'
+      key: -1,
+      title: 'object',
+      name: 'object',
+      close: true
     })
+
+    const uuid = this.getUUID()
     this.currentTabsName = uuid
     // 只能初始化一次,避免重复初始化自动提示的内容
 
