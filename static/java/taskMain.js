@@ -23,8 +23,7 @@ ProcessHost.registry('connectTest', (args) => {
     test(args)
     return { code: 20000, result: '成功' }
   } catch (e) {
-    console.log(e)
-    return { code: 50000, result: process.env }
+    return { code: 50000, result: e.message }
   }
 })
 function test (arg) {

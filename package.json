@@ -49,12 +49,8 @@
   },
   "dependencies": {
     "java": "^0.12.1",
-    "gethue": "4.8.3",
-    "sql-formatter": "2.3.3",
-    "vue-splitpane": "1.0.4",
     "electron-re": "1.1.1",
-    "electron-store": "^8.0.1",
-    "monaco-editor": "0.18.1"
+    "electron-store": "^8.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -83,7 +79,6 @@
     "@typescript-eslint/parser": "^4.4.0",
     "@vue/component-compiler-utils": "^3.2.0",
     "agentkeepalive": "^4.1.4",
-    "axios": "0.21.1",
     "vue-codemirror": "^4.0.4",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^8.2.3",
@@ -159,6 +154,10 @@
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.4",
     "webpack-hot-middleware": "^2.22.2",
+    "gethue": "4.8.3",
+    "sql-formatter": "2.3.3",
+    "monaco-editor": "0.18.1",
+    "vue-splitpane": "1.0.4",
     "webpack-merge": "^4.1.3"
   }
 }
