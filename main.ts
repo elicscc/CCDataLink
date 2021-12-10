@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import Store from 'electron-store'
 import WindowUtil from './app/script/windowUtil'
 import path from 'path'
-
+import stringUtil from './app/utils/stringUtil'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ChildProcessPool } = require('electron-re')
 declare global {
@@ -25,34 +25,12 @@ if (!getLock) {
   app.quit()
 } else {
   app.on('ready', () => {
-    // const appService = new BrowserService('app', path.join(__dirname, 'app/script/taskMain.js'), {
-    //   webContents: {
-    //     webSecurity: false
-    //   }
-    // })
-    // console.log(appService)
     WindowUtil.createMainWindow()
-    // await appService.connected()
-    // appService.openDevTools()
-    // MessageChannel.send('app', 'test_java', { test: 'test' })
-    // WindowUtil.createTaskWindow()
-    // if (process.env.NODE_ENV === 'development' && fs.existsSync('C:\\vue-tools')) {
-    //   electron.session.defaultSession.loadExtension('C:\\vue-tools').then((r) => {
-    //     console.log(r)
-    //   })
-    // }
-    const u = path.resolve(__dirname, './app/script/taskMain.js')
-    console.log(u)
-    global.son = new ChildProcessPool({
-      path: u,
-      max: 3
-    })
   })
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       WindowUtil.createMainWindow()
-      // WindowUtil.createTaskWindow()
     }
   })
 
@@ -69,3 +47,8 @@ if (!getLock) {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Store.initRenderer()
+const u = path.join(stringUtil.getStaticPath(), 'java/taskMain.js')
+global.son = new ChildProcessPool({
+  path: u,
+  max: 3
+})

@@ -163,7 +163,7 @@ export default {
       if (res.result.code === 20000) {
         this.$message.success('连接成功')
       } else {
-        // console.log(res.result.result)
+        console.log('connectTest', res.result)
         this.$message.error(res.result.result)
       }
       this.testConnectShow = false
