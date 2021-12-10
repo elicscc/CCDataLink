@@ -272,7 +272,7 @@ public class TableInputService {
             p.setProperty("useInformationSchema", "true");
             return DriverManager.getConnection(url, p);
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("连接失败" + e.getMessage());
         }
     }
 

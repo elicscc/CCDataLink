@@ -110,7 +110,7 @@
         </el-tabs>
       </el-col>
     </el-row>
-    <data-base-dialog  :isVisible.sync="addDataBaseDialogVisible" />
+    <data-base-dialog  :isVisible.sync="addDataBaseDialogVisible" @dataBaseDialog="dataBaseDialog" />
   </div>
 </template>
 
@@ -120,6 +120,10 @@ import MonacoEditor from '../../components/MonacoEditor'
 import * as monaco from 'monaco-editor'
 import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
+import electron from 'electron'
+import Store from 'electron-store'
+const son = electron.remote.getGlobal('son')
+const store = new Store()
 
 export default {
   components: { MonacoEditor, DataBaseDialog },
@@ -222,6 +226,12 @@ export default {
     }
   },
   methods: {
+    dataBaseDialog (data) {
+      const list = (store.get('databaseList') ? store.get('databaseList') : [])
+      list.push(data)
+      store.set('databaseList', list)
+      this.getTreeList()
+    },
     // 返回唯一标识
     getUUID () {
       return Math.random().toString(36).substr(3, 10)
@@ -366,7 +376,8 @@ export default {
     },
     // 获取侧边栏树
     getTreeList () {
-      console.log('getTreeList')
+      const list = store.get('databaseList') ? store.get('databaseList') : []
+      this.proOptions = list
     },
     // 筛选节点
     filterNode (value, data) {

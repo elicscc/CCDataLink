@@ -95,8 +95,9 @@
 </template>
 <script>
 import electron from 'electron'
+import Store from 'electron-store'
 const son = electron.remote.getGlobal('son')
-
+const store = new Store()
 export default {
   data () {
     return {
@@ -133,22 +134,8 @@ export default {
     saveDatabaseInfo (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-        //   this.$axios({
-        //     url: '/api/databaseInfo/addOrEdit',
-        //     method: 'POST',
-        //     data: this.dataBaseInfo
-        //   }).then(res => {
-        //     // console.log(res)
-        //     if (res.data.resultCode === '0000') {
-        //       electron.ipcRenderer.send('' +
-        //           '', true)
-        //       this.$message.success('新增成功!')
-        //     } else {
-        //       this.$message.error(res.data.resultMsg)
-        //     }
-        //   }).catch(err => {
-        //     console.log(err)
-        //   })
+          this.$emit('dataBaseDialog', this.dataBaseInfo)
+          this.showDialog = false
         } else {
           this.$message.error('请将信息填写完整')
         }
