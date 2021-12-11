@@ -29,6 +29,12 @@ ProcessHost.registry('connectTest', (args) => {
   } catch (e) {
     return { code: 50001, result: e.message }
   }
+}).registry('getTableAndColumns', (args) => {
+  try {
+    return getTableAndColumns(args)
+  } catch (e) {
+    return { code: 50001, result: e.message }
+  }
 })
 
 function test (arg) {
@@ -41,4 +47,10 @@ function getTables (arg) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.getTableNamesSync(JSON.stringify(arg), null))
+}
+
+function getTableAndColumns (arg) {
+  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.getTableAndColumnsSync(JSON.stringify(arg)))
 }

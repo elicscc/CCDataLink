@@ -84,6 +84,8 @@ import MonacoConsole from './MonacoConsole'
 import SqlLogPanel from './SqlLogPanel'
 import SplitPane from 'vue-splitpane'
 import formatter from 'sql-formatter'
+import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
+// import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
 
 export default {
   name: 'MyMonacoEditor',
@@ -94,8 +96,10 @@ export default {
       default: () => null
     },
     type: {
-      type: Number,
-      default: 1
+      type: Object,
+      default () {
+        return {}
+      }
     },
     code: {
       type: String,
@@ -118,6 +122,12 @@ export default {
   },
   data () {
     return {
+      // tableColumn is look like this
+      // tableColumn: {
+      //   t1: ['column1_t1_1', 'column1_t1_2'],
+      //   t2: ['column1_t2_1', 'column1_t2_2']
+      // },
+      tableColumn: {},
       sqlSize: 0,
       themeOption: [
         {
@@ -208,13 +218,144 @@ export default {
     }
   },
   mounted () {
+    this.tableColumn = this.type
     this.languageCopy = this.language
     this.codeCopy = this.code
     this.initEditor()
   },
   methods: {
+
+    // 根据sql语法解析提示信息
+    resolveSuggestion (suggestInfo) {
+      const self = this
+      // 定义一个最终返回的提示信息的数组,并在解析每一类提示信息的时候讲提示信息push到这个数组中,最后返还此数组
+      const monacoSuggestion = []
+      // 添加关键字
+      this.resolveSuggestKeywords(suggestInfo, monacoSuggestion)
+      // 根据表名获取列名
+      if (suggestInfo.suggestColumns && suggestInfo.suggestColumns.tables) {
+        const tables = suggestInfo.suggestColumns.tables
+        console.log('tables is' + JSON.stringify(tables))
+        for (let i = 0; i < tables.length; i++) {
+          const table = tables[i]
+          if (table.identifierChain) {
+            let tableChainName = ''
+            for (let j = 0; j < table.identifierChain.length; j++) {
+              const identifier = table.identifierChain[j]
+              if (identifier.name) {
+                tableChainName += identifier.name + '.'
+              }
+            }
+            if (tableChainName.length > 1) {
+              self.resolveColumnSuggestionByTableName(
+                tableChainName.substr(0, tableChainName.length - 1),
+                monacoSuggestion
+              )
+            }
+          }
+        }
+      }
+      // 添加表名
+      this.resolveSuggestTables(suggestInfo, monacoSuggestion)
+      // 添加常用函数
+      // this.resolveSuggestAggregateFunctions(suggestInfo, monacoSuggestion)
+      return monacoSuggestion
+    },
+    resolveSuggestTables (suggestInfo, monacoSuggestion) {
+      // 如果解析信息中没有出现suggestTables,则返回空
+      if (!suggestInfo.suggestTables) {
+        return
+      }
+
+      for (const key in this.tableColumn) {
+        monacoSuggestion.push({
+          label: key,
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: key,
+          detail: '表名'
+        })
+      }
+    },
+    // 根据sql语法解析提示关键字
+    resolveSuggestKeywords (suggestInfo, monacoSuggestion) {
+      if (!suggestInfo.suggestKeywords) {
+        return
+      }
+      for (let i = 0; i < suggestInfo.suggestKeywords.length; i++) {
+        const keyword = suggestInfo.suggestKeywords[i]
+        monacoSuggestion.push({
+          label: keyword.value,
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: keyword.value,
+          detail: '关键字'
+        })
+      }
+    },
+    // 根据表名解析对应的列提示信息
+    resolveColumnSuggestionByTableName (tableName, monacoSuggestion) {
+      const columnList = this.tableColumn[tableName]
+      if (!columnList) {
+        return
+      }
+      for (let i = 0; i < columnList.length; i++) {
+        const columnName = columnList[i]
+        monacoSuggestion.push({
+          label: columnName,
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: columnName,
+          detail: '表' + tableName
+        })
+      }
+    },
+    resolveSuggestAggregateFunctions (suggestInfo, monacoSuggestion) {
+      if (suggestInfo.suggestAggregateFunctions) {
+        const aggregateFunctions = [
+          'COUNT()',
+          'SUM()',
+          'MAX()',
+          'MIN()',
+          'AVG()'
+        ]
+        for (let i = 0; i < aggregateFunctions.length; i++) {
+          const f = aggregateFunctions[i]
+          monacoSuggestion.push({
+            label: f,
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            insertText: f,
+            detail: '函数'
+          })
+        }
+      }
+    },
     initEditor: function () {
       const self = this
+      monaco.languages.registerCompletionItemProvider('sql', {
+        provideCompletionItems: (model, position) => {
+          const sqlValue = model.getValue()
+          const lineNumber = position.lineNumber
+          const column = position.column
+          let beforeSqlIndex = 0
+          for (let i = 0; i < lineNumber - 1; i++) {
+            beforeSqlIndex = sqlValue.indexOf('\n', beforeSqlIndex)
+          }
+          beforeSqlIndex += column
+          const sqlBeforeCursor = sqlValue.substring(0, beforeSqlIndex - 1)
+          const sqlAfterCursor =
+              ' ' + sqlValue.substring(beforeSqlIndex, sqlValue.length)
+          console.log(
+            'before:' + sqlBeforeCursor + 'after:' + sqlAfterCursor + 'end'
+          )
+          const suggestInfo = sqlAutocompleteParser.parseSql(
+            sqlBeforeCursor,
+            sqlAfterCursor,
+            'hive',
+            true
+          )
+          console.log('suggest info' + JSON.stringify(suggestInfo, null, 2))
+          const columnSuggestion = self.resolveSuggestion(suggestInfo)
+          return { suggestions: columnSuggestion }
+        }
+      })
       let language = self.languageCopy || self.language
       if (language.toLocaleLowerCase() === 'sparksql' || language.toLocaleLowerCase() === 'sql') {
         language = 'sql'

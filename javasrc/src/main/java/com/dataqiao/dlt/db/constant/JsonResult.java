@@ -21,7 +21,7 @@ public class JsonResult<T> {
 
     private T data;
 
-    public static <T> String success() {
+    public static String success() {
         return JsonUtil.toJsonString(new JsonResult<>().setCode(20000));
     }
 
@@ -29,7 +29,7 @@ public class JsonResult<T> {
         return JsonUtil.toJsonString(new JsonResult<>().setCode(20000).setData(data));
     }
 
-    public static <T> String error(String message) {
+    public static String error(String message) {
         return JsonUtil.toJsonString(new JsonResult<>().setCode(50000).setMessage(message));
     }
 

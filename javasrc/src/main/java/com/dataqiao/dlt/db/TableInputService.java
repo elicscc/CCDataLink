@@ -8,6 +8,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.dataqiao.dlt.db.constant.DatabaseTypeEnum.Oracle;
 
@@ -135,29 +136,75 @@ public class TableInputService {
         return tableModelVos;
     }
 
-
-    private List<NameCommentVo> getColumns(String databaseInfoStr, String tableName) {
-        List<NameCommentVo> columnsVos = new ArrayList<>();
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        try (Connection conn = getConnection(databaseInfo)) {
-            ResultSet tableColumns;
-            if (DatabaseTypeEnum.Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
-                Statement statement = conn.createStatement();
-                tableColumns = statement.executeQuery(" select t.COLUMN_NAME COLUMN_NAME, b.comments REMARKS from user_tab_columns t  join user_col_comments b on t.COLUMN_NAME=b.column_name and b.table_name='" + tableName + "'  where t.Table_Name='" + tableName + "'");
-            } else {
-                DatabaseMetaData metaData = conn.getMetaData();
-                tableColumns = metaData.getColumns(null, null, tableName, "%");
-            }
-            while (tableColumns.next()) {
-                String name = tableColumns.getString("COLUMN_NAME");
-                String remarks = tableColumns.getString("REMARKS");
-                columnsVos.add(new NameCommentVo(name, remarks));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("获取列信息失败" + e.getMessage());
+    public String getTableAndColumns(String databaseInfoStr) {
+        try {
+            return JsonResult.success(getTablesAndColumns(databaseInfoStr));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
         }
-        return columnsVos;
     }
+
+
+    public Map<String, List<String>> getTablesAndColumns(String databaseInfoStr) {
+
+        List<TablesAndColumnsVo> tableModelVos;
+        String sql;
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        switch (databaseInfo.getDatabaseType()) {
+            case "1":
+            case "4":
+                sql = "SELECT  TABLE_NAME tableName, COLUMN_NAME columnName, COLUMN_TYPE columnType FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '" + databaseInfo.getDatabaseName() + "'";
+                break;
+//            case "2":
+//                sql = "SELECT Name name,Name cm FROM SysObjects where Name like '%" + tableName + "%'";
+//                break;
+//            case "3":
+//                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments where TABLE_NAME like '%" + tableName + "%'";
+//                break;
+            default:
+                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet resultSet = ps.executeQuery();
+            BeanListHandler<TablesAndColumnsVo> beanListHandler = new BeanListHandler<>(TablesAndColumnsVo.class);
+            tableModelVos = beanListHandler.handle(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException("获取信息失败：" + e.getMessage());
+        }
+        if (tableModelVos.isEmpty()) {
+            return null;
+        } else {
+            return tableModelVos.stream().collect(Collectors.groupingBy(TablesAndColumnsVo::getTableName, Collectors.mapping(TablesAndColumnsVo::getColumnName, Collectors.toList())));
+        }
+    }
+
+
+//    private List<NameCommentVo> getColumns(String databaseInfoStr, String tableName) {
+//        List<NameCommentVo> columnsVos = new ArrayList<>();
+//        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+//        try (Connection conn = getConnection(databaseInfo)) {
+//            ResultSet tableColumns;
+//            if (DatabaseTypeEnum.Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
+//                Statement statement = conn.createStatement();
+//                tableColumns = statement.executeQuery(" select t.COLUMN_NAME COLUMN_NAME, b.comments REMARKS from user_tab_columns t  join user_col_comments b on t.COLUMN_NAME=b.column_name and b.table_name='" + tableName + "'  where t.Table_Name='" + tableName + "'");
+//            } else {
+//                DatabaseMetaData metaData = conn.getMetaData();
+//                tableColumns = metaData.getColumns(null, null, tableName, "%");
+//            }
+//            while (tableColumns.next()) {
+//                String name = tableColumns.getString("COLUMN_NAME");
+//                String remarks = tableColumns.getString("REMARKS");
+//                columnsVos.add(new NameCommentVo(name, remarks));
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException("获取列信息失败" + e.getMessage());
+//        }
+//        return columnsVos;
+//    }
 
     private IViewTableVo selectTableInput(DatabaseInfo databaseInfo, String sql) {
         List<ColumnVo> columns = new ArrayList<>();

@@ -49,6 +49,7 @@ export default {
   methods: {
     initEditor () {
       const self = this
+
       self.editor = monaco.editor.create(self.$refs.console, {
         value: self.codes,
         language: 'plaintext',
@@ -67,6 +68,7 @@ export default {
         self.editor.layout()
       })
     }
+
   }
 }
 </script>
