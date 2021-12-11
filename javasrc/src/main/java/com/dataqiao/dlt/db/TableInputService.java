@@ -137,6 +137,49 @@ public class TableInputService {
         return JsonUtil.toJsonString(page);
     }
 
+
+    /**
+     * 获取表
+     *
+     * @param databaseInfoStr
+     * @param tableName
+     * @return
+     */
+    public String getTableNames(String databaseInfoStr, String tableName) {
+        if (StringUtils.isBlank(tableName)) {
+            tableName = "";
+        }
+        List<NameCommentVo> tableModelVos;
+        String sql;
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        switch (databaseInfo.getDatabaseType()) {
+            case "1":
+            case "4":
+                sql = "SELECT table_name name,TABLE_COMMENT cm FROM INFORMATION_SCHEMA.TABLES  WHERE table_schema = '" + databaseInfo.getDatabaseName() + "' and table_name like concat('%','" + tableName + "','%')";
+                break;
+            case "2":
+                sql = "SELECT Name name,Name cm FROM SysObjects where Name like '%" + tableName + "%'";
+                break;
+            case "3":
+                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments where TABLE_NAME like '%" + tableName + "%'";
+                break;
+            default:
+                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet resultSet = ps.executeQuery();
+            BeanListHandler<NameCommentVo> beanListHandler = new BeanListHandler<>(NameCommentVo.class);
+            tableModelVos = beanListHandler.handle(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException("获取表信息失败" + e.getMessage());
+        }
+        return JsonUtil.toJsonString(tableModelVos);
+    }
+
     /**
      * 查询表所在的页数
      *

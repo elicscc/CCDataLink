@@ -373,26 +373,31 @@ export default {
     //     this.addEditor(data, this.type)
     //   }
     // },
-    handleNodeClick (data) {
+    async  handleNodeClick (data) {
+      console.log(data)
+      const res = await son.send('getTables', data)
+      console.log(res)
+      this.tableList = res.result.result
+      this.currentTabsName = 'object'
       // 记录点击次数
-      this.treeClickCount++
-      // 单次点击次数超过2次不作处理,直接返回,也可以拓展成多击事件
-      if (this.treeClickCount >= 2) {
-        return
-      }
-      // 计时器,计算300毫秒为单位,可自行修改
-      this.timer = window.setTimeout(() => {
-        if (this.treeClickCount === 1) {
-          // 把次数归零
-          this.treeClickCount = 0
-          // 单击事件处理
-        } else if (this.treeClickCount > 1) {
-          // 把次数归零
-          this.treeClickCount = 0
-          // 双击事件
-          this.insertTableName = data.label
-        }
-      }, 300)
+      // this.treeClickCount++
+      // // 单次点击次数超过2次不作处理,直接返回,也可以拓展成多击事件
+      // if (this.treeClickCount >= 2) {
+      //   return
+      // }
+      // // 计时器,计算300毫秒为单位,可自行修改
+      // this.timer = window.setTimeout(() => {
+      //   if (this.treeClickCount === 1) {
+      //     // 把次数归零
+      //     this.treeClickCount = 0
+      //     // 单击事件处理
+      //   } else if (this.treeClickCount > 1) {
+      //     // 把次数归零
+      //     this.treeClickCount = 0
+      //     // 双击事件
+      //     this.insertTableName = data.label
+      //   }
+      // }, 300)
     },
     initTableColumn () {
       // get('/transformInfo/queryAllTableInfo').then((res) => {

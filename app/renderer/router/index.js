@@ -6,13 +6,8 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/s',
-      name: 'title',
-      component: () => import('@/views/title/title.vue')
-    },
-    {
       path: '/',
-      name: 'edit',
+      name: 'index',
       component: () => import('@/views/programmingEditor/programmingEditor.vue')
     },
     {
