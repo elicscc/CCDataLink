@@ -38,6 +38,8 @@
               ref="tree"
               :data="proOptions"
               node-key="id"
+              lazy
+              :load="loadNode"
               :props="defaultProps"
               :expand-on-click-node="false"
               :filter-node-method="filterNode"
@@ -45,7 +47,7 @@
               highlight-current
             >
               <span slot-scope="{ node, data }"  :title="data.connectName">
-                <svg-icon icon-class="db" />
+                <svg-icon :icon-class="node.level === 1 ?'db': 'table'" />
                 {{ data.connectName }}
               </span>
             </el-tree>
@@ -141,13 +143,10 @@ export default {
       return this.$store.state.monaco.suggestionsInitial
     }
   },
-
-  created () {
-    // SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'mx' ORDER BY TABLE_SCHEMA, TABLE_NAME
+  mounted () {
     this.getTreeList()
-    // this.addEditor(this.$route.query, this.type)
-    this.showCloseTab = false
-
+  },
+  created () {
     this.editorTabs.push({
       key: -1,
       title: 'object',
@@ -162,7 +161,6 @@ export default {
     const self = this
     if (this.suggestionsInitial === false) {
       this.$store.dispatch('monaco/setSuggestionsInitial', true)
-
       // 多个代码编辑页面只需要全局注册一次提示项,所以放到这里
       monaco.languages.registerCompletionItemProvider('sql', {
         provideCompletionItems: (model, position) => {
@@ -191,7 +189,7 @@ export default {
           return { suggestions: columnSuggestion }
         }
       })
-      monaco.languages.registerCompletionItemProvider('python', {
+      /*    monaco.languages.registerCompletionItemProvider('python', {
         provideCompletionItems: () => {
           return {
             suggestions: JSON.parse(
@@ -199,12 +197,12 @@ export default {
             )
           }
         }
-      })
+      }) */
     }
   },
   methods: {
     dataBaseDialog (data) {
-      const list = (store.get('databaseList') ? store.get('databaseList') : [])
+      const list = store.get('databaseList') || []
       if (!data.id) {
         const f = JSON.parse(JSON.stringify(data))
         f.id = this.getUUID()
@@ -276,7 +274,7 @@ export default {
       // 添加表名
       this.resolveSuggestTables(suggestInfo, monacoSuggestion)
       // 添加常用函数
-      this.resolveSuggestAggregateFunctions(suggestInfo, monacoSuggestion)
+      // this.resolveSuggestAggregateFunctions(suggestInfo, monacoSuggestion)
       return monacoSuggestion
     },
     resolveSuggestTables (suggestInfo, monacoSuggestion) {
@@ -347,7 +345,7 @@ export default {
     },
     // 获取侧边栏树
     getTreeList () {
-      this.proOptions = store.get('databaseList') ? store.get('databaseList') : []
+      this.proOptions = store.get('databaseList') || []
       console.log(this.proOptions)
     },
     // 筛选节点
@@ -355,27 +353,36 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
-    // 节点单击事件
-    // handleNodeClick(data) {
-    //   const transformInfo = this.proOptions.find((e) => e.id === data.id)
-    //   if (transformInfo != null) return
-    //   // 判断有重复的直接打开页面 没有再新增
-    //   const checkee = this.editorTabs.find((e) => {
-    //     return e.name === data.id
-    //   })
-    //   if (checkee) {
-    //     this.currentTabsName = data.id
-    //   } else {
-    //     this.addEditor(data, this.type)
-    //   }
-    // },
-    async  handleNodeClick (data) {
-      console.log(data)
-      const res = await son.send('getTables', data)
-      console.log(res)
-      this.tableList = res.result.result
-      this.currentTabsName = 'object'
-      console.log(this.keyId)
+    async  loadNode (node, resolve) {
+      console.log(node)
+      if (node.level === 1) {
+        const res = await son.send('getTables', node.data)
+        console.log(res.result)
+        if (res.result.code === 50000) {
+          this.$message.error(res.result.result)
+          return resolve([])
+        }
+        console.log(res.result)
+        const s = res.result.result.map(i => {
+          return { connectName: i.name }
+        })
+        return resolve(s)
+      }
+      if (node.level > 1) { return resolve([]) }
+    },
+    handleNodeClick (data) {
+      // data.children = [
+      //   { connectName: '/ss', label: 'sdads' }
+      // ]
+      //
+      // console.log(data)
+      //
+      // console.log(this.proOptions)
+      // const res = await son.send('getTables', data)
+      // console.log(res)
+      // this.tableList = res.result.result
+      // this.currentTabsName = 'object'
+      // console.log(this.keyId)
       // 记录点击次数
       // this.treeClickCount++
       // // 单次点击次数超过2次不作处理,直接返回,也可以拓展成多击事件
