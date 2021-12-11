@@ -1368,6 +1368,11 @@
   dependencies:
     source-map "^0.6.1"
 
+"@types/uuid@^8.0.0":
+  version "8.3.3"
+  resolved "https://registry.npmmirror.com/@types/uuid/download/@types/uuid-8.3.3.tgz#c6a60686d953dbd1b1d45e66f4ecdbd5d471b4d0"
+  integrity sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==
+
 "@types/verror@^1.10.3":
   version "1.10.5"
   resolved "https://registry.npmmirror.com/@types/verror/download/@types/verror-1.10.5.tgz#2a1413aded46e67a1fe2386800e291123ed75eb1"
@@ -11527,7 +11532,7 @@ uuid@^7.0.3:
   resolved "https://registry.npmmirror.com/uuid/download/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
   integrity sha1-xcnyyM8l3Ao3LE3xRBxB9b0MaAs=
 
-uuid@^8.3.2:
+uuid@^8.1.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.npmmirror.com/uuid/download/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha1-gNW1ztJxu5r2xEXyGhoExgbO++I=
@@ -11679,6 +11684,14 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha1-HuO8mhbsv1EYvjNLsV+cRvgvWCU=
+
+vue-uuid@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npm.taobao.org/vue-uuid/download/vue-uuid-2.0.2.tgz#0cfb739e660a3af1d4e3342743578114f79b2438"
+  integrity sha1-DPtznmYKOvHU4zQnQ1eBFPebJDg=
+  dependencies:
+    "@types/uuid" "^8.0.0"
+    uuid "^8.1.0"
 
 vue@2.6.11:
   version "2.6.11"

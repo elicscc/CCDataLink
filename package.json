@@ -120,6 +120,7 @@
     "js-md5": "^0.7.3",
     "lodash": "^4.17.20",
     "log4js": "^6.3.0",
+    "vue-uuid": "^2.0.2",
     "mini-css-extract-plugin": "^1.2.1",
     "mocha": "^5.2.0",
     "monaco-editor": "0.18.1",

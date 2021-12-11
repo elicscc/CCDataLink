@@ -35,12 +35,13 @@
           <div class="tree">
             <el-tree
               ref="tree"
-              highlight-current
               :data="proOptions"
+              node-key="id"
               :props="defaultProps"
               :expand-on-click-node="false"
               :filter-node-method="filterNode"
               @node-click="handleNodeClick"
+              highlight-current
             >
               <span slot-scope="{ node, data }"  :title="data.connectName">
                 <svg-icon icon-class="db" />
@@ -62,7 +63,7 @@
           <el-tab-pane
             v-for="(item, index) in editorTabs"
             :key="index"
-            :lazy="true"
+            lazy
             :label="item.title"
             :name="item.name"
             :closable="item.close || false"
@@ -92,6 +93,7 @@ import MonacoEditor from '../../components/MonacoEditor'
 import * as monaco from 'monaco-editor'
 import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
+import { uuid } from 'vue-uuid'
 import electron from 'electron'
 import Store from 'electron-store'
 const son = electron.remote.getGlobal('son')
@@ -107,6 +109,7 @@ export default {
   },
   data () {
     return {
+      keyId: null,
       tableList: null,
       addDataBaseDialogVisible: false,
       // 定义点击次数,默认0次
@@ -152,8 +155,7 @@ export default {
       close: true
     })
 
-    const uuid = this.getUUID()
-    this.currentTabsName = uuid
+    this.currentTabsName = this.getUUID()
     // 只能初始化一次,避免重复初始化自动提示的内容
 
     console.log('suggestionsInitial', this.$store.state.monaco.suggestionsInitial)
@@ -203,13 +205,24 @@ export default {
   methods: {
     dataBaseDialog (data) {
       const list = (store.get('databaseList') ? store.get('databaseList') : [])
-      list.push(data)
+      if (!data.id) {
+        const f = JSON.parse(JSON.stringify(data))
+        f.id = this.getUUID()
+        list.push(f)
+      } else {
+        const i = list.findIndex(item => item.id === data.id)
+        if (i === -1) {
+          list.push(data)
+        } else {
+          list.splice(i, 1, data)
+        }
+      }
       store.set('databaseList', list)
       this.getTreeList()
     },
     // 返回唯一标识
     getUUID () {
-      return Math.random().toString(36).substr(3, 10)
+      return uuid.v1()
     },
     // 新增一个编辑器
     async addEditor (item, type) {
@@ -229,14 +242,14 @@ export default {
       }
       if (type === 2) {
         this.showCloseTab = false
-        const uuid = this.getUUID()
+        const uid = this.getUUID()
         this.editorTabs.push({
           title: '数据分析',
-          name: uuid,
+          name: uid,
           code: '',
           language: 'sql'
         })
-        this.currentTabsName = uuid
+        this.currentTabsName = uid
       }
     },
     clickTabs (tab) {
@@ -379,6 +392,7 @@ export default {
       console.log(res)
       this.tableList = res.result.result
       this.currentTabsName = 'object'
+      console.log(this.keyId)
       // 记录点击次数
       // this.treeClickCount++
       // // 单次点击次数超过2次不作处理,直接返回,也可以拓展成多击事件
