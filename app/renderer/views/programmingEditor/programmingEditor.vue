@@ -358,12 +358,12 @@ export default {
       if (node.level === 1) {
         const res = await son.send('getTables', node.data)
         console.log(res.result)
-        if (res.result.code === 50000) {
-          this.$message.error(res.result.result)
+        if (res.result.code !== 20000) {
+          this.$message.error(res.result.message)
           return resolve([])
         }
         console.log(res.result)
-        const s = res.result.result.map(i => {
+        const s = res.result.data.map(i => {
           return { connectName: i.name }
         })
         return resolve(s)

@@ -19,19 +19,18 @@ dependencies.forEach(function (dependency) {
 
 ProcessHost.registry('connectTest', (args) => {
   try {
-    test(args)
-    return { code: 20000, result: '成功' }
+    return test(args)
   } catch (e) {
-    return { code: 50000, result: e.message }
+    return { code: 50001, result: e.message }
   }
 }).registry('getTables', (args) => {
   try {
-    const r = getTables(args)
-    return { code: 20000, result: r }
+    return getTables(args)
   } catch (e) {
-    return { code: 50000, result: e.message }
+    return { code: 50001, result: e.message }
   }
 })
+
 function test (arg) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
   const service = new TableInputService()

@@ -151,7 +151,7 @@ export default {
         this.$message.success('连接成功')
       } else {
         console.log('connectTest', res.result)
-        this.$message.error(res.result.result)
+        this.$message.error(res.result.message)
       }
       this.testConnectShow = false
     }

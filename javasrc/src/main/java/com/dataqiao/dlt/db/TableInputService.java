@@ -1,7 +1,6 @@
 package com.dataqiao.dlt.db;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dataqiao.dlt.db.constant.*;
 import com.dataqiao.dlt.db.util.JsonUtil;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -26,43 +25,14 @@ public class TableInputService {
      * @param databaseInfoStr
      * @return
      */
-    public void testConnect(String databaseInfoStr) {
+    public String testConnect(String databaseInfoStr) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
         try (Connection conn = getConnection(databaseInfo)) {
             conn.isValid(30);
+            return JsonResult.success();
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            return JsonResult.error(e.getMessage());
         }
-    }
-
-
-    /**
-     * 表输入组件预览用,返回10条数据
-     *
-     * @param databaseInfoStr
-     * @param sql
-     * @return
-     */
-    public String selectTableInputTopTen(String databaseInfoStr, String sql) {
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        sql = formatSqlWithLimit(databaseInfoStr, sql, 10);
-        return JsonUtil.toJsonString(selectTableInput(databaseInfo, sql));
-    }
-
-
-    public String formatSqlWithLimit(String databaseInfoStr, String sql, Integer maxQueryNum) {
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        sql = sql.trim();
-        sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
-        if (DatabaseTypeEnum.Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
-            sql = "select * from (" + sql + ") dataqiao where rownum<=" + maxQueryNum;
-        } else if (DatabaseTypeEnum.MySQL.getCode().equals(databaseInfo.getDatabaseType())) {
-            sql = "select * from (" + sql + ") dataqiao limit " + maxQueryNum;
-        } else if (DatabaseTypeEnum.SQLServer.getCode().equals(databaseInfo.getDatabaseType())) {
-            sql = "select top " + maxQueryNum + " * from (" + sql + ") dataqiao";
-        }
-
-        return sql;
     }
 
 
@@ -114,29 +84,14 @@ public class TableInputService {
         return new String(data);
     }
 
-    /**
-     * 数据库表分页查询
-     *
-     * @param databaseInfoStr
-     * @param tableName
-     * @param current
-     * @param size
-     * @return
-     */
-    public String getTablePage(String databaseInfoStr, String tableName, int current, int size) {
-        Page<NameCommentVo> page = new Page<>(current, size);
-        List<NameCommentVo> tables = getTables(databaseInfoStr, tableName);
-        page.setTotal(tables.size());
-        if ((page.getCurrent() - 1) * page.getSize() >= tables.size()) {
-            return JsonUtil.toJsonString(page);
-        }
-        int startIndex = (int) ((page.getCurrent() - 1) * page.getSize());
-        int engIndex = page.getCurrent() * page.getSize() > tables.size() ?
-                tables.size() : (int) (page.getCurrent() * page.getSize());
-        page.setRecords(tables.subList(startIndex, engIndex));
-        return JsonUtil.toJsonString(page);
-    }
 
+    public String getTableNames(String databaseInfoStr, String tableName) {
+        try {
+            return JsonResult.success(getTables(databaseInfoStr, tableName));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
+    }
 
     /**
      * 获取表
@@ -145,7 +100,7 @@ public class TableInputService {
      * @param tableName
      * @return
      */
-    public String getTableNames(String databaseInfoStr, String tableName) {
+    public List<NameCommentVo> getTables(String databaseInfoStr, String tableName) {
         if (StringUtils.isBlank(tableName)) {
             tableName = "";
         }
@@ -177,45 +132,9 @@ public class TableInputService {
         } catch (SQLException e) {
             throw new RuntimeException("获取表信息失败" + e.getMessage());
         }
-        return JsonUtil.toJsonString(tableModelVos);
+        return tableModelVos;
     }
 
-    /**
-     * 查询表所在的页数
-     *
-     * @param databaseInfoStr
-     * @param tableName
-     * @param pageSize
-     * @return
-     */
-    public String getTableNum(String databaseInfoStr, String tableName, int pageSize) {
-        List<NameCommentVo> tables = getTables(databaseInfoStr, null);
-        long current = (getTableNum(tableName, tables) - 1) / pageSize + 1;
-        Page<NameCommentVo> page = new Page<>();
-        page.setTotal(tables.size());
-        page.setSize(pageSize);
-        page.setCurrent(current);
-        if ((page.getCurrent() - 1) * page.getSize() >= tables.size()) {
-            return JsonUtil.toJsonString(page);
-        }
-        int startIndex = (int) ((page.getCurrent() - 1) * page.getSize());
-        int engIndex = page.getCurrent() * page.getSize() > tables.size() ?
-                tables.size() : (int) (page.getCurrent() * page.getSize());
-        page.setRecords(tables.subList(startIndex, engIndex));
-        return JsonUtil.toJsonString(page);
-    }
-
-    /**
-     * 获取列分页查询
-     *
-     * @param databaseInfoStr
-     * @param tableName
-     * @return
-     */
-    public String getColumnsPage(String databaseInfoStr, String tableName) {
-        List<NameCommentVo> columns = getColumns(databaseInfoStr, tableName);
-        return JsonUtil.toJsonString(columns);
-    }
 
     private List<NameCommentVo> getColumns(String databaseInfoStr, String tableName) {
         List<NameCommentVo> columnsVos = new ArrayList<>();
@@ -271,39 +190,6 @@ public class TableInputService {
         }
     }
 
-    private List<NameCommentVo> getTables(String databaseInfoStr, String tableName) {
-        if (StringUtils.isBlank(tableName)) {
-            tableName = "";
-        }
-        List<NameCommentVo> tableModelVos;
-        String sql;
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        if (null == databaseInfo) {
-            throw new RuntimeException("数据库不存在！");
-        }
-        switch (databaseInfo.getDatabaseType()) {
-            case "1":
-                sql = "SELECT table_name name,TABLE_COMMENT cm FROM INFORMATION_SCHEMA.TABLES  WHERE table_schema = '" + databaseInfo.getDatabaseName() + "' and table_name like concat('%','" + tableName + "','%')";
-                break;
-            case "2":
-                sql = "SELECT Name name,Name cm FROM SysObjects where Name like '%" + tableName + "%'";
-                break;
-            case "3":
-                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments where TABLE_NAME like '%" + tableName + "%'";
-                break;
-            default:
-                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
-        }
-        try (Connection conn = getConnection(databaseInfo)) {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet resultSet = ps.executeQuery();
-            BeanListHandler<NameCommentVo> beanListHandler = new BeanListHandler<>(NameCommentVo.class);
-            tableModelVos = beanListHandler.handle(resultSet);
-        } catch (SQLException e) {
-            throw new RuntimeException("获取表信息失败" + e.getMessage());
-        }
-        return tableModelVos;
-    }
 
     private Connection getConnection(DatabaseInfo databaseInfo) {
         String url = DatabaseService.getConnectionUrl(databaseInfo);
@@ -319,14 +205,5 @@ public class TableInputService {
         }
     }
 
-    private int getTableNum(String tableName, List<NameCommentVo> tables) {
-        int i = 0;
-        for (NameCommentVo table : tables) {
-            i++;
-            if (table.getName().equals(tableName)) {
-                return i;
-            }
-        }
-        return 0;
-    }
+
 }
