@@ -130,18 +130,12 @@ export default {
         }
       ],
       languageOption: [
-        {
-          value: 'sparkSql',
-          label: 'SparkSql'
-        },
+
         {
           value: 'sql',
           label: 'SQL'
-        },
-        {
-          value: 'python',
-          label: 'Python'
         }
+
       ],
       // 循环获取日志 定时任务 的引用
       interval: null,

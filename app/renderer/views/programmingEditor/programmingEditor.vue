@@ -19,6 +19,7 @@
                     icon="el-icon-search"
                     size="mini"
                     type="primary"
+                    @click="addEditor"
                 />
               </el-col>
               <el-col :span="1.5">
@@ -144,7 +145,6 @@ export default {
   created () {
     // SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'mx' ORDER BY TABLE_SCHEMA, TABLE_NAME
     this.getTreeList()
-    this.initTableColumn()
     // this.addEditor(this.$route.query, this.type)
     this.showCloseTab = false
 
@@ -225,32 +225,15 @@ export default {
       return uuid.v1()
     },
     // 新增一个编辑器
-    async addEditor (item, type) {
-      if (type === 1) {
-        // const res = await get('/transformInfo/queryDetail', {
-        //   transformInfoId: item.id
-        // })
-        // if (res.code === 20000) {
-        //   this.editorTabs.push({
-        //     title: res.data.name,
-        //     name: res.data.id,
-        //     code: res.data.transformCode,
-        //     language: res.data.toolType.toLocaleLowerCase()
-        //   })
-        //   this.currentTabsName = res.data.id
-        // }
-      }
-      if (type === 2) {
-        this.showCloseTab = false
-        const uid = this.getUUID()
-        this.editorTabs.push({
-          title: '数据分析',
-          name: uid,
-          code: '',
-          language: 'sql'
-        })
-        this.currentTabsName = uid
-      }
+    async addEditor () {
+      const uid = this.getUUID()
+      this.editorTabs.push({
+        title: 'search',
+        name: uid,
+        code: '',
+        language: 'sql'
+      })
+      this.currentTabsName = uid
     },
     clickTabs (tab) {
       this.$store.dispatch('monaco/setCurrentTabsName', tab.name)
@@ -412,17 +395,6 @@ export default {
       //     this.insertTableName = data.label
       //   }
       // }, 300)
-    },
-    initTableColumn () {
-      // get('/transformInfo/queryAllTableInfo').then((res) => {
-      //   const tableInfos = res.data
-      //   tableInfos.forEach((tableInfo) => {
-      //     const tableName = tableInfo.tableName
-      //     this.tableColumn[tableName] = tableInfo.tableColumns.map(
-      //       (column) => column.name
-      //     )
-      //   })
-      // })
     }
   }
 }
