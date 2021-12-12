@@ -9,12 +9,8 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace NodeJS {
         interface Global {
-            industry: string,
             mainWindow: BrowserWindow,
-            loadingWindow: BrowserWindow,
-            EXECUTOR_BASE_API: string,
             BASE_API: string,
-            initJavaSuccess: number,
             son:any
         }
     }
@@ -47,9 +43,8 @@ if (!getLock) {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Store.initRenderer()
-const u = path.join(stringUtil.getStaticPath(), 'java/taskMain.js')
 global.son = new ChildProcessPool({
-  path: u,
+  path: path.join(stringUtil.getStaticPath(), 'java/taskMain.js'),
   max: 3,
   env: { NODE_ENV: process.env.NODE_ENV }
 })

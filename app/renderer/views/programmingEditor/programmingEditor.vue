@@ -44,6 +44,7 @@
                 :expand-on-click-node="false"
                 :filter-node-method="filterNode"
                 @node-click="handleNodeClick"
+                @node-contextmenu="rightClick"
                 highlight-current
             >
               <span slot-scope="{ node, data }" :title="data.connectName">
@@ -109,17 +110,17 @@ export default {
   },
   data () {
     return {
-      selectId: null,
+      selectDatabaseId: null,
       tableList: null,
       addDataBaseDialogVisible: false,
       // 定义点击次数,默认0次
       treeClickCount: 0,
+      timer: null,
       insertTableName: '',
       showCloseTab: false,
       currentTabsName: null,
       editorTabs: [],
       treeExpandedKeys: [],
-
       // 树结构配置
       defaultProps: {
         children: 'children',
@@ -136,16 +137,24 @@ export default {
   },
   mounted () {
     this.getTreeList()
-  },
-  created () {
+    if (this.proOptions.length > 0) {
+      // 'nextTick()' 下次dom更新时触发回调函数
+      // 默认点击
+      this.$nextTick().then(() => {
+        const firstNode = document.querySelector('.el-tree-node')
+        firstNode.click()
+      })
+    }
+
     this.editorTabs.push({
       key: -1,
-      title: 'object',
+      title: '对象',
       name: 'object',
       close: false
     })
-    this.currentTabsName = this.getUUID()
+    this.currentTabsName = 'object'
   },
+
   methods: {
     dataBaseDialog (data) {
       const list = store.get('databaseList') || []
@@ -170,10 +179,10 @@ export default {
     },
     // 新增一个编辑器
     async query () {
-      if (!this.selectId) {
+      if (!this.selectDatabaseId) {
         return this.$message.error('未选择数据库')
       }
-      const item = this.proOptions.find(e => e.id === this.selectId)
+      const item = this.proOptions.find(e => e.id === this.selectDatabaseId)
       const res = await son.send('getTableAndColumns', item)
       console.log(res.result)
       if (res && res.result.code === 20000) {
@@ -229,49 +238,60 @@ export default {
           return resolve([])
         }
         console.log(res.result)
+        const self = this
         const s = res.result.data.map(i => {
-          return { connectName: i.name }
+          return { connectName: i.name, id: self.getUUID(), type: 'table' }
         })
+        node.data.isConnected = true
         return resolve(s)
       }
       if (node.level > 1) {
         return resolve([])
       }
     },
+    rightClick (event, data, e, element) {
+      this.$refs.tree.setCurrentKey(data.id)
+
+      this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
+
+      console.log(this.selectDatabaseId)
+    },
+
+    refreshNode (id) {
+      const node = this.$refs.tree.getNode(id)
+      //  设置未进行懒加载状态
+      node.loaded = false
+      // 重新展开节点就会间接重新触发load达到刷新效果
+      node.expand()
+    },
     handleNodeClick (data, e) {
-      this.selectId = data.id || e.parent.data.id
-      console.log(this.selectId)
-      // data.children = [
-      //   { connectName: '/ss', label: 'sdads' }
-      // ]
-      //
-      // console.log(data)
-      //
-      // console.log(this.proOptions)
-      // const res = await son.send('getTables', data)
-      // console.log(res)
-      // this.tableList = res.result.result
-      // this.currentTabsName = 'object'
-      // console.log(this.keyId)
-      // 记录点击次数
-      // this.treeClickCount++
-      // // 单次点击次数超过2次不作处理,直接返回,也可以拓展成多击事件
-      // if (this.treeClickCount >= 2) {
-      //   return
-      // }
-      // // 计时器,计算300毫秒为单位,可自行修改
-      // this.timer = window.setTimeout(() => {
-      //   if (this.treeClickCount === 1) {
-      //     // 把次数归零
-      //     this.treeClickCount = 0
-      //     // 单击事件处理
-      //   } else if (this.treeClickCount > 1) {
-      //     // 把次数归零
-      //     this.treeClickCount = 0
-      //     // 双击事件
-      //     this.insertTableName = data.label
-      //   }
-      // }, 300)
+      console.log(e)
+      this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
+      console.log(this.selectDatabaseId)
+      this.treeClickCount++
+      if (this.treeClickCount >= 2) {
+        return
+      }
+      // 计时器,计算300毫秒为单位,可自行修改
+      this.timer = window.setTimeout(() => {
+        if (this.treeClickCount === 1) {
+          // 把次数归零
+          this.treeClickCount = 0
+          // 单击事件处理
+        } else if (this.treeClickCount > 1) {
+          // 把次数归零
+          this.treeClickCount = 0
+          if (e.expanded) {
+            if (!data.isConnected) {
+              this.refreshNode(data.id)
+            } else {
+              e.expanded = false
+            }
+          } else {
+            this.refreshNode(data.id)
+          }
+        }
+      }, 300)
     }
   }
 }
@@ -291,6 +311,7 @@ export default {
 }
 
 .tree {
+  user-select:none;
   overflow-y: auto;
   overflow-x: auto;
   height: calc(100vh - 245px);

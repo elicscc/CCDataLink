@@ -183,29 +183,6 @@ public class TableInputService {
     }
 
 
-//    private List<NameCommentVo> getColumns(String databaseInfoStr, String tableName) {
-//        List<NameCommentVo> columnsVos = new ArrayList<>();
-//        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-//        try (Connection conn = getConnection(databaseInfo)) {
-//            ResultSet tableColumns;
-//            if (DatabaseTypeEnum.Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
-//                Statement statement = conn.createStatement();
-//                tableColumns = statement.executeQuery(" select t.COLUMN_NAME COLUMN_NAME, b.comments REMARKS from user_tab_columns t  join user_col_comments b on t.COLUMN_NAME=b.column_name and b.table_name='" + tableName + "'  where t.Table_Name='" + tableName + "'");
-//            } else {
-//                DatabaseMetaData metaData = conn.getMetaData();
-//                tableColumns = metaData.getColumns(null, null, tableName, "%");
-//            }
-//            while (tableColumns.next()) {
-//                String name = tableColumns.getString("COLUMN_NAME");
-//                String remarks = tableColumns.getString("REMARKS");
-//                columnsVos.add(new NameCommentVo(name, remarks));
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException("获取列信息失败" + e.getMessage());
-//        }
-//        return columnsVos;
-//    }
-
     private IViewTableVo selectTableInput(DatabaseInfo databaseInfo, String sql) {
         List<ColumnVo> columns = new ArrayList<>();
         List<Map<String, String>> dataList = new ArrayList<>();
@@ -251,6 +228,41 @@ public class TableInputService {
             throw new RuntimeException("连接失败" + e.getMessage());
         }
     }
+
+    /**
+     * 查询表结构
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SHOW TABLE STATUS LIKE 't\_mx'
+     * Time: 0.000s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SHOW CREATE TABLE `t_mx`
+     * Time: 0.000s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SHOW FULL COLUMNS FROM `t_mx`
+     * Time: 0.024s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SHOW INDEX FROM `t_mx`
+     * Time: 0.001s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SELECT action_order, event_object_table, trigger_name, event_manipulation, event_object_table, definer, action_statement, action_timing FROM information_schema.triggers WHERE BINARY event_object_schema = 'mx' AND BINARY event_object_table = 't_mx' ORDER BY event_object_table
+     * Time: 0.014s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SELECT TABLE_NAME, PARTITION_NAME, SUBPARTITION_NAME, PARTITION_METHOD, SUBPARTITION_METHOD, PARTITION_EXPRESSION, SUBPARTITION_EXPRESSION, PARTITION_DESCRIPTION, PARTITION_COMMENT, NODEGROUP, TABLESPACE_NAME FROM information_schema.PARTITIONS WHERE NOT ISNULL(PARTITION_NAME) AND TABLE_SCHEMA LIKE 'mx' AND TABLE_NAME LIKE 't_mx' ORDER BY TABLE_NAME, PARTITION_NAME, PARTITION_ORDINAL_POSITION, SUBPARTITION_ORDINAL_POSITION
+     * Time: 0.015s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA
+     * Time: 0.001s
+     *
+     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
+     * SELECT DISTINCT(TABLESPACE_NAME) AS TABLESPACE_NAME FROM information_schema.FILES WHERE NOT ISNULL(TABLESPACE_NAME) LIMIT 10000
+     * Time: 0.000s
+     */
 
 
 }
