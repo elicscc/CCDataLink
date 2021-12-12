@@ -40,7 +40,7 @@ ProcessHost.registry('connectTest', (args) => {
 function test (arg) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
   const service = new TableInputService()
-  service.testConnectSync(JSON.stringify(arg))
+  return JSON.parse(service.testConnectSync(JSON.stringify(arg)))
 }
 
 function getTables (arg) {

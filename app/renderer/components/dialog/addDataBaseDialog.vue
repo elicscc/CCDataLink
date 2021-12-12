@@ -147,10 +147,10 @@ export default {
     async  connectTest (name) {
       this.testConnectShow = true
       const res = await son.send('connectTest', this.dataBaseInfo)
+      console.log('connectTest', res.result)
       if (res.result.code === 20000) {
         this.$message.success('连接成功')
       } else {
-        console.log('connectTest', res.result)
         this.$message.error(res.result.message)
       }
       this.testConnectShow = false
