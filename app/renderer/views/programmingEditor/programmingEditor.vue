@@ -238,8 +238,9 @@ export default {
         return resolve([])
       }
     },
-    handleNodeClick (data) {
-      this.selectId = data.id
+    handleNodeClick (data, e) {
+      this.selectId = data.id || e.parent.data.id
+      console.log(this.selectId)
       // data.children = [
       //   { connectName: '/ss', label: 'sdads' }
       // ]
