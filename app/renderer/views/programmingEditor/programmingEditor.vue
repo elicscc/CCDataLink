@@ -221,7 +221,7 @@ export default {
     // 获取侧边栏树
     getTreeList () {
       this.proOptions = store.get('databaseList') || []
-      console.log(this.proOptions)
+      // console.log(this.proOptions)
     },
     // 筛选节点
     filterNode (value, data) {
@@ -232,12 +232,11 @@ export default {
       console.log(node)
       if (node.level === 1) {
         const res = await son.send('getTables', node.data)
-        console.log(res.result)
+        // console.log(res.result)
         if (res.result.code !== 20000) {
           this.$message.error(res.result.message)
           return resolve([])
         }
-        console.log(res.result)
         const self = this
         const s = res.result.data.map(i => {
           return { connectName: i.name, id: self.getUUID(), type: 'table' }
@@ -254,7 +253,7 @@ export default {
 
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
 
-      console.log(this.selectDatabaseId)
+      // console.log(this.selectDatabaseId)
     },
 
     refreshNode (id) {
@@ -265,22 +264,22 @@ export default {
       node.expand()
     },
     handleNodeClick (data, e) {
-      console.log(e)
+      // console.log(e)
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
-      console.log(this.selectDatabaseId)
+      // console.log(this.selectDatabaseId)
       this.treeClickCount++
       if (this.treeClickCount >= 2) {
+        // 超过2次点击的事件
         return
       }
       // 计时器,计算300毫秒为单位,可自行修改
       this.timer = window.setTimeout(() => {
+        // 把次数归零
+        this.treeClickCount = 0
         if (this.treeClickCount === 1) {
-          // 把次数归零
-          this.treeClickCount = 0
           // 单击事件处理
         } else if (this.treeClickCount > 1) {
-          // 把次数归零
-          this.treeClickCount = 0
+          // 双击事件处理
           if (e.expanded) {
             if (!data.isConnected) {
               this.refreshNode(data.id)
