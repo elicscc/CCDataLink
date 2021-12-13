@@ -11,7 +11,7 @@
                   icon="el-icon-plus"
                   size="mini"
                   type="primary"
-                  @click="addDataBaseDialogVisible=true"
+                  @click="openDataBaseDialog"
               />
             </el-col>
             <el-col :span="1.5">
@@ -86,12 +86,113 @@
         </el-tabs>
       </el-col>
     </el-row>
-    <data-base-dialog :isVisible.sync="addDataBaseDialogVisible" @dataBaseDialog="dataBaseDialog"/>
+
+    <el-dialog
+        title="connect"
+        :visible.sync="addDataBaseDialogVisible"
+        :show-close="true"
+        width="700"
+        :close-on-click-modal="false"
+        :modal="false"
+        v-dialogDrag
+        class="dialog"
+        @close="addDataBaseDialogVisible = false"
+    >
+      <!-- 新增数据库弹窗 -->
+      <div class="innerView">
+        <Form
+            class="form"
+            ref="dataBaseInfo"
+            :model="dataBaseInfo"
+            :rules="dataBaseInfoRules"
+            :label-width="100"
+        >
+          <Row>
+            <Col span="18" offset="3" style="margin-top: 20px">
+              <FormItem label="连接名称:" prop="connectName" class="title">
+                <Input v-model="dataBaseInfo.connectName" placeholder="请输入连接名称" maxlength="30"></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="数据库类型:" prop="databaseType" class="title">
+                <Select v-model="dataBaseInfo.databaseType"  style="width:100%;text-align:left;" clearable placeholder="请选择数据库类型">
+                  <Option v-for="item in databaseTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="数据库地址:" prop="databaseAddress" class="title">
+                <Input v-model="dataBaseInfo.databaseAddress" placeholder="请输入数据库地址" maxlength="30"></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="数据库名称:" prop="databaseName" class="title">
+                <Input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30"></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="端口号:" prop="port" class="title">
+                <Input v-model="dataBaseInfo.port" placeholder="请输入端口号" maxlength="30"></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="用户名:" prop="username" class="title">
+                <Input v-model="dataBaseInfo.username" placeholder="请输入用户名" maxlength="30"></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="密码:" prop="password" class="title" >
+                <Input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password" password></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="18" offset="3">
+              <FormItem label="数据库说明:" prop="databaseDescription" class="title">
+                <Input v-model="dataBaseInfo.databaseDescription"  type="textarea" :rows="3" maxlength="300" show-word-limit></Input>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style="margin-left:12.5%;">
+            <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')" :loading="testConnectShow">连接测试</el-button>
+          </Row>
+        </Form>
+        <el-row class="bottomSide rowPadding">
+          <el-col :span="3" :offset="16">
+            <el-button @click="addDataBaseDialogVisible = false" size="small">取 消</el-button>
+          </el-col>
+          <el-col :span="3">
+            <el-button type="primary" @click="saveDatabaseInfo('dataBaseInfo')" size="small">确 定</el-button>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
+
+    <div id="data_base_menu" v-show="showDataBaseRightClickOption">
+      <div @click.stop="editDataBase" class="menu">编辑数据库</div>
+      <div @click.stop="delDataBase" class="menu">删除数据库</div>
+    </div>
+
+    <div id="table_menu" v-show="showTableRightClickOption">
+      <div @click.stop="editTable" class="menu">设计表结构</div>
+      <div @click.stop="delTable" class="menu">删除表</div>
+    </div>
   </div>
 </template>
 
 <script>
-import DataBaseDialog from '../../components/dialog/addDataBaseDialog'
 import MonacoEditor from '../../components/MonacoEditor'
 import { uuid } from 'vue-uuid'
 import electron from 'electron'
@@ -101,7 +202,7 @@ const son = electron.remote.getGlobal('son')
 const store = new Store()
 
 export default {
-  components: { MonacoEditor, DataBaseDialog },
+  components: { MonacoEditor },
   props: {
     type: {
       type: Number,
@@ -110,6 +211,34 @@ export default {
   },
   data () {
     return {
+      showDataBaseRightClickOption: false,
+      showTableRightClickOption: false,
+      testConnectShow: false,
+      dataBaseInfo: {
+        connectName: '',
+        databaseType: '1',
+        databaseAddress: 'localhost',
+        databaseName: '',
+        port: '3306',
+        username: 'root',
+        password: '',
+        databaseDescription: ''
+      },
+      dataBaseInfoRules: {
+        connectName: [{ required: true, message: ' ', trigger: 'blur' }],
+        databaseType: [{ required: true, message: ' ', trigger: 'change' }],
+        databaseAddress: [{ required: true, message: ' ', trigger: 'blur' }],
+        databaseName: [{ required: true, message: ' ', trigger: 'blur' }],
+        port: [{ required: true, message: ' ', trigger: 'blur' }],
+        username: [{ required: true, message: ' ', trigger: 'blur' }],
+        password: [{ required: true, message: ' ', trigger: 'blur' }]
+      },
+      databaseTypeList: [
+        { label: 'MySQL', value: '1' },
+        { label: 'Mariadb', value: '4' },
+        { label: 'SQLServer', value: '2' },
+        { label: 'Oracle', value: '3' }
+      ],
       selectDatabaseId: null,
       tableList: null,
       addDataBaseDialogVisible: false,
@@ -128,11 +257,6 @@ export default {
       },
       // 侧边栏数据
       proOptions: []
-    }
-  },
-  computed: {
-    suggestionsInitial () {
-      return this.$store.state.monaco.suggestionsInitial
     }
   },
   mounted () {
@@ -156,22 +280,30 @@ export default {
   },
 
   methods: {
-    dataBaseDialog (data) {
-      const list = store.get('databaseList') || []
-      if (!data.id) {
-        const f = JSON.parse(JSON.stringify(data))
-        f.id = this.getUUID()
-        list.push(f)
-      } else {
-        const i = list.findIndex(item => item.id === data.id)
-        if (i === -1) {
-          list.push(data)
+    saveDatabaseInfo (name) {
+      const data = this.dataBaseInfo
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          const list = store.get('databaseList') || []
+          if (!data.id) {
+            const f = JSON.parse(JSON.stringify(data))
+            f.id = this.getUUID()
+            list.push(f)
+          } else {
+            const i = list.findIndex(item => item.id === data.id)
+            if (i === -1) {
+              list.push(data)
+            } else {
+              list.splice(i, 1, data)
+            }
+          }
+          store.set('databaseList', list)
+          this.addDataBaseDialogVisible = false
+          this.getTreeList()
         } else {
-          list.splice(i, 1, data)
+          this.$message.error('请将信息填写完整')
         }
-      }
-      store.set('databaseList', list)
-      this.getTreeList()
+      })
     },
     // 返回唯一标识
     getUUID () {
@@ -223,6 +355,21 @@ export default {
       this.proOptions = store.get('databaseList') || []
       // console.log(this.proOptions)
     },
+
+    editDataBase () {
+      console.log()
+    },
+    delDataBase () {
+      console.log()
+    },
+
+    editTable () {
+      console.log()
+    },
+    delTable () {
+      console.log()
+    },
+
     // 筛选节点
     filterNode (value, data) {
       if (!value) return true
@@ -250,12 +397,43 @@ export default {
     },
     rightClick (event, data, e, element) {
       this.$refs.tree.setCurrentKey(data.id)
+      let menuId
+      if (data.type === 'table') {
+        menuId = '#table_menu'
+        this.selectDatabaseId = e.parent.data.id
+      } else {
+        menuId = '#data_base_menu'
+        this.selectDatabaseId = data.id
+      }
+      const menu = document.querySelector(menuId)
+      event.preventDefault()
+      // 根据事件对象中鼠标点击的位置，进行定位
+      menu.style.left = event.clientX + 'px'
+      menu.style.top = event.clientY + 'px'
+      // 改变自定义菜单的隐藏与显示
+      if (data.type === 'table') {
+        this.showDataBaseRightClickOption = false
 
-      this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
-
-      // console.log(this.selectDatabaseId)
+        // todo 判断选择的信息
+        this.showTableRightClickOption = true
+      } else {
+        this.showTableRightClickOption = false
+        this.showDataBaseRightClickOption = true
+      }
     },
-
+    openDataBaseDialog () {
+      this.dataBaseInfo = {
+        connectName: '',
+        databaseType: '1',
+        databaseAddress: 'localhost',
+        databaseName: '',
+        port: '3306',
+        username: 'root',
+        password: '',
+        databaseDescription: ''
+      }
+      this.addDataBaseDialogVisible = true
+    },
     refreshNode (id) {
       const node = this.$refs.tree.getNode(id)
       //  设置未进行懒加载状态
@@ -263,10 +441,21 @@ export default {
       // 重新展开节点就会间接重新触发load达到刷新效果
       node.expand()
     },
+    async  connectTest (name) {
+      this.testConnectShow = true
+      const res = await son.send('connectTest', this.dataBaseInfo)
+      console.log('connectTest', res.result)
+      if (res.result.code === 20000) {
+        this.$message.success('连接成功')
+      } else {
+        this.$message.error(res.result.message)
+      }
+      this.testConnectShow = false
+    },
     handleNodeClick (data, e) {
-      // console.log(e)
+      console.log(e)
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
-      // console.log(this.selectDatabaseId)
+      console.log(this.selectDatabaseId)
       this.treeClickCount++
       if (this.treeClickCount >= 2) {
         // 超过2次点击的事件
@@ -275,10 +464,12 @@ export default {
       // 计时器,计算300毫秒为单位,可自行修改
       this.timer = window.setTimeout(() => {
         // 把次数归零
-        this.treeClickCount = 0
+
         if (this.treeClickCount === 1) {
+          this.treeClickCount = 0
           // 单击事件处理
         } else if (this.treeClickCount > 1) {
+          this.treeClickCount = 0
           // 双击事件处理
           if (e.expanded) {
             if (!data.isConnected) {
@@ -340,4 +531,40 @@ export default {
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
+#data_base_menu {
+  width: 130px;
+  overflow: hidden; /*隐藏溢出的元素*/
+  position: fixed;
+  z-index: 10;
+  background: #ffffff;
+  border-radius: 5px;
+  padding-bottom: 2px;
+  font-size: 12px;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+}
+#table_menu {
+  width: 130px;
+  overflow: hidden; /*隐藏溢出的元素*/
+  position: fixed;
+  z-index: 10;
+  background: #ffffff;
+  border-radius: 5px;
+  padding-bottom: 2px;
+  font-size: 12px;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+}
+
+.menu {
+  width: 130px;
+  height: 25px;
+  line-height: 25px;
+  text-indent: 10px;
+  cursor: pointer;
+}
+
+.menu:hover {
+  background-color: #eeeeee;
+}
+
 </style>

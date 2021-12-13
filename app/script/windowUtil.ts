@@ -5,7 +5,7 @@ import stringUtil from '../utils/stringUtil'
 
 export default class WindowUtil {
   public static createMainWindow (): void {
-    Menu.setApplicationMenu(null)
+    // Menu.setApplicationMenu(null)
     global.mainWindow = new BrowserWindow({
       icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
       useContentSize: true,
