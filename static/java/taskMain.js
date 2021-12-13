@@ -21,21 +21,28 @@ ProcessHost.registry('connectTest', (args) => {
   try {
     return test(args)
   } catch (e) {
-    return { code: 50001, result: e.message }
+    return exception(e)
   }
 }).registry('getTables', (args) => {
   try {
     return getTables(args)
   } catch (e) {
-    return { code: 50001, result: e.message }
+    return exception(e)
   }
 }).registry('getTableAndColumns', (args) => {
   try {
     return getTableAndColumns(args)
   } catch (e) {
-    return { code: 50001, result: e.message }
+    return exception(e)
   }
 })
+
+function exception (e) {
+  return {
+    code: 50001,
+    message: e.message
+  }
+}
 
 function test (arg) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')

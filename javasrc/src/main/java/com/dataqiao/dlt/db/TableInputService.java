@@ -229,6 +229,61 @@ public class TableInputService {
         }
     }
 
+
+    public static void main(String[] args) {
+        new TableInputService().executeSql(JsonUtil.toJsonString(new DatabaseInfo().setDatabaseType("4").setDatabaseName("mx").setDatabaseAddress("localhost").setPort(3306).setUsername("root").setPassword("root"))
+                , "select * from t_mx;INSERT INTO t_mx (id)  VALUES(29)");
+    }
+
+    public Integer executeSql(String databaseInfoStr, String sqlStr) {
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        ResultSet rs = null;
+        int tag = 0;
+        int count = 0;
+        boolean label = true;
+        try (Connection conn = getConnection(databaseInfo)) {
+            Statement stmt = conn.createStatement();
+            stmt.setQueryTimeout(300);
+            stmt.execute(sqlStr.trim());
+            while (label) {
+                int i = 0;
+                i = stmt.getUpdateCount();
+                boolean up_label = false;
+                if (i != -1) {
+                    up_label = stmt.getMoreResults();
+                    continue;
+                }
+                boolean flag_label = false;
+                rs = stmt.getResultSet();
+                if (rs != null) {
+                    ResultSetMetaData rsmd = rs.getMetaData();
+                    int columnCount = rsmd.getColumnCount();
+                    tag++;
+                    if (tag == 1) {
+                        while (rs.next()) {
+                        }
+
+                    } else if (tag == 2) {
+                        while (rs.next()) {
+                        }
+                    }
+                    flag_label = stmt.getMoreResults();
+                    continue;
+                }
+                label = up_label || flag_label;
+            }
+        } catch (SQLTimeoutException e) {
+            throw new RuntimeException("执行sql异常，数据库超时>300s");
+        } catch (SQLException e) {
+            throw new RuntimeException("执行sql异常，数据库报错：" + e.getMessage());
+        }
+        return null;
+    }
+
+
     /**
      * 查询表结构
      * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
