@@ -453,6 +453,8 @@ export default {
       this.testConnectShow = false
     },
     handleNodeClick (data, e) {
+      this.showDataBaseRightClickOption = false
+      this.showTableRightClickOption = false
       console.log(e)
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
       console.log(this.selectDatabaseId)
