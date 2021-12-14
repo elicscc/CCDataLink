@@ -49,7 +49,6 @@
       <template slot="paneL">
         <div
           ref="container"
-          v-loading="!runComplete"
           style="height: 100%;"
         />
       </template>
@@ -65,7 +64,7 @@
             v-else
             style="height:98%;"
             :size="sqlSize"
-            :sql-result-list="sqlResultList"
+            :sqlResult.sync="sqlResultList"
           />
         </div>
       </template>

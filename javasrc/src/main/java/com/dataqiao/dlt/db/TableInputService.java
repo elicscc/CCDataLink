@@ -224,7 +224,8 @@ public class TableInputService {
         try (Connection conn = getConnection(databaseInfo)) {
             Statement stmt = conn.createStatement();
             stmt.setQueryTimeout(300);
-            long startTime = System.currentTimeMillis(); // 获取开始时间
+            // 获取开始时间
+            long startTime = System.currentTimeMillis();
             stmt.execute(sql);
             while (label) {
                 int i = stmt.getUpdateCount();
@@ -263,7 +264,8 @@ public class TableInputService {
                 }
                 label = upLabel;
             }
-            long endTime = System.currentTimeMillis(); // 获取结束时间
+            // 获取结束时间
+            long endTime = System.currentTimeMillis();
             long methodTime = (endTime - startTime) / 1000;
             DecimalFormat df2 = new DecimalFormat("0.###");
             QuerySqlVo querySqlVo = new QuerySqlVo();
