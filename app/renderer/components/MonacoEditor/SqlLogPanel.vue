@@ -21,7 +21,7 @@
           v-for="(sqlResult, index) in (sqlResultList.resultSet)"
           :key="index"
           :label="'结果' + (index+1)"
-          :name="'结果' + index"
+          :name="'结果' + (index+1)"
       >
 
           <Table
@@ -68,13 +68,16 @@ export default {
     }
   },
 
-  // watch: {
-  //   sqlResult (v) {
-  //     if (v.sql) {
-  //       this.tab = '结果1'
-  //     }
-  //   }
-  // },
+  watch: {
+    sqlResult (v) {
+      if (v.resultSet && v.resultSet.length > 0) {
+        console.log('d', v)
+        this.$nextTick(() => {
+          this.tab = '结果1'
+        })
+      }
+    }
+  },
 
   methods: {}
 }
