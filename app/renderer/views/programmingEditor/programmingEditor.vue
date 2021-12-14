@@ -22,14 +22,14 @@
                   @click="query"
               />
             </el-col>
-            <el-col :span="1.5">
-              <el-button
-                  icon="el-icon-refresh-right"
-                  size="mini"
-                  type="primary"
-                  @click="getTreeList"
-              />
-            </el-col>
+            <!--            <el-col :span="1.5">-->
+            <!--              <el-button-->
+            <!--                  icon="el-icon-refresh-right"-->
+            <!--                  size="mini"-->
+            <!--                  type="primary"-->
+            <!--                  @click="getTreeList"-->
+            <!--              />-->
+            <!--            </el-col>-->
           </el-row>
         </div>
         <div class="head-container">
@@ -75,12 +75,13 @@
                 :id="item.name"
                 :type="item.type"
                 :code="item.code"
+                :dataBaseInfo="item.dataBaseInfo"
                 :language="item.language"
                 :name="item.title"
                 style="padding-bottom:10px"
                 :insert-table-name="insertTableName"
             />
-            <div v-else>{{ tableList }}</div>
+            <div v-else style="height: calc(100vh);margin-top: 15px;margin-bottom: 5px;">{{ tableList }}</div>
 
           </el-tab-pane>
         </el-tabs>
@@ -117,8 +118,12 @@
           <Row>
             <Col span="18" offset="3">
               <FormItem label="数据库类型:" prop="databaseType" class="title">
-                <Select v-model="dataBaseInfo.databaseType"  style="width:100%;text-align:left;" clearable placeholder="请选择数据库类型">
-                  <Option v-for="item in databaseTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Select v-model="dataBaseInfo.databaseType" style="width:100%;text-align:left;" clearable
+                        placeholder="请选择数据库类型">
+                  <Option v-for="item in databaseTypeList" :value="item.value" :key="item.value">{{
+                      item.label
+                    }}
+                  </Option>
                 </Select>
               </FormItem>
             </Col>
@@ -153,20 +158,24 @@
           </Row>
           <Row>
             <Col span="18" offset="3">
-              <FormItem label="密码:" prop="password" class="title" >
-                <Input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password" password></Input>
+              <FormItem label="密码:" prop="password" class="title">
+                <Input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password"
+                       password></Input>
               </FormItem>
             </Col>
           </Row>
           <Row>
             <Col span="18" offset="3">
               <FormItem label="数据库说明:" prop="databaseDescription" class="title">
-                <Input v-model="dataBaseInfo.databaseDescription"  type="textarea" :rows="3" maxlength="300" show-word-limit></Input>
+                <Input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300"
+                       show-word-limit></Input>
               </FormItem>
             </Col>
           </Row>
           <Row style="margin-left:12.5%;">
-            <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')" :loading="testConnectShow">连接测试</el-button>
+            <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')"
+                       :loading="testConnectShow">连接测试
+            </el-button>
           </Row>
         </Form>
         <el-row class="bottomSide rowPadding">
@@ -188,6 +197,7 @@ import MonacoEditor from '../../components/MonacoEditor'
 import { uuid } from 'vue-uuid'
 import { remote } from 'electron'
 import Store from 'electron-store'
+
 const { Menu, MenuItem } = remote
 const son = remote.getGlobal('son')
 const store = new Store()
@@ -311,6 +321,7 @@ export default {
         this.editorTabs.push({
           title: 'search',
           name: uid,
+          dataBaseInfo: item,
           code: '',
           close: true,
           language: 'sql',
@@ -334,7 +345,6 @@ export default {
           }
         })
       }
-
       this.currentTabsName = activeName
       this.editorTabs = tabs.filter(tab => tab.name !== targetName)
     },
@@ -386,7 +396,6 @@ export default {
     },
     rightClick (event, data, e, element) {
       this.$refs.tree.setCurrentKey(data.id)
-
       let menu
       const that = this
       if (data.type === 'table') {
@@ -398,7 +407,6 @@ export default {
               that.editTable()
             }
           }
-
         ))
         menu.append(new MenuItem(
           {
@@ -408,7 +416,6 @@ export default {
             }
           }
         ))
-
         this.selectDatabaseId = e.parent.data.id
       } else {
         menu = new Menu()
@@ -419,7 +426,6 @@ export default {
               that.editDataBase()
             }
           }
-
         ))
         menu.append(new MenuItem(
           {
@@ -453,7 +459,7 @@ export default {
       // 重新展开节点就会间接重新触发load达到刷新效果
       node.expand()
     },
-    async  connectTest (name) {
+    async connectTest (name) {
       this.testConnectShow = true
       const res = await son.send('connectTest', this.dataBaseInfo)
       console.log('connectTest', res.result)
@@ -465,8 +471,6 @@ export default {
       this.testConnectShow = false
     },
     handleNodeClick (data, e) {
-      this.showDataBaseRightClickOption = false
-      this.showTableRightClickOption = false
       console.log(e)
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
       console.log(this.selectDatabaseId)
@@ -515,10 +519,10 @@ export default {
 }
 
 .tree {
-  user-select:none;
+  user-select: none;
   overflow-y: auto;
   overflow-x: auto;
-  height: calc(100vh - 245px);
+  //height: calc(100vh - 245px);
 }
 
 // 滚动条样式

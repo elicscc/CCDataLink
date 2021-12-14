@@ -2,7 +2,7 @@
   <div>
     <el-tabs type="card">
       <el-tab-pane
-        v-for="(sqlResult, index) in sqlResultList"
+        v-for="(sqlResult, index) in sqlResultList.resultSet"
         :key="index"
         style="display: block;"
         :label="'结果' + (index+1)"
@@ -10,9 +10,7 @@
       >
         <div onselectstart="return false">
           <el-table
-            :cell-style="rowClass"
-            :header-cell-style="headClass"
-            :data="sqlResult.result"
+            :data="sqlResult.dataList"
             border
             style="width: 100%"
             :max-height="size"
@@ -20,13 +18,13 @@
             <el-table-column
               type="index"
               label="序号"
-              :index="getIndex"
+              :index="index+1"
               width="70"
             />
             <el-table-column
-              v-for="(item, columnIndex) in sqlResult.columnLabels"
-              :key="item"
-              :label="item"
+              v-for="(item, columnIndex) in sqlResult.columns"
+              :key="item.key"
+              :label="item.title"
             >
               <template slot-scope="scope">
                 {{ scope.row[columnIndex] }}
@@ -45,8 +43,10 @@ export default {
 
   props: {
     sqlResultList: {
-      type: Array,
-      default: null
+      type: Object,
+      default () {
+        return {}
+      }
     },
     size: {
       type: Number,

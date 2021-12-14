@@ -230,57 +230,80 @@ public class TableInputService {
     }
 
 
-    public static void main(String[] args) {
-        new TableInputService().executeSql(JsonUtil.toJsonString(new DatabaseInfo().setDatabaseType("4").setDatabaseName("mx").setDatabaseAddress("localhost").setPort(3306).setUsername("root").setPassword("root"))
-                , "select * from t_mx;INSERT INTO t_mx (id)  VALUES(29)");
+//    public static void main(String[] args) {
+//        QuerySqlVo s = new TableInputService().executeSql(JsonUtil.toJsonString(new DatabaseInfo().setDatabaseType("4").setDatabaseName("mx").setDatabaseAddress("localhost").setPort(3306).setUsername("root").setPassword("root"))
+//                , "select * from t_mx;select id from t_mx;");
+//    }
+
+    public String exeSql(String databaseInfoStr, String sql) {
+        try {
+            return JsonResult.success(executeSql(databaseInfoStr, sql));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
     }
 
-    public Integer executeSql(String databaseInfoStr, String sqlStr) {
+
+    public QuerySqlVo executeSql(String databaseInfoStr, String sqlStr) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
         if (null == databaseInfo) {
             throw new RuntimeException("数据库不存在！");
         }
-        ResultSet rs = null;
-        int tag = 0;
+        ResultSet rs;
+        String sql = sqlStr.trim();
         int count = 0;
         boolean label = true;
+        List<IViewTableVo> s = new ArrayList<>();
         try (Connection conn = getConnection(databaseInfo)) {
             Statement stmt = conn.createStatement();
             stmt.setQueryTimeout(300);
-            stmt.execute(sqlStr.trim());
+            stmt.execute(sql);
             while (label) {
-                int i = 0;
-                i = stmt.getUpdateCount();
-                boolean up_label = false;
+                int i = stmt.getUpdateCount();
+                boolean upLabel = false;
                 if (i != -1) {
-                    up_label = stmt.getMoreResults();
+                    count += i;
                     continue;
                 }
-                boolean flag_label = false;
                 rs = stmt.getResultSet();
                 if (rs != null) {
-                    ResultSetMetaData rsmd = rs.getMetaData();
-                    int columnCount = rsmd.getColumnCount();
-                    tag++;
-                    if (tag == 1) {
-                        while (rs.next()) {
-                        }
-
-                    } else if (tag == 2) {
-                        while (rs.next()) {
-                        }
+                    ResultSetMetaData data = rs.getMetaData();
+                    List<ColumnVo> columns = new ArrayList<>();
+                    List<Map<String, String>> dataList = new ArrayList<>();
+                    for (int f = 0; f < data.getColumnCount(); f++) {
+                        ColumnVo columnVo = new ColumnVo();
+                        columnVo.setKey(data.getColumnName(f + 1));
+                        columnVo.setTitle(data.getColumnName(f + 1));
+                        columns.add(columnVo);
                     }
-                    flag_label = stmt.getMoreResults();
+                    while (rs.next()) {
+                        Map<String, String> v = new HashMap<>(16);
+                        for (int j = 0; j < data.getColumnCount(); j++) {
+                            String value = data.getColumnTypeName(j + 1).toUpperCase().contains("IMAGE") || data.getColumnTypeName(j + 1).toUpperCase().contains("BLOB") ? getBlob(rs.getBlob(j + 1)) : rs.getString(j + 1);
+                            v.put(data.getColumnName(j + 1), value);
+                        }
+                        dataList.add(v);
+                    }
+                    IViewTableVo iViewTableVo = new IViewTableVo();
+                    iViewTableVo.setColumns(columns);
+                    iViewTableVo.setDataList(dataList);
+                    s.add(iViewTableVo);
+                    stmt.getMoreResults();
                     continue;
                 }
-                label = up_label || flag_label;
+                label = upLabel;
             }
+            QuerySqlVo querySqlVo = new QuerySqlVo();
+            querySqlVo.setSql(sql);
+            querySqlVo.setCount(count);
+            querySqlVo.setResultSet(s);
+            return querySqlVo;
         } catch (SQLTimeoutException e) {
             throw new RuntimeException("执行sql异常，数据库超时>300s");
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             throw new RuntimeException("执行sql异常，数据库报错：" + e.getMessage());
         }
-        return null;
+
     }
 
 

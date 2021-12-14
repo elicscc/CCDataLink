@@ -21,7 +21,7 @@
         <svg-icon icon-class="stop" />
         停止
       </el-button>
-      <el-button v-if="type===1" type="success" size="small" @click="save()">
+      <el-button  type="success" size="small" @click="save()">
         <svg-icon icon-class="skill" />
         保存
       </el-button>
@@ -43,7 +43,7 @@
     </div>
     <split-pane
       split="horizontal"
-      style="height: calc(100vh - 245px);margin-top: 15px;margin-bottom: 5px;"
+      style="height: calc(100vh);margin-top: 15px;margin-bottom: 5px;"
       @resize="reInitEditor"
     >
       <template slot="paneL">
@@ -85,6 +85,9 @@ import SqlLogPanel from './SqlLogPanel'
 import SplitPane from 'vue-splitpane'
 import formatter from 'sql-formatter'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
+import { remote } from 'electron'
+const son = remote.getGlobal('son')
+
 // import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
 
 export default {
@@ -96,6 +99,12 @@ export default {
       default: () => null
     },
     type: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    dataBaseInfo: {
       type: Object,
       default () {
         return {}
@@ -132,7 +141,7 @@ export default {
       themeOption: [
         {
           value: 'vs',
-          label: '默认主题'
+          label: '白色主题'
         },
         {
           value: 'vs-dark',
@@ -151,7 +160,7 @@ export default {
       interval: null,
       editor: null,
       languageCopy: 'sql',
-      sqlResultList: [],
+      sqlResultList: {},
       pythonResult: null,
       pythonConsoleSize: -1,
       runResultLogType: null,
@@ -402,6 +411,16 @@ export default {
           transformCode = firstLineSelection + middleLineSelection + lastLineSelection
         }
       }
+      const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode })
+      console.log(res.result)
+      if (res && res.result.code === 20000) {
+        this.runComplete = true
+        this.runResult = true
+        self.sqlResultList = res.result.data
+        this.sqlSize = this.$refs.getheight.offsetHeight - 70
+        self.showLog(res.result.data)
+      }
+
       // try {
       //   const response = await post('/transformInfo/execute', {
       //     id: this.id,
