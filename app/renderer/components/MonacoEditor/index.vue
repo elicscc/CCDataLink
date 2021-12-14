@@ -380,7 +380,6 @@ export default {
     async run () {
       const self = this
       this.runComplete = false
-      this.sqlResultList = []
       this.pythonResult = null
       let transformCode = this.codeCopy || this.code
       const value = self.editor.getValue()
@@ -405,7 +404,7 @@ export default {
         }
       }
       const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode })
-      console.log(res.result)
+      // console.log(res.result)
       this.runComplete = true
       this.runResult = true
       if (res && res.result.code === 20000) {

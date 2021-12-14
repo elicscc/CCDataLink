@@ -71,10 +71,7 @@ export default {
   watch: {
     sqlResult (v) {
       if (v.resultSet && v.resultSet.length > 0) {
-        console.log('d', v)
-        this.$nextTick(() => {
-          this.tab = '结果1'
-        })
+        this.tab = '结果1'
       }
     }
   },
