@@ -7,6 +7,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public class TableInputService {
         try (Connection conn = getConnection(databaseInfo)) {
             conn.isValid(30);
             return JsonResult.success();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             return JsonResult.error(e.getMessage());
         }
     }
@@ -183,38 +184,6 @@ public class TableInputService {
     }
 
 
-    private IViewTableVo selectTableInput(DatabaseInfo databaseInfo, String sql) {
-        List<ColumnVo> columns = new ArrayList<>();
-        List<Map<String, String>> dataList = new ArrayList<>();
-        try (Connection conn = getConnection(databaseInfo)) {
-            Statement sm = conn.createStatement();
-            ResultSet rs = sm.executeQuery(sql);
-            ResultSetMetaData data = rs.getMetaData();
-            for (int i = 0; i < data.getColumnCount(); i++) {
-                ColumnVo columnVo = new ColumnVo();
-                columnVo.setKey(data.getColumnName(i + 1));
-                columnVo.setTitle(data.getColumnName(i + 1));
-                columns.add(columnVo);
-            }
-            while (rs.next()) {
-                Map<String, String> v = new HashMap<>(16);
-                for (int i = 0; i < data.getColumnCount(); i++) {
-                    String value;
-                    value = data.getColumnTypeName(i + 1).toUpperCase().contains("IMAGE") || data.getColumnTypeName(i + 1).toUpperCase().contains("BLOB") ? getBlob(rs.getBlob(i + 1)) : rs.getString(i + 1);
-                    v.put(data.getColumnName(i + 1), value);
-                }
-                dataList.add(v);
-            }
-            IViewTableVo iViewTableVo = new IViewTableVo();
-            iViewTableVo.setColumns(columns);
-            iViewTableVo.setDataList(dataList);
-            return iViewTableVo;
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException("获取信息失败" + e.getMessage());
-        }
-    }
-
-
     private Connection getConnection(DatabaseInfo databaseInfo) {
         String url = DatabaseService.getConnectionUrl(databaseInfo);
         try {
@@ -230,16 +199,14 @@ public class TableInputService {
     }
 
 
-//    public static void main(String[] args) {
-//        QuerySqlVo s = new TableInputService().executeSql(JsonUtil.toJsonString(new DatabaseInfo().setDatabaseType("4").setDatabaseName("mx").setDatabaseAddress("localhost").setPort(3306).setUsername("root").setPassword("root"))
-//                , "select * from t_mx;select id from t_mx;");
-//    }
-
     public String exeSql(String databaseInfoStr, String sql) {
         try {
             return JsonResult.success(executeSql(databaseInfoStr, sql));
         } catch (RuntimeException e) {
-            return JsonResult.error(e.getMessage());
+            QuerySqlVo s = new QuerySqlVo();
+            s.setErrorMessage(e.getMessage());
+            s.setSql(sql);
+            return JsonResult.success(s);
         }
     }
 
@@ -257,6 +224,7 @@ public class TableInputService {
         try (Connection conn = getConnection(databaseInfo)) {
             Statement stmt = conn.createStatement();
             stmt.setQueryTimeout(300);
+            long startTime = System.currentTimeMillis(); // 获取开始时间
             stmt.execute(sql);
             while (label) {
                 int i = stmt.getUpdateCount();
@@ -274,6 +242,8 @@ public class TableInputService {
                         ColumnVo columnVo = new ColumnVo();
                         columnVo.setKey(data.getColumnName(f + 1));
                         columnVo.setTitle(data.getColumnName(f + 1));
+                        columnVo.setResizable(true);
+                        columnVo.setWidth(300);
                         columns.add(columnVo);
                     }
                     while (rs.next()) {
@@ -293,15 +263,21 @@ public class TableInputService {
                 }
                 label = upLabel;
             }
+            long endTime = System.currentTimeMillis(); // 获取结束时间
+            long methodTime = (endTime - startTime) / 1000;
+            DecimalFormat df2 = new DecimalFormat("0.###");
             QuerySqlVo querySqlVo = new QuerySqlVo();
+            querySqlVo.setTime(df2.format(methodTime) + "s");
             querySqlVo.setSql(sql);
-            querySqlVo.setCount(count);
+            if (count > 0) {
+                querySqlVo.setCount(count);
+            }
             querySqlVo.setResultSet(s);
             return querySqlVo;
         } catch (SQLTimeoutException e) {
             throw new RuntimeException("执行sql异常，数据库超时>300s");
         } catch (SQLException | IOException e) {
-            throw new RuntimeException("执行sql异常，数据库报错：" + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
     }

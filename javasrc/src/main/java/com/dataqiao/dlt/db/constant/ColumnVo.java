@@ -22,4 +22,8 @@ public class ColumnVo implements Serializable {
      * 存储下拉框选择器中每个选项的key
      */
     private String key;
+
+    private Boolean resizable;
+
+    private Integer width;
 }

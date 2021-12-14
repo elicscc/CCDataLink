@@ -143,7 +143,7 @@
     "typescript": "^4.0.3",
     "url-loader": "^1.0.1",
     "utf-8-validate": "^5.0.2",
-    "view-design": "^4.5.0",
+    "view-design": "^4.7.0",
     "vue": "^2.5.10",
     "vue-codemirror": "^4.0.4",
     "vue-loader": "^15.9.3",

@@ -43,24 +43,18 @@
     </div>
     <split-pane
       split="horizontal"
-      style="height: calc(100vh);margin-top: 15px;margin-bottom: 5px;"
+      style="height: calc(100vh - 100px);margin-top: 15px;margin-bottom: 5px;"
       @resize="reInitEditor"
     >
       <template slot="paneL">
         <div
           ref="container"
           v-loading="!runComplete"
-          element-loading-text="执行中,请耐心等待..."
           style="height: 100%;"
         />
       </template>
       <template slot="paneR">
         <div ref="getheight" style="height: 100%;">
-          <el-row>
-            <label style="color:#ffffff;margin-left:5px">执行结果:
-              <span v-if="runResult">执行成功</span>
-            </label>
-          </el-row>
           <monaco-console
             v-if="( languageCopy || language).toLowerCase() === 'python'"
             :codes="pythonResult"
@@ -413,12 +407,14 @@ export default {
       }
       const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode })
       console.log(res.result)
+      this.runComplete = true
+      this.runResult = true
       if (res && res.result.code === 20000) {
-        this.runComplete = true
-        this.runResult = true
         self.sqlResultList = res.result.data
         this.sqlSize = this.$refs.getheight.offsetHeight - 70
-        self.showLog(res.result.data)
+      } else {
+        self.sqlResultList = { errorMessage: res.result.message }
+        this.sqlSize = this.$refs.getheight.offsetHeight - 70
       }
 
       // try {

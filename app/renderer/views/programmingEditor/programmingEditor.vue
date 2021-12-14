@@ -89,20 +89,19 @@
     </el-row>
 
     <el-dialog
-        title="connect"
+        title="数据库连接"
         :visible.sync="addDataBaseDialogVisible"
         :show-close="true"
-        width="700"
+        width="50%"
+        top="50"
         :close-on-click-modal="false"
         :modal="false"
         v-dialogDrag
-        class="dialog"
         @close="addDataBaseDialogVisible = false"
     >
       <!-- 新增数据库弹窗 -->
-      <div class="innerView">
+      <div>
         <Form
-            class="form"
             ref="dataBaseInfo"
             :model="dataBaseInfo"
             :rules="dataBaseInfoRules"
