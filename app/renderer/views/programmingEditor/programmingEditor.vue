@@ -180,25 +180,16 @@
       </div>
     </el-dialog>
 
-    <div id="data_base_menu" v-show="showDataBaseRightClickOption">
-      <div @click.stop="editDataBase" class="menu">编辑数据库</div>
-      <div @click.stop="delDataBase" class="menu">删除数据库</div>
-    </div>
-
-    <div id="table_menu" v-show="showTableRightClickOption">
-      <div @click.stop="editTable" class="menu">设计表结构</div>
-      <div @click.stop="delTable" class="menu">删除表</div>
-    </div>
   </div>
 </template>
 
 <script>
 import MonacoEditor from '../../components/MonacoEditor'
 import { uuid } from 'vue-uuid'
-import electron from 'electron'
+import { remote } from 'electron'
 import Store from 'electron-store'
-
-const son = electron.remote.getGlobal('son')
+const { Menu, MenuItem } = remote
+const son = remote.getGlobal('son')
 const store = new Store()
 
 export default {
@@ -211,8 +202,6 @@ export default {
   },
   data () {
     return {
-      showDataBaseRightClickOption: false,
-      showTableRightClickOption: false,
       testConnectShow: false,
       dataBaseInfo: {
         connectName: '',
@@ -357,14 +346,14 @@ export default {
     },
 
     editDataBase () {
-      console.log()
+      console.log('ssddsa')
     },
     delDataBase () {
       console.log()
     },
 
     editTable () {
-      console.log()
+      console.log('t')
     },
     delTable () {
       console.log()
@@ -397,29 +386,52 @@ export default {
     },
     rightClick (event, data, e, element) {
       this.$refs.tree.setCurrentKey(data.id)
-      let menuId
+
+      let menu
+      const that = this
       if (data.type === 'table') {
-        menuId = '#table_menu'
+        menu = new Menu()
+        menu.append(new MenuItem(
+          {
+            label: '编辑表结构',
+            click: function () {
+              that.editTable()
+            }
+          }
+
+        ))
+        menu.append(new MenuItem(
+          {
+            label: '删除表',
+            click: function () {
+              that.delTable()
+            }
+          }
+        ))
+
         this.selectDatabaseId = e.parent.data.id
       } else {
-        menuId = '#data_base_menu'
+        menu = new Menu()
+        menu.append(new MenuItem(
+          {
+            label: '编辑连接',
+            click: function () {
+              that.editDataBase()
+            }
+          }
+
+        ))
+        menu.append(new MenuItem(
+          {
+            label: '删除连接',
+            click: function () {
+              that.delDataBase()
+            }
+          }
+        ))
         this.selectDatabaseId = data.id
       }
-      const menu = document.querySelector(menuId)
-      event.preventDefault()
-      // 根据事件对象中鼠标点击的位置，进行定位
-      menu.style.left = event.clientX + 'px'
-      menu.style.top = event.clientY + 'px'
-      // 改变自定义菜单的隐藏与显示
-      if (data.type === 'table') {
-        this.showDataBaseRightClickOption = false
-
-        // todo 判断选择的信息
-        this.showTableRightClickOption = true
-      } else {
-        this.showTableRightClickOption = false
-        this.showDataBaseRightClickOption = true
-      }
+      menu.popup(remote.getCurrentWindow())
     },
     openDataBaseDialog () {
       this.dataBaseInfo = {
@@ -509,15 +521,6 @@ export default {
   height: calc(100vh - 245px);
 }
 
-//::v-deep
-//  .el-tree--highlight-current
-//  .el-tree-node.is-current
-//  > .el-tree-node__content {
-//  background-color: #606266;
-//}
-//::v-deep .el-tree-node__content:hover {
-//  background-color: #66b1ff87;
-//}
 // 滚动条样式
 ::-webkit-scrollbar {
   width: 4px;
@@ -532,41 +535,6 @@ export default {
 
 ::-webkit-scrollbar-track {
   background-color: transparent;
-}
-
-#data_base_menu {
-  width: 130px;
-  overflow: hidden; /*隐藏溢出的元素*/
-  position: fixed;
-  z-index: 10;
-  background: #ffffff;
-  border-radius: 5px;
-  padding-bottom: 2px;
-  font-size: 12px;
-  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
-}
-#table_menu {
-  width: 130px;
-  overflow: hidden; /*隐藏溢出的元素*/
-  position: fixed;
-  z-index: 10;
-  background: #ffffff;
-  border-radius: 5px;
-  padding-bottom: 2px;
-  font-size: 12px;
-  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
-}
-
-.menu {
-  width: 130px;
-  height: 25px;
-  line-height: 25px;
-  text-indent: 10px;
-  cursor: pointer;
-}
-
-.menu:hover {
-  background-color: #eeeeee;
 }
 
 </style>
