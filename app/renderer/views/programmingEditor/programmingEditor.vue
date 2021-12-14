@@ -193,7 +193,7 @@
 
 <script>
 import MonacoEditor from '../../components/MonacoEditor'
-import { uuid } from 'vue-uuid'
+import min from '../../mixin/mixin'
 import { remote } from 'electron'
 import Store from 'electron-store'
 
@@ -203,6 +203,7 @@ const store = new Store()
 
 export default {
   components: { MonacoEditor },
+  mixins: [min],
   props: {
     type: {
       type: Number,
@@ -303,10 +304,7 @@ export default {
         }
       })
     },
-    // 返回唯一标识
-    getUUID () {
-      return uuid.v1()
-    },
+
     // 新增一个编辑器
     async query () {
       if (!this.selectDatabaseId) {

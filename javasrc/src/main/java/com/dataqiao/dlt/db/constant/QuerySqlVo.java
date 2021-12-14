@@ -16,6 +16,8 @@ public class QuerySqlVo implements Serializable {
 
     private String sql;
 
+    private String id;
+
     private Integer count;
 
     private String time;

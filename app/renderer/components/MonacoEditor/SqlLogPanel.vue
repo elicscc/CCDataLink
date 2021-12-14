@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Tabs type="card" :value="tab" :animated="false">
+    <Tabs type="card" :value="tab" :animated="false" v-show="sqlResultList.id">
       <TabPane
           v-show="sqlResultList.sql!=null"
           key="-1"
@@ -8,13 +8,13 @@
           name="-1"
       >
         <div v-if="sqlResultList.errorMessage">
-         sql: {{sqlResultList.sql}}<br/>
-          报错：{{sqlResultList.errorMessage}}
+          sql: {{ sqlResultList.sql }}<br/>
+          报错：{{ sqlResultList.errorMessage }}
         </div>
         <div v-else>
-          sql: {{sqlResultList.sql}}<br/>
-          <span v-show="sqlResultList.count">影响行：{{sqlResultList.count}}<br/></span>
-          time：{{sqlResultList.time}}<br/>
+          sql: {{ sqlResultList.sql }}<br/>
+          <span v-show="sqlResultList.count">影响行：{{ sqlResultList.count }}<br/></span>
+          time：{{ sqlResultList.time }}<br/>
         </div>
       </TabPane>
       <TabPane
@@ -24,15 +24,15 @@
           :name="'结果' + (index+1)"
       >
 
-          <Table
-              :max-height="size"
-              :columns="sqlResult.columns"
-              :data="sqlResult.dataList"
-              size="small"
-              border
-              ellipsis
-              tooltip
-          ></Table>
+        <Table
+            :max-height="size"
+            :columns="sqlResult.columns"
+            :data="sqlResult.dataList"
+            size="small"
+            border
+            ellipsis
+            tooltip
+        ></Table>
 
       </TabPane>
     </Tabs>
@@ -43,7 +43,7 @@
 export default {
   name: 'SqlLogPanel',
   props: {
-    sqlResult: {
+    sqlResultList: {
       type: Object,
       default () {
         return {}
@@ -59,19 +59,22 @@ export default {
       tab: null
     }
   },
-  computed: {
-    // 子组件和父组件进行双向绑定的方法
-    sqlResultList: {
-      get (v) {
-        return this.sqlResult
-      }
-    }
-  },
+  // computed: {
+  //   // 子组件和父组件进行双向绑定的方法
+  //   sqlResultList: {
+  //     get (v) {
+  //       return this.sqlResult
+  //     }
+  //   }
+  // },
 
   watch: {
-    sqlResult (v) {
-      if (v.resultSet && v.resultSet.length > 0) {
+    'sqlResultList.id' (v) {
+      if (this.sqlResultList.resultSet && this.sqlResultList.resultSet.length > 0) {
         this.tab = '结果1'
+      }
+      if (v.errorMessage) {
+        this.tab = '-1'
       }
     }
   },

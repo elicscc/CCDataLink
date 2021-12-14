@@ -199,19 +199,20 @@ public class TableInputService {
     }
 
 
-    public String exeSql(String databaseInfoStr, String sql) {
+    public String exeSql(String databaseInfoStr, String sql, String id) {
         try {
-            return JsonResult.success(executeSql(databaseInfoStr, sql));
+            return JsonResult.success(executeSql(databaseInfoStr, sql, id));
         } catch (RuntimeException e) {
             QuerySqlVo s = new QuerySqlVo();
             s.setErrorMessage(e.getMessage());
             s.setSql(sql);
+            s.setId(id);
             return JsonResult.success(s);
         }
     }
 
 
-    public QuerySqlVo executeSql(String databaseInfoStr, String sqlStr) {
+    public QuerySqlVo executeSql(String databaseInfoStr, String sqlStr, String id) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
         if (null == databaseInfo) {
             throw new RuntimeException("数据库不存在！");
@@ -271,6 +272,7 @@ public class TableInputService {
             QuerySqlVo querySqlVo = new QuerySqlVo();
             querySqlVo.setTime(df2.format(methodTime) + "s");
             querySqlVo.setSql(sql);
+            querySqlVo.setId(id);
             if (count > 0) {
                 querySqlVo.setCount(count);
             }

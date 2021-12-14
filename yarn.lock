@@ -1324,11 +1324,6 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@types/source-list-map@*":
-  version "0.1.2"
-  resolved "https://registry.npmmirror.com/@types/source-list-map/download/@types/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
-  integrity sha1-AHiDYGP/rxdBI0m7o2QIfgrALsk=
-
 "@types/ssh2-sftp-client@^5.3.0":
   version "5.3.2"
   resolved "https://registry.npmmirror.com/@types/ssh2-sftp-client/download/@types/ssh2-sftp-client-5.3.2.tgz#9d46fe4017099b59ab1ce1120bd780954a18f4a0"
@@ -1351,22 +1346,10 @@
     "@types/node" "*"
     "@types/ssh2-streams" "*"
 
-"@types/tapable@^1":
-  version "1.0.8"
-  resolved "https://registry.npmmirror.com/@types/tapable/download/@types/tapable-1.0.8.tgz?cache=0&sync_timestamp=1637271538942&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40types%2Ftapable%2Fdownload%2F%40types%2Ftapable-1.0.8.tgz#b94a4391c85666c7b73299fd3ad79d4faa435310"
-  integrity sha1-uUpDkchWZse3Mpn9OtedT6pDUxA=
-
 "@types/tough-cookie@*":
   version "4.0.1"
   resolved "https://registry.npmmirror.com/@types/tough-cookie/download/@types/tough-cookie-4.0.1.tgz?cache=0&sync_timestamp=1637419917434&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40types%2Ftough-cookie%2Fdownload%2F%40types%2Ftough-cookie-4.0.1.tgz#8f80dd965ad81f3e1bc26d6f5c727e132721ff40"
   integrity sha1-j4DdllrYHz4bwm1vXHJ+Eych/0A=
-
-"@types/uglify-js@*":
-  version "3.13.1"
-  resolved "https://registry.npmmirror.com/@types/uglify-js/download/@types/uglify-js-3.13.1.tgz#5e889e9e81e94245c75b6450600e1c5ea2878aea"
-  integrity sha1-XoienoHpQkXHW2RQYA4cXqKHiuo=
-  dependencies:
-    source-map "^0.6.1"
 
 "@types/uuid@^8.0.0":
   version "8.3.3"
@@ -1377,27 +1360,6 @@
   version "1.10.5"
   resolved "https://registry.npmmirror.com/@types/verror/download/@types/verror-1.10.5.tgz#2a1413aded46e67a1fe2386800e291123ed75eb1"
   integrity sha1-KhQTre1G5nof4jhoAOKREj7XXrE=
-
-"@types/webpack-sources@*":
-  version "3.2.0"
-  resolved "https://registry.nlark.com/@types/webpack-sources/download/@types/webpack-sources-3.2.0.tgz#16d759ba096c289034b26553d2df1bf45248d38b"
-  integrity sha1-FtdZuglsKJA0smVT0t8b9FJI04s=
-  dependencies:
-    "@types/node" "*"
-    "@types/source-list-map" "*"
-    source-map "^0.7.3"
-
-"@types/webpack@^4.4.19":
-  version "4.41.32"
-  resolved "https://registry.npmmirror.com/@types/webpack/download/@types/webpack-4.41.32.tgz#a7bab03b72904070162b2f169415492209e94212"
-  integrity sha512-cb+0ioil/7oz5//7tZUSwbrSAN/NWHrQylz5cW8G0dWTcF/g+/dSdMlKVZspBYuMAN1+WnwHrkxiRrLcwd0Heg==
-  dependencies:
-    "@types/node" "*"
-    "@types/tapable" "^1"
-    "@types/uglify-js" "*"
-    "@types/webpack-sources" "*"
-    anymatch "^3.0.0"
-    source-map "^0.6.0"
 
 "@types/yargs-parser@*":
   version "20.2.1"
@@ -1845,7 +1807,7 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
-anymatch@^3.0.0, anymatch@~3.1.2:
+anymatch@~3.1.2:
   version "3.1.2"
   resolved "https://registry.nlark.com/anymatch/download/anymatch-3.1.2.tgz#c0557c096af32f106198f4f4e2a383537e378716"
   integrity sha1-wFV8CWrzLxBhmPT04qODU343hxY=
@@ -8164,17 +8126,17 @@ mocha@^5.2.0:
     mkdirp "0.5.1"
     supports-color "5.4.0"
 
-monaco-editor-webpack-plugin@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.npmmirror.com/monaco-editor-webpack-plugin/download/monaco-editor-webpack-plugin-1.7.0.tgz#920cbeecca25f15d70d568a7e11b0ba4daf1ae83"
-  integrity sha1-kgy+7Mol8V1w1Win4RsLpNrxroM=
+monaco-editor-webpack-plugin@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmmirror.com/monaco-editor-webpack-plugin/download/monaco-editor-webpack-plugin-5.0.0.tgz#796c50fb4ce3f75f45bf18dfa3c31f85dc9a05da"
+  integrity sha1-eWxQ+0zj919Fvxjfo8MfhdyaBdo=
   dependencies:
-    "@types/webpack" "^4.4.19"
+    loader-utils "^2.0.0"
 
-monaco-editor@0.18.1:
-  version "0.18.1"
-  resolved "https://registry.npmmirror.com/monaco-editor/download/monaco-editor-0.18.1.tgz#ced7c305a23109875feeaf395a504b91f6358cfc"
-  integrity sha1-ztfDBaIxCYdf7q85WlBLkfY1jPw=
+monaco-editor@0.29.1:
+  version "0.29.1"
+  resolved "https://registry.npmmirror.com/monaco-editor/download/monaco-editor-0.29.1.tgz#6ee93d8a5320704d48fd7058204deed72429c020"
+  integrity sha1-buk9ilMgcE1I/XBYIE3u1yQpwCA=
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -10489,7 +10451,7 @@ source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
 
-source-map@^0.7.3, source-map@~0.7.2:
+source-map@~0.7.2:
   version "0.7.3"
   resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"
   integrity sha1-UwL4FpAxc1ImVECS5kmB91F1A4M=

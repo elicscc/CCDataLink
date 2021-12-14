@@ -55,6 +55,7 @@
       <template slot="paneR">
         <div ref="getheight" style="height: 100%;">
           <monaco-console
+              :key="id"
             v-if="( languageCopy || language).toLowerCase() === 'python'"
             :codes="pythonResult"
             :size="pythonConsoleSize"
@@ -64,7 +65,7 @@
             v-else
             style="height:98%;"
             :size="sqlSize"
-            :sqlResult.sync="sqlResultList"
+            :sqlResultList="sqlResultList"
           />
         </div>
       </template>
@@ -77,6 +78,7 @@ import MonacoConsole from './MonacoConsole'
 import SqlLogPanel from './SqlLogPanel'
 import SplitPane from 'vue-splitpane'
 import formatter from 'sql-formatter'
+import min from '../../mixin/mixin'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
 import { remote } from 'electron'
 const son = remote.getGlobal('son')
@@ -86,6 +88,7 @@ const son = remote.getGlobal('son')
 export default {
   name: 'MyMonacoEditor',
   components: { SplitPane, MonacoConsole, SqlLogPanel },
+  mixins: [min],
   props: {
     insertTableName: {
       type: String,
@@ -237,7 +240,7 @@ export default {
       // 根据表名获取列名
       if (suggestInfo.suggestColumns && suggestInfo.suggestColumns.tables) {
         const tables = suggestInfo.suggestColumns.tables
-        console.log('tables is' + JSON.stringify(tables))
+        // console.log('tables is' + JSON.stringify(tables))
         for (let i = 0; i < tables.length; i++) {
           const table = tables[i]
           if (table.identifierChain) {
@@ -342,18 +345,17 @@ export default {
           }
           beforeSqlIndex += column
           const sqlBeforeCursor = sqlValue.substring(0, beforeSqlIndex - 1)
-          const sqlAfterCursor =
-              ' ' + sqlValue.substring(beforeSqlIndex, sqlValue.length)
-          console.log(
-            'before:' + sqlBeforeCursor + 'after:' + sqlAfterCursor + 'end'
-          )
+          const sqlAfterCursor = ' ' + sqlValue.substring(beforeSqlIndex, sqlValue.length)
+          // console.log(
+          //   'before:' + sqlBeforeCursor + 'after:' + sqlAfterCursor + 'end'
+          // )
           const suggestInfo = sqlAutocompleteParser.parseSql(
             sqlBeforeCursor,
             sqlAfterCursor,
             'hive',
             true
           )
-          console.log('suggest info' + JSON.stringify(suggestInfo, null, 2))
+          //  console.log('suggest info' + JSON.stringify(suggestInfo, null, 2))
           const columnSuggestion = self.resolveSuggestion(suggestInfo)
           return { suggestions: columnSuggestion }
         }
@@ -403,7 +405,8 @@ export default {
           transformCode = firstLineSelection + middleLineSelection + lastLineSelection
         }
       }
-      const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode })
+      const uuid = this.getUUID()
+      const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode, id: uuid })
       // console.log(res.result)
       this.runComplete = true
       this.runResult = true
@@ -487,8 +490,9 @@ export default {
       //   })
     },
     formatSql () {
-      this.codeCopy = formatter.format(this.codeCopy)
-      this.editor.setValue(this.codeCopy)
+      this.editor.getAction(['editor.action.formatDocument'])._run()
+      // this.codeCopy = formatter.format(this.codeCopy)
+      // this.editor.setValue(this.codeCopy)
     },
     setTheme (currentTheme) {
       monaco.editor.setTheme(currentTheme)

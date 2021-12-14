@@ -37,7 +37,7 @@ ProcessHost.registry('connectTest', (args) => {
   }
 }).registry('exeSql', (args) => {
   try {
-    return exeSql(args.databaseInfo, args.sql)
+    return exeSql(args.databaseInfo, args.sql, args.id)
   } catch (e) {
     return exception(e)
   }
@@ -67,8 +67,8 @@ function getTableAndColumns (arg) {
   const service = new TableInputService()
   return JSON.parse(service.getTableAndColumnsSync(JSON.stringify(arg)))
 }
-function exeSql (databaseInfoStr, sql) {
+function exeSql (databaseInfoStr, sql, id) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
   const service = new TableInputService()
-  return JSON.parse(service.exeSqlSync(databaseInfoStr, sql))
+  return JSON.parse(service.exeSqlSync(databaseInfoStr, sql, id))
 }
