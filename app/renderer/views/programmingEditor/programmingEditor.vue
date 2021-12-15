@@ -280,20 +280,19 @@ export default {
 
   methods: {
     saveDatabaseInfo (name) {
-      const data = this.dataBaseInfo
+      const f = JSON.parse(JSON.stringify(this.dataBaseInfo))
       this.$refs[name].validate((valid) => {
         if (valid) {
           const list = store.get('databaseList') || []
-          if (!data.id) {
-            const f = JSON.parse(JSON.stringify(data))
+          if (!f.id) {
             f.id = this.getUUID()
             list.push(f)
           } else {
-            const i = list.findIndex(item => item.id === data.id)
+            const i = list.findIndex(item => item.id === f.id)
             if (i === -1) {
-              list.push(data)
+              list.push(f)
             } else {
-              list.splice(i, 1, data)
+              list.splice(i, 1, f)
             }
           }
           store.set('databaseList', list)
