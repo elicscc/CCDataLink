@@ -352,8 +352,10 @@ export default {
       // console.log(this.proOptions)
     },
 
-    editDataBase () {
-      console.log('ssddsa')
+    editDataBase (id) {
+      const item = this.proOptions.find(e => e.id === id)
+      this.dataBaseInfo = item
+      this.addDataBaseDialogVisible = true
     },
     delDataBase () {
       console.log()
@@ -420,7 +422,7 @@ export default {
           {
             label: '编辑连接',
             click: function () {
-              that.editDataBase()
+              that.editDataBase(data.id)
             }
           }
         ))
@@ -519,7 +521,7 @@ export default {
   user-select: none;
   overflow-y: auto;
   overflow-x: auto;
-  //height: calc(100vh - 245px);
+  height: calc(100vh - 40px);
 }
 
 // 滚动条样式
