@@ -30,8 +30,6 @@
             :data="sqlResult.dataList"
             size="small"
             border
-            ellipsis
-            tooltip
         ></Table>
 
       </TabPane>
@@ -73,7 +71,7 @@ export default {
       if (this.sqlResultList.resultSet && this.sqlResultList.resultSet.length > 0) {
         this.tab = '结果1'
       }
-      if (v.errorMessage) {
+      if (this.sqlResultList.errorMessage) {
         this.tab = '-1'
       }
     }
@@ -82,6 +80,3 @@ export default {
   methods: {}
 }
 </script>
-<style scoped>
-
-</style>

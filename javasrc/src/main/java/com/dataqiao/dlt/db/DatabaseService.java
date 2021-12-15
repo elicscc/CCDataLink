@@ -35,7 +35,7 @@ public interface DatabaseService {
         } else if (DatabaseTypeEnum.SQLServer.getCode().equals(type)) {
             url = "jdbc:sqlserver://" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + ";database=" + databaseInfo.getDatabaseName();
         } else if (DatabaseTypeEnum.Oracle.getCode().equals(type)) {
-            url = "jdbc:oracle:thin:@//" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName() + "?allowMultiQueries=true";
+            url = "jdbc:oracle:thin:@//" + databaseInfo.getDatabaseAddress() + ":" + databaseInfo.getPort() + "/" + databaseInfo.getDatabaseName();
         } else {
             throw new IllegalStateException("Unexpected value: " + databaseInfo.getDatabaseType());
         }

@@ -59,7 +59,7 @@ function test (arg) {
 function getTables (arg) {
   const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
   const service = new TableInputService()
-  return JSON.parse(service.getTableNamesSync(JSON.stringify(arg), null))
+  return JSON.parse(service.getTableNamesSync(JSON.stringify(arg)))
 }
 
 function getTableAndColumns (arg) {

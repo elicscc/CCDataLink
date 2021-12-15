@@ -24,6 +24,8 @@ public class ColumnVo implements Serializable {
     private String key;
 
     private Boolean resizable;
+    private Boolean ellipsis;
+    private Boolean tooltip;
 
     private Integer width;
 }

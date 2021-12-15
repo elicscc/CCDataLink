@@ -1,6 +1,5 @@
 package com.dataqiao.dlt.db;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.dataqiao.dlt.db.constant.*;
 import com.dataqiao.dlt.db.util.JsonUtil;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -37,17 +36,6 @@ public class TableInputService {
         }
     }
 
-
-    public String formatSqlWithInput(String databaseInfoStr, String sql) {
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        sql = sql.trim();
-        sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
-        // 不套子查询了,别名解析不了的问题先不管
-//        if (DatabaseTypeEnum.MySQL.getCode().equals(databaseInfo.getDatabaseType())) {
-//            sql = "select * from (" + sql + ") dataqiao";
-//        }
-        return sql;
-    }
 
     /**
      * 表输入组件用
@@ -87,9 +75,9 @@ public class TableInputService {
     }
 
 
-    public String getTableNames(String databaseInfoStr, String tableName) {
+    public String getTableNames(String databaseInfoStr) {
         try {
-            return JsonResult.success(getTables(databaseInfoStr, tableName));
+            return JsonResult.success(getTables(databaseInfoStr));
         } catch (RuntimeException e) {
             return JsonResult.error(e.getMessage());
         }
@@ -99,13 +87,9 @@ public class TableInputService {
      * 获取表
      *
      * @param databaseInfoStr
-     * @param tableName
      * @return
      */
-    public List<NameCommentVo> getTables(String databaseInfoStr, String tableName) {
-        if (StringUtils.isBlank(tableName)) {
-            tableName = "";
-        }
+    public List<NameCommentVo> getTables(String databaseInfoStr) {
         List<NameCommentVo> tableModelVos;
         String sql;
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
@@ -115,13 +99,13 @@ public class TableInputService {
         switch (databaseInfo.getDatabaseType()) {
             case "1":
             case "4":
-                sql = "SELECT table_name name,TABLE_COMMENT cm FROM INFORMATION_SCHEMA.TABLES  WHERE table_schema = '" + databaseInfo.getDatabaseName() + "' and table_name like concat('%','" + tableName + "','%')";
+                sql = "SELECT table_name name,TABLE_COMMENT cm FROM INFORMATION_SCHEMA.TABLES  WHERE table_schema = '" + databaseInfo.getDatabaseName() + "' ORDER BY table_name";
                 break;
             case "2":
-                sql = "SELECT Name name,Name cm FROM SysObjects where Name like '%" + tableName + "%'";
+                sql = "SELECT TABLE_NAME name, TABLE_TYPE cm FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME";
                 break;
             case "3":
-                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments where TABLE_NAME like '%" + tableName + "%'";
+                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments ORDER BY TABLE_NAME";
                 break;
             default:
                 throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
@@ -147,7 +131,6 @@ public class TableInputService {
 
 
     public Map<String, List<String>> getTablesAndColumns(String databaseInfoStr) {
-
         List<TablesAndColumnsVo> tableModelVos;
         String sql;
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
@@ -159,12 +142,12 @@ public class TableInputService {
             case "4":
                 sql = "SELECT  TABLE_NAME tableName, COLUMN_NAME columnName, COLUMN_TYPE columnType FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '" + databaseInfo.getDatabaseName() + "'";
                 break;
-//            case "2":
-//                sql = "SELECT Name name,Name cm FROM SysObjects where Name like '%" + tableName + "%'";
-//                break;
-//            case "3":
-//                sql = "select TABLE_NAME name ,COMMENTS  cm from user_tab_comments where TABLE_NAME like '%" + tableName + "%'";
-//                break;
+            case "2":
+                sql = "SELECT  TABLE_NAME tableName, COLUMN_NAME columnName, DATA_TYPE  columnType FROM INFORMATION_SCHEMA.COLUMNS";
+                break;
+            case "3":
+                sql = "SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS WHERE OWNER = '" + databaseInfo.getDatabaseName() + "'";
+                break;
             default:
                 throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
         }
@@ -245,6 +228,8 @@ public class TableInputService {
                         columnVo.setKey(data.getColumnName(f + 1));
                         columnVo.setTitle(data.getColumnName(f + 1));
                         columnVo.setResizable(true);
+                        columnVo.setEllipsis(true);
+                        columnVo.setTooltip(true);
                         columnVo.setWidth(300);
                         columns.add(columnVo);
                     }

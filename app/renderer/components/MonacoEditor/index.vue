@@ -380,6 +380,7 @@ export default {
     },
     // 执行transform,并设置定时任务去获取日志
     async run () {
+      this.sqlResultList = {}
       const self = this
       this.runComplete = false
       this.pythonResult = null
@@ -417,59 +418,9 @@ export default {
         self.sqlResultList = { errorMessage: res.result.message }
         this.sqlSize = this.$refs.getheight.offsetHeight - 70
       }
-
-      // try {
-      //   const response = await post('/transformInfo/execute', {
-      //     id: this.id,
-      //     toolType: this.languageCopy,
-      //     transformCode
-      //   })
-      //   this.asyncResult = response.data
-      // } catch (err) {
-      //   // 如果不是20000,直接返回
-      //   this.runComplete = true
-      //   this.runResult = false
-      //   return
-      // }
-
-      // 循环请求次数
-      const time = 0
-      // this.interval = setInterval(async () => {
-      //   time = time + 1
-      //   if (time > 60) {
-      //     self.runComplete = true
-      //     self.$message.error('任务执行超时,请重试')
-      //     clearInterval(self.interval)
-      //   }
-      //   const { data } = await get('/transformInfo/fetchTransformLog', this.asyncResult)
-      //     .catch(err => {
-      //       console.log(err)
-      //       this.runComplete = true
-      //       this.runResult = false
-      //       clearInterval(self.interval)
-      //     })
-      //   if (data && data.logStatus === true) {
-      //     clearInterval(self.interval)
-      //     self.sqlResultList = data.sqlResults
-      //
-      //     this.sqlSize = this.$refs.getheight.offsetHeight - 70
-      //     self.pythonResult = data.pythonLog
-      //     this.runComplete = true
-      //     this.runResult = true
-      //     self.showLog(data)
-      //   }
-      // }, 10 * 1000)
-    },
-    showLog (data) {
-      console.log(data)
     },
     stop () {
-      // get('/transformInfo/cancel?jobId=demoData', { jobId: this.asyncResult.uniqueId })
-      //   .then(() => {
-      //     this.runComplete = true
-      //     clearInterval(this.interval)
-      //     this.tipsSuccess()
-      //   })
+      console.log()
     },
     keyHandler () {
       // 快捷键触发monaco的自动提示补全功能
@@ -482,12 +433,7 @@ export default {
       this.editor.trigger('随便写点儿啥', 'editor.action.triggerSuggest', {})
     },
     save () {
-      const self = this
-      const transformCode = this.codeCopy || this.code
-      // post('/transformInfo/saveCode', { id: this.id, toolType: this.languageCopy, transformCode })
-      //   .then(() => {
-      //     self.tipsSuccess()
-      //   })
+      // const transformCode = this.codeCopy || this.code
     },
     formatSql () {
       this.editor.getAction(['editor.action.formatDocument'])._run()
