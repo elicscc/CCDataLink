@@ -82,9 +82,11 @@
                 :insert-table-name="insertTableName"
             />
             <div v-else style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
-              <div>
-
-              </div>
+              <el-row style="margin-left: 5px">
+                <el-button type="primary" size="small" disabled>打开表</el-button>
+                <el-button type="primary" size="small" disabled>设计表</el-button>
+                <el-button type="primary" size="small" disabled>新增表</el-button>
+              </el-row>
               <div class="result-box">
                 <vue-drag-select
                     v-model="selectTables"
@@ -594,7 +596,7 @@ export default {
 }
 
 .result-box {
-
+margin-top: 10px;
   width: 100%;
   height: 100%;
   transition: all 0.3s;
