@@ -81,7 +81,30 @@
                 style="padding-bottom:10px"
                 :insert-table-name="insertTableName"
             />
-            <div v-else style="height: calc(100vh);margin-top: 15px;margin-bottom: 5px;">{{ tableList }}</div>
+            <div v-else style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
+              <div>
+
+              </div>
+              <div class="result-box">
+                <vue-drag-select
+                    v-model="selectTables"
+                    value-key="connectName"
+                    :item-margin="[3, 3, 3, 3]"
+                    :item-height="40"
+                    :item-width="160"
+                    :warpper-padding="[0,0,0,0]"
+                    ref="dragSelect"
+                >
+                  <template v-for="(item, index) in tableList">
+                    <drag-select-option :key="item.id" :value="item" :item-index="index">
+                      <div class="item-self">
+                        <el-tag style="width: 100%;" :key="item.connectName" @click="tableEvent(item.connectName)">{{ item.connectName }}</el-tag>
+                      </div>
+                    </drag-select-option>
+                  </template>
+                </vue-drag-select>
+              </div>
+            </div>
 
           </el-tab-pane>
         </el-tabs>
@@ -212,6 +235,7 @@ export default {
   },
   data () {
     return {
+      selectTables: [],
       testConnectShow: false,
       dataBaseInfo: {
         connectName: '',
@@ -367,7 +391,7 @@ export default {
       }
       this.addDataBaseDialogVisible = true
     },
-    async   delDataBase (id) {
+    async delDataBase (id) {
       const list = store.get('databaseList')
       const i = list.findIndex(item => item.id === id)
       if (i === -1) {
@@ -393,7 +417,9 @@ export default {
     delTable () {
       console.log()
     },
-
+    tableEvent (data) {
+      console.log(data, this.selectTables)
+    },
     // 筛选节点
     filterNode (value, data) {
       if (!value) return true
@@ -412,6 +438,7 @@ export default {
         const s = res.result.data.map(i => {
           return { connectName: i.name, id: self.getUUID(), type: 'table' }
         })
+        this.tableList = s
         node.data.isConnected = true
         return resolve(s)
       }
@@ -566,4 +593,33 @@ export default {
   background-color: transparent;
 }
 
+.result-box {
+
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s;
+
+  .vue-drag-select {
+    background-color: #ddd;
+  }
+
+  .item-self {
+    border: 1px solid #fff;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0px 2px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .selected-item {
+    .item-self {
+      border: 1px solid red;
+      border-color: rgb(65, 98, 255);
+      box-shadow: rgb(65, 98, 255) 0px 0px 0px 2px !important;
+    }
+  }
+}
 </style>

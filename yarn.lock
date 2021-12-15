@@ -3502,7 +3502,7 @@ core-js-compat@^3.18.0, core-js-compat@^3.19.1:
     browserslist "^4.18.1"
     semver "7.0.0"
 
-core-js@^2.4.0, core-js@^2.5.0:
+core-js@^2.4.0, core-js@^2.5.0, core-js@^2.6.5:
   version "2.6.12"
   resolved "https://registry.npmmirror.com/core-js/download/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha1-2TM9+nsGXjR8xWgiGdb2kIWcwuw=
@@ -11574,6 +11574,15 @@ vue-custom-element@3.2.14:
   resolved "https://registry.nlark.com/vue-custom-element/download/vue-custom-element-3.2.14.tgz#fc4987ed4e1742bcb4e70a669d5060fc2c42bc25"
   integrity sha1-/EmH7U4XQry05wpmnVBg/CxCvCU=
 
+vue-drag-select-pro@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.nlark.com/vue-drag-select-pro/download/vue-drag-select-pro-1.0.4.tgz#2d7acba2428e02e181b92fec20de0de516db4212"
+  integrity sha1-LXrLokKOAuGBuS/sIN4N5RbbQhI=
+  dependencies:
+    core-js "^2.6.5"
+    vue "^2.6.10"
+    vue-drag-select-pro "^1.0.4"
+
 vue-eslint-parser@^7.10.0:
   version "7.11.0"
   resolved "https://registry.npmmirror.com/vue-eslint-parser/download/vue-eslint-parser-7.11.0.tgz#214b5dea961007fcffb2ee65b8912307628d0daf"
@@ -11660,7 +11669,7 @@ vue@2.6.11:
   resolved "https://registry.npmmirror.com/vue/download/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
   integrity sha1-dllNh31LEiNEBuhONSdcbVFBJcU=
 
-vue@^2.5.10:
+vue@^2.5.10, vue@^2.6.10:
   version "2.6.14"
   resolved "https://registry.npmmirror.com/vue/download/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
   integrity sha1-5RqlJQJQ1Wmj+606ilpofWA24jU=

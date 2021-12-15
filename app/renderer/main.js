@@ -10,7 +10,10 @@ import 'view-design/dist/styles/iview.css'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import './icons'
+import vueDragSelectPro from 'vue-drag-select-pro'
+import 'vue-drag-select-pro/lib/vueDragSelectPro.css'
 
+Vue.use(vueDragSelectPro)
 Vue.use(Element)
 Vue.use(ViewUI)
 Vue.use(VueCodemirror)
