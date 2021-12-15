@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-    <!-- 自定义标题栏 需将main.js中的frame改为false -->
-    <!-- <ElectronTitle /> -->
-    <router-view></router-view>
+    <Index/>
   </div>
 </template>
 
 <script>
-// import ElectronTitle from './views/title/title'
-
-// import electron from 'electron'
+import Index from './views/programmingEditor/programmingEditor.vue'
 
 export default {
-  name: 'cc'
+  name: 'cc',
+  components: {
+    Index
+  }
 }
 </script>
 

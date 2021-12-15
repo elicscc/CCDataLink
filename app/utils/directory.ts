@@ -9,7 +9,6 @@
 import os from 'os'
 import fs from 'fs'
 import log4js from './log4j'
-import { getUuid } from './uuid'
 
 const logger = log4js.getLogger()
 const homePath: string = os.homedir().replace(new RegExp(/\\/, 'g'), '/')
@@ -129,22 +128,6 @@ export default {
       this.mkdir(path)
     }
     return path
-  },
-
-  /**
-   * 生成下载临时目录
-   * @param uuid
-   */
-  generateDownLoadPath: function (uuid: string) {
-    if (!uuid) {
-      throw new Error('generateDownLoadPath中uuid为空！')
-    }
-    const id = getUuid()
-    const path = homePath + '/SLT_Temp/' + uuid + '/download/' + id + '/'
-    if (!fs.existsSync(path)) {
-      // 创建目录
-      this.mkdir(path)
-    }
-    return path
   }
+
 }

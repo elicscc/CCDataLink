@@ -338,7 +338,7 @@ export default {
       }
       const item = this.proOptions.find(e => e.id === this.selectDatabaseId)
       const res = await son.send('getTableAndColumns', item)
-      console.log(res.result)
+      // console.log(res.result)
       if (res && res.result.code === 20000) {
         const uid = this.getUUID()
         this.editorTabs.push({
@@ -414,13 +414,14 @@ export default {
     },
 
     editTable () {
-      console.log('t')
+      this.$message.warning('未开发')
     },
     delTable () {
-      console.log()
+      this.$message.warning('未开发')
     },
     tableEvent (data) {
       console.log(data, this.selectTables)
+      this.$message.warning('未开发')
     },
     // 筛选节点
     filterNode (value, data) {

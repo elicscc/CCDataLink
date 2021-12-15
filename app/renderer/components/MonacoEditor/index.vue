@@ -1,18 +1,11 @@
 <template>
   <div
-    @keydown.ctrl.shift="suggest"
+    @keydown.ctrl.shift="keyHandler"
     @keyup.110="keyHandler"
     @keyup.190="keyHandler"
   >
     <div style="padding-left:10px">
-      <el-select v-model="languageCopy" size="small" style="width: 120px" placeholder="language" @change="reInitEditor">
-        <el-option
-          v-for="item in languageOption"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+      <span style="padding-right:10px">当前数据库连接：{{dataBaseInfo.connectName}}</span>
       <el-button type="success" :disabled="!runComplete" size="small" style="margin-left:10px" @click="run()">
         <svg-icon icon-class="run" />
         运行
@@ -29,7 +22,6 @@
         <svg-icon icon-class="format" />
         格式化
       </el-button>
-      <span style="color:#ffffff">按ctrl + shift 键触发自动补全</span>
       <span class="theme" style="float:right;width: 120px">
         <el-select :value="theme" size="small" placeholder="请选择主题" @change="setTheme">
           <el-option
@@ -54,15 +46,7 @@
       </template>
       <template slot="paneR">
         <div ref="getheight" style="height: 100%;">
-          <monaco-console
-              :key="id"
-            v-if="( languageCopy || language).toLowerCase() === 'python'"
-            :codes="pythonResult"
-            :size="pythonConsoleSize"
-            style="height:98%;border-top: 1px solid #dfe4ed"
-          />
           <sql-log-panel
-            v-else
             style="height:98%;"
             :size="sqlSize"
             :sqlResultList="sqlResultList"
@@ -74,7 +58,6 @@
 </template>
 <script>
 import * as monaco from 'monaco-editor'
-import MonacoConsole from './MonacoConsole'
 import SqlLogPanel from './SqlLogPanel'
 import SplitPane from 'vue-splitpane'
 import formatter from 'sql-formatter'
@@ -87,7 +70,7 @@ const son = remote.getGlobal('son')
 
 export default {
   name: 'MyMonacoEditor',
-  components: { SplitPane, MonacoConsole, SqlLogPanel },
+  components: { SplitPane, SqlLogPanel },
   mixins: [min],
   props: {
     insertTableName: {
@@ -173,12 +156,12 @@ export default {
     }
   },
   computed: {
-    sidebarOpened () {
-      return this.$store.state.app.sidebar.opened
-    },
-    currentTabsName () {
-      return this.$store.state.monaco.currentTabsName
-    },
+    // sidebarOpened () {
+    //   return this.$store.state.app.sidebar.opened
+    // },
+    // currentTabsName () {
+    //   return this.$store.state.monaco.currentTabsName
+    // },
     theme () {
       return this.$store.state.monaco.theme
     }
@@ -208,19 +191,19 @@ export default {
           this.editor.getModel().setValue(sql)
         }
       }
-    },
-    sidebarOpened: function (open) {
-      const self = this
-      setTimeout(function () {
-        self.editor.layout()
-      }, 300)
-    },
-    currentTabsName: function (name) {
-      const self = this
-      if (name === this.name) {
-        self.editor.layout()
-      }
     }
+    // sidebarOpened: function (open) {
+    //   const self = this
+    //   setTimeout(function () {
+    //     self.editor.layout()
+    //   }, 300)
+    // },
+    // currentTabsName: function (name) {
+    //   const self = this
+    //   if (name === this.name) {
+    //     self.editor.layout()
+    //   }
+    // }
   },
   mounted () {
     this.tableColumn = this.type
@@ -422,23 +405,20 @@ export default {
       }
     },
     stop () {
-      console.log()
+      this.$message.warning('未开发')
     },
     keyHandler () {
       // 快捷键触发monaco的自动提示补全功能
       console.log('trigger')
       this.editor.trigger('随便写点儿啥', 'editor.action.triggerSuggest', {})
     },
-    suggest () {
-      // 快捷键触发monaco的自动提示补全功能
-      console.log('trigger')
-      this.editor.trigger('随便写点儿啥', 'editor.action.triggerSuggest', {})
-    },
     save () {
+      this.$message.warning('未开发')
       // const transformCode = this.codeCopy || this.code
     },
     formatSql () {
-      this.editor.getAction(['editor.action.formatDocument'])._run()
+      this.$message.warning('未开发')
+      // // this.editor.getAction(['editor.action.formatDocument'])._run()
       // this.codeCopy = formatter.format(this.codeCopy)
       // this.editor.setValue(this.codeCopy)
     },
@@ -449,8 +429,6 @@ export default {
     reInitEditor () {
       this.editor.dispose()
       this.initEditor()
-      // 用于python控制台resize
-      this.pythonConsoleSize++
       this.sqlSize = this.$refs.getheight.offsetHeight - 70
     }
   }
