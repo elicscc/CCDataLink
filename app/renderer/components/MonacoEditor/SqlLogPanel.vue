@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Tabs type="card" :value="tab" :animated="false" v-show="sqlResultList.id">
+    <Tabs type="card" :value="tab" :animated="false" v-if="sqlResultList.id">
       <TabPane
           v-show="sqlResultList.sql!=null"
           key="-1"
@@ -57,14 +57,6 @@ export default {
       tab: null
     }
   },
-  // computed: {
-  //   // 子组件和父组件进行双向绑定的方法
-  //   sqlResultList: {
-  //     get (v) {
-  //       return this.sqlResult
-  //     }
-  //   }
-  // },
 
   watch: {
     'sqlResultList.id' (v) {
