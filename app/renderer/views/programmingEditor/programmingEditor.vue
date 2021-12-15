@@ -281,6 +281,7 @@ export default {
   methods: {
     saveDatabaseInfo (name) {
       const f = JSON.parse(JSON.stringify(this.dataBaseInfo))
+      f.isConnected = false
       this.$refs[name].validate((valid) => {
         if (valid) {
           const list = store.get('databaseList') || []
@@ -351,13 +352,39 @@ export default {
       // console.log(this.proOptions)
     },
 
-    editDataBase (id) {
-      const item = this.proOptions.find(e => e.id === id)
-      this.dataBaseInfo = item
+    async editDataBase (id) {
+      this.dataBaseInfo = this.proOptions.find(e => e.id === id)
+      if (this.dataBaseInfo.isConnected) {
+        const confirmResult = await this.$confirm('正在连接中是否关闭连接?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).catch(err => err)
+        if (confirmResult !== 'confirm') {
+          return
+        }
+        this.dataBaseInfo.isConnected = false
+      }
       this.addDataBaseDialogVisible = true
     },
-    delDataBase () {
-      console.log()
+    async   delDataBase (id) {
+      const list = store.get('databaseList')
+      const i = list.findIndex(item => item.id === id)
+      if (i === -1) {
+        return
+      }
+      const confirmResult = await this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return
+      }
+      list.splice(i, 1)
+      store.set('databaseList', list)
+      this.getTreeList()
+      this.$message.success('已删除')
     },
 
     editTable () {
@@ -429,7 +456,7 @@ export default {
           {
             label: '删除连接',
             click: function () {
-              that.delDataBase()
+              that.delDataBase(data.id)
             }
           }
         ))
