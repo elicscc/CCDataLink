@@ -1,8 +1,6 @@
 package com.dataqiao.dlt.db;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.dataqiao.dlt.db.constant.CommonConstant;
-import com.dataqiao.dlt.db.constant.DatabaseTypeEnum;
 import com.dataqiao.dlt.db.util.JsonUtil;
 import com.dataqiao.dlt.db.util.tableimport.SqlExecutor;
 import com.zaxxer.hikari.HikariDataSource;
@@ -137,9 +135,9 @@ public class TableOutputService implements DatabaseService{
         this.session = this.sessionFactory.openSession();
         this.mapper = (BaseMapper<Object>) session.getMapper(this.mapperClass);
         // 清空表数据
-        if (CommonConstant.EMPTY_YES.equals(isEmpty)) {
-            truncateTable(tableName);
-        }
+//        if (CommonConstant.EMPTY_YES.equals(isEmpty)) {
+//            truncateTable(tableName);
+//        }
     }
 
     /**
