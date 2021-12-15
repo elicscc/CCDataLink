@@ -407,7 +407,9 @@ export default {
         }
       }
       const uuid = this.getUUID()
-      const res = await son.send('exeSql', { databaseInfo: JSON.stringify(this.dataBaseInfo), sql: transformCode, id: uuid })
+      const database = JSON.stringify(this.dataBaseInfo)
+      console.log(database)
+      const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
       // console.log(res.result)
       this.runComplete = true
       this.runResult = true

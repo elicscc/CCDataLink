@@ -2,6 +2,7 @@ package com.dataqiao.dlt.db;
 
 import com.dataqiao.dlt.db.constant.*;
 import com.dataqiao.dlt.db.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import static com.dataqiao.dlt.db.constant.DatabaseTypeEnum.Oracle;
  * @author cc
  * @date 2021/04/22
  */
+@Slf4j
 public class TableInputService {
 
     /**
@@ -146,7 +148,7 @@ public class TableInputService {
                 sql = "SELECT  TABLE_NAME tableName, COLUMN_NAME columnName, DATA_TYPE  columnType FROM INFORMATION_SCHEMA.COLUMNS";
                 break;
             case "3":
-                sql = "SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS WHERE OWNER = '" + databaseInfo.getDatabaseName() + "'";
+                sql = "SELECT TABLE_NAME as \"tableName\", COLUMN_NAME as \"columnName\" , DATA_TYPE as \"columnType\" FROM ALL_TAB_COLUMNS WHERE TABLE_NAME in  (select TABLE_NAME from user_tab_comments)";
                 break;
             default:
                 throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
@@ -181,6 +183,17 @@ public class TableInputService {
         }
     }
 
+//    public static void main(String[] args) {
+//
+//        String database = "{\"connectName\":\"oracle\",\"databaseType\":\"3\",\"databaseAddress\":\"172.16.10.70\",\"databaseName\":\"center\",\"port\":\"1521\",\"username\":\"sjz\",\"password\":\"sjz@2020\",\"databaseDescription\":\"\",\"id\":\"4ce41570-5d6c-11ec-be8f-67031276b348\"}";
+//
+//        String sql = "SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS  WHERE OWNER = 'SJZ';SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS  WHERE OWNER = 'SJZ';";
+//
+//        TableInputService s = new TableInputService();
+//        String sss = s.exeSql(database, sql, "sss");
+//        System.out.println(sss);
+//
+//    }
 
     public String exeSql(String databaseInfoStr, String sql, String id) {
         try {
@@ -200,8 +213,13 @@ public class TableInputService {
         if (null == databaseInfo) {
             throw new RuntimeException("数据库不存在！");
         }
+        //oracle的sql需要支持分号
+
         ResultSet rs;
         String sql = sqlStr.trim();
+        if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
+            sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
+        }
         int count = 0;
         boolean label = true;
         List<IViewTableVo> s = new ArrayList<>();
@@ -221,9 +239,10 @@ public class TableInputService {
                 rs = stmt.getResultSet();
                 if (rs != null) {
                     ResultSetMetaData data = rs.getMetaData();
+                    int columnCount = data.getColumnCount();
                     List<ColumnVo> columns = new ArrayList<>();
                     List<Map<String, String>> dataList = new ArrayList<>();
-                    for (int f = 0; f < data.getColumnCount(); f++) {
+                    for (int f = 0; f < columnCount; f++) {
                         ColumnVo columnVo = new ColumnVo();
                         columnVo.setKey(data.getColumnName(f + 1));
                         columnVo.setTitle(data.getColumnName(f + 1));
@@ -245,6 +264,11 @@ public class TableInputService {
                     iViewTableVo.setColumns(columns);
                     iViewTableVo.setDataList(dataList);
                     s.add(iViewTableVo);
+                    // oracle不支持多条sql执行需要返回
+                    if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
+                        label = false;
+                        continue;
+                    }
                     stmt.getMoreResults();
                     continue;
                 }
@@ -266,6 +290,7 @@ public class TableInputService {
         } catch (SQLTimeoutException e) {
             throw new RuntimeException("执行sql异常，数据库超时>300s");
         } catch (SQLException | IOException e) {
+            log.error("数据库报错：", e);
             throw new RuntimeException(e.getMessage());
         }
 
