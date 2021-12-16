@@ -70,18 +70,7 @@
               :name="item.name"
               :closable="item.close"
           >
-            <monaco-editor
-                v-if="item.key !== -1"
-                :id="item.name"
-                :type="item.type"
-                :code="item.code"
-                :dataBaseInfo="item.dataBaseInfo"
-                :language="item.language"
-                :name="item.title"
-                style="padding-bottom:10px"
-                :insert-table-name="insertTableName"
-            />
-            <div v-else style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
+            <div  v-if="item.key === -1" style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
               <el-row style="margin-left: 5px">
                 <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="openTable">打开表</el-button>
                 <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表</el-button>
@@ -107,7 +96,19 @@
                 </vue-drag-select>
               </div>
             </div>
-
+            <div v-else-if="item.tagType === -2">打开了表</div>
+            <div v-else-if="item.tagType === -3">设计表</div>
+            <monaco-editor
+                v-else
+                :id="item.name"
+                :type="item.type"
+                :code="item.code"
+                :dataBaseInfo="item.dataBaseInfo"
+                :language="item.language"
+                :name="item.title"
+                style="padding-bottom:10px"
+                :insert-table-name="insertTableName"
+            />
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -218,7 +219,7 @@
 
 <script>
 import MonacoEditor from '../../components/MonacoEditor'
-import min from '../../mixin/mixin'
+import mix from '../../mixin/mixin'
 import { remote } from 'electron'
 import Store from 'electron-store'
 
@@ -228,7 +229,7 @@ const store = new Store()
 
 export default {
   components: { MonacoEditor },
-  mixins: [min],
+  mixins: [mix],
   props: {
     type: {
       type: Number,
@@ -376,11 +377,26 @@ export default {
     getTreeList () {
       this.proOptions = store.get('databaseList') || []
     },
-    openTable () {
-      this.$message.warning('未开发')
+    openTable (data, tableName) {
+      const uid = this.getUUID()
+      this.editorTabs.push({
+        title: tableName,
+        name: uid,
+        dataBaseInfo: data,
+        close: true,
+        tagType: -2
+      })
+      this.currentTabsName = uid
     },
     designTable () {
-      this.$message.warning('未开发')
+      const uid = this.getUUID()
+      this.editorTabs.push({
+        title: 'edite',
+        name: uid,
+        close: true,
+        tagType: -3
+      })
+      this.currentTabsName = uid
     },
     addTable () {
       this.$message.warning('未开发')
@@ -427,8 +443,24 @@ export default {
       this.$message.warning('未开发')
     },
     tableEvent (data) {
-      console.log(data, this.selectTables)
-      this.$message.warning('未开发')
+      this.treeClickCount++
+      if (this.treeClickCount >= 2) {
+        // 超过2次点击的事件
+        return
+      }
+      // 计时器,计算300毫秒为单位,可自行修改
+      this.timer = window.setTimeout(() => {
+        // 把次数归零
+        if (this.treeClickCount === 1) {
+          this.treeClickCount = 0
+          // 单击事件处理
+        } else if (this.treeClickCount > 1) {
+          this.treeClickCount = 0
+          // 双击事件处理
+          const i = this.proOptions.find(item => item.id === this.selectDatabaseId)
+          this.openTable(i, this.selectTables[0].connectName)
+        }
+      }, 300)
     },
     // 筛选节点
     filterNode (value, data) {
@@ -436,7 +468,6 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     async loadNode (node, resolve) {
-      console.log(node)
       if (node.level === 1) {
         const res = await son.send('getTables', node.data)
         if (res.result.code !== 20000) {
@@ -532,9 +563,7 @@ export default {
       this.testConnectShow = false
     },
     handleNodeClick (data, e) {
-      console.log(e)
       this.selectDatabaseId = data.type === 'table' ? e.parent.data.id : data.id
-      console.log(this.selectDatabaseId)
       this.treeClickCount++
       if (this.treeClickCount >= 2) {
         // 超过2次点击的事件
@@ -543,7 +572,6 @@ export default {
       // 计时器,计算300毫秒为单位,可自行修改
       this.timer = window.setTimeout(() => {
         // 把次数归零
-
         if (this.treeClickCount === 1) {
           this.treeClickCount = 0
           // 单击事件处理
