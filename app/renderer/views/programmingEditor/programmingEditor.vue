@@ -83,9 +83,9 @@
             />
             <div v-else style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
               <el-row style="margin-left: 5px">
-                <el-button type="primary" size="small" disabled>打开表</el-button>
-                <el-button type="primary" size="small" disabled>设计表</el-button>
-                <el-button type="primary" size="small" disabled>新增表</el-button>
+                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="openTable">打开表</el-button>
+                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表</el-button>
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新增表</el-button>
               </el-row>
               <div class="result-box">
                 <vue-drag-select
@@ -375,9 +375,16 @@ export default {
     // 获取侧边栏树
     getTreeList () {
       this.proOptions = store.get('databaseList') || []
-      // console.log(this.proOptions)
     },
-
+    openTable () {
+      this.$message.warning('未开发')
+    },
+    designTable () {
+      this.$message.warning('未开发')
+    },
+    addTable () {
+      this.$message.warning('未开发')
+    },
     async editDataBase (id) {
       this.dataBaseInfo = this.proOptions.find(e => e.id === id)
       if (this.dataBaseInfo.isConnected) {
@@ -432,7 +439,6 @@ export default {
       console.log(node)
       if (node.level === 1) {
         const res = await son.send('getTables', node.data)
-        // console.log(res.result)
         if (res.result.code !== 20000) {
           this.$message.error(res.result.message)
           return resolve([])
@@ -620,8 +626,8 @@ margin-top: 10px;
   .selected-item {
     .item-self {
       border: 1px solid red;
-      border-color: rgb(65, 98, 255);
-      box-shadow: rgb(65, 98, 255) 0px 0px 0px 2px !important;
+      border-color: rgb(1, 4, 16);
+      box-shadow: rgb(1, 5, 21) 0px 0px 0px 2px !important;
     }
   }
 }
