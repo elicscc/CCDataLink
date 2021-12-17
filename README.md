@@ -14,7 +14,7 @@ v1.0.0 预览版已发布
 
 外链地址：
 
-https://njc-download.weiyun.com/ftn_handler/f395cc225996f5582d85a64dd252b80d358cb1c7a149300a71e3c323ce48fb857af46bdab612bace1764de40f11f9c6b5bfa40979a83b581b48cfb20395ecfeb/CC%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%20Setup%201.0.0.exe?fname=CC%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%20Setup%201.0.0.exe&from=30113&version=3.3.3.3
+https://share.weiyun.com/d9yzAeon
 
 #### 软件架构
 软件架构说明
