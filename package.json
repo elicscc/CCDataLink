@@ -48,7 +48,6 @@
     ]
   },
   "dependencies": {
-    "electron-re": "1.1.1",
     "electron-store": "^8.0.1",
     "java": "^0.12.1"
   },
@@ -91,6 +90,7 @@
     "crypto-js": "^4.0.0",
     "css-loader": "^0.28.4",
     "del": "^3.0.0",
+    "electron-re": "1.1.1",
     "dom-parser": "^0.1.6",
     "electron": "^10.4.7",
     "electron-builder": "^22.8.0",

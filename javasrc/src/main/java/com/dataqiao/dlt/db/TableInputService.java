@@ -183,17 +183,6 @@ public class TableInputService {
         }
     }
 
-//    public static void main(String[] args) {
-//
-//        String database = "{\"connectName\":\"oracle\",\"databaseType\":\"3\",\"databaseAddress\":\"172.16.10.70\",\"databaseName\":\"center\",\"port\":\"1521\",\"username\":\"sjz\",\"password\":\"sjz@2020\",\"databaseDescription\":\"\",\"id\":\"4ce41570-5d6c-11ec-be8f-67031276b348\"}";
-//
-//        String sql = "SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS  WHERE OWNER = 'SJZ';SELECT TABLE_NAME as tableName, COLUMN_NAME as columnName , DATA_TYPE as columnType FROM ALL_TAB_COLUMNS  WHERE OWNER = 'SJZ';";
-//
-//        TableInputService s = new TableInputService();
-//        String sss = s.exeSql(database, sql, "sss");
-//        System.out.println(sss);
-//
-//    }
 
     public String exeSql(String databaseInfoStr, String sql, String id) {
         try {
@@ -295,42 +284,6 @@ public class TableInputService {
         }
 
     }
-
-
-    /**
-     * 查询表结构
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SHOW TABLE STATUS LIKE 't\_mx'
-     * Time: 0.000s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SHOW CREATE TABLE `t_mx`
-     * Time: 0.000s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SHOW FULL COLUMNS FROM `t_mx`
-     * Time: 0.024s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SHOW INDEX FROM `t_mx`
-     * Time: 0.001s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SELECT action_order, event_object_table, trigger_name, event_manipulation, event_object_table, definer, action_statement, action_timing FROM information_schema.triggers WHERE BINARY event_object_schema = 'mx' AND BINARY event_object_table = 't_mx' ORDER BY event_object_table
-     * Time: 0.014s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SELECT TABLE_NAME, PARTITION_NAME, SUBPARTITION_NAME, PARTITION_METHOD, SUBPARTITION_METHOD, PARTITION_EXPRESSION, SUBPARTITION_EXPRESSION, PARTITION_DESCRIPTION, PARTITION_COMMENT, NODEGROUP, TABLESPACE_NAME FROM information_schema.PARTITIONS WHERE NOT ISNULL(PARTITION_NAME) AND TABLE_SCHEMA LIKE 'mx' AND TABLE_NAME LIKE 't_mx' ORDER BY TABLE_NAME, PARTITION_NAME, PARTITION_ORDINAL_POSITION, SUBPARTITION_ORDINAL_POSITION
-     * Time: 0.015s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA
-     * Time: 0.001s
-     *
-     * [2021-12-12 14:28:17][localhost_3306][92][MARIADB]
-     * SELECT DISTINCT(TABLESPACE_NAME) AS TABLESPACE_NAME FROM information_schema.FILES WHERE NOT ISNULL(TABLESPACE_NAME) LIMIT 10000
-     * Time: 0.000s
-     */
 
 
 }

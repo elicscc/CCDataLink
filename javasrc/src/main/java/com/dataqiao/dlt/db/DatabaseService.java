@@ -1,10 +1,6 @@
 package com.dataqiao.dlt.db;
 
 import com.dataqiao.dlt.db.constant.DatabaseTypeEnum;
-import com.zaxxer.hikari.HikariDataSource;
-
-import java.sql.Driver;
-
 
 /**
  * <p>
@@ -42,60 +38,60 @@ public interface DatabaseService {
         return url;
     }
 
-
-    /**
-     * 初始化数据源
-     *
-     * @param driver   司机
-     * @param url      url
-     * @param username 用户名
-     * @param password 密码
-     * @return {@link HikariDataSource}
-     */
-    default HikariDataSource initDataSource(Driver driver, String url, String username, String password) {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setDriverClassName(driver.getClass().getName());
-        ds.setJdbcUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        ds.setMaximumPoolSize(3);
-        return ds;
-    }
-
-
-    /**
-     * 提交
-     */
-    default void commit() {
-    }
-
-    default Integer executeSql(String sqlStr) {
-        return null;
-    }
-
-    /**
-     * 关闭
-     */
-    void close();
-
-    /**
-     * init sql会话
-     */
-    default void initSqlSession() {
-    }
-
-    /**
-     * 获取数据库信息str
-     *
-     * @return {@link String}
-     */
-    String getDatabaseInfoStr();
-
-    default String getTableName() {
-        return null;
-    }
-
-    default String getIsEmpty() {
-        return null;
-    }
+//
+//    /**
+//     * 初始化数据源
+//     *
+//     * @param driver   司机
+//     * @param url      url
+//     * @param username 用户名
+//     * @param password 密码
+//     * @return {@link HikariDataSource}
+//     */
+//    default HikariDataSource initDataSource(Driver driver, String url, String username, String password) {
+//        HikariDataSource ds = new HikariDataSource();
+//        ds.setDriverClassName(driver.getClass().getName());
+//        ds.setJdbcUrl(url);
+//        ds.setUsername(username);
+//        ds.setPassword(password);
+//        ds.setMaximumPoolSize(3);
+//        return ds;
+//    }
+//
+//
+//    /**
+//     * 提交
+//     */
+//    default void commit() {
+//    }
+//
+//    default Integer executeSql(String sqlStr) {
+//        return null;
+//    }
+//
+//    /**
+//     * 关闭
+//     */
+//    void close();
+//
+//    /**
+//     * init sql会话
+//     */
+//    default void initSqlSession() {
+//    }
+//
+//    /**
+//     * 获取数据库信息str
+//     *
+//     * @return {@link String}
+//     */
+//    String getDatabaseInfoStr();
+//
+//    default String getTableName() {
+//        return null;
+//    }
+//
+//    default String getIsEmpty() {
+//        return null;
+//    }
 }
