@@ -1,4 +1,4 @@
-package com.dataqiao.dlt.db.util;
+package com.cc.dlt.db.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

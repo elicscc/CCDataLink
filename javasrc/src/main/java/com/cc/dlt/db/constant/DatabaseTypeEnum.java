@@ -1,4 +1,4 @@
-package com.dataqiao.dlt.db.constant;
+package com.cc.dlt.db.constant;
 
 import lombok.Getter;
 

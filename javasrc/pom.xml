@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.dataqiao</groupId>
+    <groupId>com.cc</groupId>
     <artifactId>dlt_db</artifactId>
     <version>1.0</version>
 
@@ -64,7 +64,7 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>dataqiao-repos</id>
+            <id>cc-repos</id>
             <url>https://maven.aliyun.com/repository/public</url>
             <releases>
                 <enabled>true</enabled>
@@ -73,7 +73,7 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>dataqiao-repos</id>
+            <id>cc-repos</id>
             <url>https://maven.aliyun.com/repository/public</url>
         </pluginRepository>
     </pluginRepositories>

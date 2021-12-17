@@ -1,4 +1,4 @@
-package com.dataqiao.dlt.db;
+package com.cc.dlt.db;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

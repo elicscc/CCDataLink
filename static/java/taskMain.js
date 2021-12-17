@@ -56,25 +56,25 @@ function exception (e) {
 }
 
 function test (arg) {
-  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.testConnectSync(JSON.stringify(arg)))
 }
 
 function getTables (arg) {
-  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.getTableNamesSync(JSON.stringify(arg)))
 }
 
 function getTableAndColumns (arg) {
-  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.getTableAndColumnsSync(JSON.stringify(arg)))
 }
 
 function exeSql (databaseInfoStr, sql, id) {
-  const TableInputService = java.import('com.dataqiao.dlt.db.TableInputService')
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.exeSqlSync(databaseInfoStr, sql, id))
 }

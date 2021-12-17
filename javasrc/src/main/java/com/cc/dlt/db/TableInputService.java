@@ -1,7 +1,8 @@
-package com.dataqiao.dlt.db;
+package com.cc.dlt.db;
 
-import com.dataqiao.dlt.db.constant.*;
-import com.dataqiao.dlt.db.util.JsonUtil;
+import com.cc.dlt.db.constant.*;
+import com.cc.dlt.db.constant.*;
+import com.cc.dlt.db.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
@@ -11,7 +12,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dataqiao.dlt.db.constant.DatabaseTypeEnum.Oracle;
+import static com.cc.dlt.db.constant.DatabaseTypeEnum.Oracle;
 
 /**
  * 表输入服务，执行sql语句，查询表，查询列

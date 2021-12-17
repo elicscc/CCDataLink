@@ -1,7 +1,7 @@
-package com.dataqiao.dlt.db.constant;
+package com.cc.dlt.db.constant;
 
 
-import com.dataqiao.dlt.db.util.JsonUtil;
+import com.cc.dlt.db.util.JsonUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
