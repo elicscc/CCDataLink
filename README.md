@@ -8,7 +8,7 @@ v1.0.0 预览版已发布
 
 包含 数据库连接 数据库sql执行 关键词提示等
 
-目前支持mysql mybatis oracle sqlserver
+目前支持mysql MariaDB oracle sqlserver
 
 其中oracle不支持多条sql同时执行
 
