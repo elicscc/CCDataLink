@@ -1217,14 +1217,14 @@
   integrity sha1-MbfKZAcSij0rvCf+LSGzRTl/YZc=
 
 "@types/node@*":
-  version "17.0.0"
-  resolved "https://registry.npmmirror.com/@types/node/download/@types/node-17.0.0.tgz#62797cee3b8b497f6547503b2312254d4fe3c2bb"
-  integrity sha512-eMhwJXc931Ihh4tkU+Y7GiLzT/y/DBNpNtr4yU9O2w3SYBsr9NaOPhQlLKRmoWtI54uNwuo0IOUFQjVOTZYRvw==
+  version "15.6.0"
+  resolved "https://registry.nlark.com/@types/node/download/@types/node-15.6.0.tgz?cache=0&sync_timestamp=1621593366540&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-15.6.0.tgz#f0ddca5a61e52627c9dcb771a6039d44694597bc"
+  integrity sha1-8N3KWmHlJifJ3LdxpgOdRGlFl7w=
 
-"@types/node@^14.6.2":
-  version "14.18.0"
-  resolved "https://registry.npmmirror.com/@types/node/download/@types/node-14.18.0.tgz#98df2397f6936bfbff4f089e40e06fa5dd88d32a"
-  integrity sha512-0GeIl2kmVMXEnx8tg1SlG6Gg8vkqirrW752KqolYo1PHevhhZN3bhJ67qHj+bQaINhX0Ra3TlWwRvMCd9iEfNQ==
+"@types/node@^12.0.12":
+  version "12.20.13"
+  resolved "https://registry.nlark.com/@types/node/download/@types/node-12.20.13.tgz?cache=0&sync_timestamp=1621593366540&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-12.20.13.tgz#e743bae112bd779ac9650f907197dd2caa7f0364"
+  integrity sha1-50O64RK9d5rJZQ+QcZfdLKp/A2Q=
 
 "@types/plist@^3.0.1":
   version "3.0.2"
@@ -4828,6 +4828,14 @@ file-entry-cache@^6.0.1:
   integrity sha1-IRst2WWcsDlLBz5zI6w8kz1SICc=
   dependencies:
     flat-cache "^3.0.4"
+
+file-loader@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.nlark.com/file-loader/download/file-loader-6.2.0.tgz#baef7cf8e1840df325e4390b4484879480eebe4d"
+  integrity sha1-uu98+OGEDfMl5DkLRISHlIDuvk0=
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^3.0.0"
 
 file-saver@^2.0.2:
   version "2.0.5"
