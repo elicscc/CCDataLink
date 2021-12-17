@@ -4829,13 +4829,13 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
-file-loader@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.nlark.com/file-loader/download/file-loader-6.2.0.tgz#baef7cf8e1840df325e4390b4484879480eebe4d"
-  integrity sha1-uu98+OGEDfMl5DkLRISHlIDuvk0=
+file-loader@^1.1.11:
+  version "1.1.11"
+  resolved "https://registry.nlark.com/file-loader/download/file-loader-1.1.11.tgz#6fe886449b0f2a936e43cabaac0cdbfb369506f8"
+  integrity sha1-b+iGRJsPKpNuQ8q6rAzb+zaVBvg=
   dependencies:
-    loader-utils "^2.0.0"
-    schema-utils "^3.0.0"
+    loader-utils "^1.0.2"
+    schema-utils "^0.4.5"
 
 file-saver@^2.0.2:
   version "2.0.5"
