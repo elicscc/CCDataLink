@@ -377,10 +377,11 @@ export default {
     getTreeList () {
       this.proOptions = store.get('databaseList') || []
     },
-    openTable (data, tableName) {
+    openTable () {
+      const data = this.proOptions.find(item => item.id === this.selectDatabaseId)
       const uid = this.getUUID()
       this.editorTabs.push({
-        title: tableName,
+        title: this.selectTables[0].connectName,
         name: uid,
         dataBaseInfo: data,
         close: true,
@@ -457,8 +458,7 @@ export default {
         } else if (this.treeClickCount > 1) {
           this.treeClickCount = 0
           // 双击事件处理
-          const i = this.proOptions.find(item => item.id === this.selectDatabaseId)
-          this.openTable(i, this.selectTables[0].connectName)
+          this.openTable()
         }
       }, 300)
     },
