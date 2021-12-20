@@ -44,6 +44,13 @@ function handelMessage ({ action, params, id }) {
         r = exception(e)
       }
       break
+    case 'getTablePage':
+      try {
+        r = getTablePage(params.databaseInfo, params.tableName, params.num, params.size)
+      } catch (e) {
+        r = exception(e)
+      }
+      break
   }
   process.send({ action, error: null, result: r, id })
 }
@@ -77,6 +84,12 @@ function exeSql (databaseInfoStr, sql, id) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.exeSqlSync(databaseInfoStr, sql, id))
+}
+
+function getTablePage (databaseInfoStr, tableName, num, size) {
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.getTablePageSync(databaseInfoStr, tableName, num, size))
 }
 
 process.on('message', handelMessage)

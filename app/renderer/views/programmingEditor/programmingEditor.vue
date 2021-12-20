@@ -96,7 +96,10 @@
                 </vue-drag-select>
               </div>
             </div>
-            <div v-else-if="item.tagType === -2">打开了表</div>
+            <table-list v-else-if="item.tagType === -2"
+                        :tableName="item.title"
+                        :databaseInfo="item.dataBaseInfo"
+            />
             <div v-else-if="item.tagType === -3">设计表</div>
             <monaco-editor
                 v-else
@@ -219,6 +222,7 @@
 
 <script>
 import MonacoEditor from '../../components/MonacoEditor'
+import TableList from '../../components/TableList'
 import mix from '../../mixin/mixin'
 import { remote } from 'electron'
 import Store from 'electron-store'
@@ -228,7 +232,7 @@ const son = remote.getGlobal('son')
 const store = new Store()
 
 export default {
-  components: { MonacoEditor },
+  components: { MonacoEditor, TableList },
   mixins: [mix],
   props: {
     type: {

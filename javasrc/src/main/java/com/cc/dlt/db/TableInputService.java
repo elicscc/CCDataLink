@@ -40,35 +40,6 @@ public class TableInputService {
     }
 
 
-    /**
-     * 表输入组件用
-     *
-     * @param databaseInfoStr
-     * @param sql
-     * @param fetchSize
-     * @return
-     * @throws SQLException
-     */
-    public TableInputDto selectTableInputData(String databaseInfoStr, String sql, Integer fetchSize) throws SQLException {
-        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
-        //oracle的sql需要支持分号
-        if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
-            sql = sql.trim();
-            sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
-        }
-        if (null == fetchSize) {
-            fetchSize = 2000;
-        }
-        Connection conn = getConnection(databaseInfo);
-        Statement sm = conn.createStatement();
-        sm.setFetchSize(fetchSize);
-        ResultSet resultSet = sm.executeQuery(sql);
-        TableInputDto d = new TableInputDto();
-        d.setResultSet(resultSet);
-        d.setConn(conn);
-        return d;
-    }
-
     public String getBlob(Blob blob) throws SQLException, IOException {
         if (null == blob) {
             return null;
@@ -85,6 +56,106 @@ public class TableInputService {
             return JsonResult.error(e.getMessage());
         }
     }
+
+
+    public String getTablePage(String databaseInfoStr, String tableName, Integer num, Integer size) {
+        try {
+            return JsonResult.success(getTablePageService(databaseInfoStr, tableName, num, size));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
+    }
+
+
+    public String getTableLastPage(String databaseInfoStr, String tableName, Integer size) {
+        try {
+            return JsonResult.success(getTableLastPageService(databaseInfoStr, tableName, size));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * SELECT * FROM `data_link_transfer_5`.`t_online_class_info` LIMIT 0,1000
+     * <p>
+     * SHOW CREATE TABLE `data_link_transfer_5`.`t_collect_log`
+     * <p>
+     * SHOW CREATE TABLE `data_link_transfer_5`.`t_online_class_info`
+     *
+     * @param databaseInfoStr
+     * @param tableName
+     * @param num
+     * @param size
+     * @return
+     */
+    public TableListVo getTablePageService(String databaseInfoStr, String tableName, Integer num, Integer size) {
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        List<Map<String, String>> dataList = new ArrayList<>();
+        List<Map<String, String>> columnInfo = new ArrayList<>();
+        String showColumnsSql, selectSql;
+        String databaseAndTableName = "`" + databaseInfo.getDatabaseName() + "`.`" + tableName + "`";
+        switch (databaseInfo.getDatabaseType()) {
+            case "1":
+            case "4":
+                showColumnsSql = "SHOW COLUMNS FROM " + databaseAndTableName;
+                selectSql = "SELECT * FROM " + databaseAndTableName + " LIMIT " + num + "," + size;
+                break;
+            default:
+                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+
+
+            Statement stmt = conn.createStatement();
+            stmt.setQueryTimeout(300);
+            stmt.execute(selectSql);
+            ResultSet rs = stmt.getResultSet();
+            ResultSetMetaData data = rs.getMetaData();
+            while (rs.next()) {
+                Map<String, String> v = new HashMap<>(16);
+                for (int j = 0; j < data.getColumnCount(); j++) {
+                    String value = data.getColumnTypeName(j + 1).toUpperCase().contains("IMAGE") || data.getColumnTypeName(j + 1).toUpperCase().contains("BLOB") ? getBlob(rs.getBlob(j + 1)) : rs.getString(j + 1);
+                    v.put(data.getColumnName(j + 1), value);
+                }
+                dataList.add(v);
+            }
+            stmt.execute(showColumnsSql);
+            rs = stmt.getResultSet();
+            data = rs.getMetaData();
+            while (rs.next()) {
+                Map<String, String> v = new HashMap<>(16);
+                for (int j = 0; j < data.getColumnCount(); j++) {
+                    String value = data.getColumnTypeName(j + 1).toUpperCase().contains("IMAGE") || data.getColumnTypeName(j + 1).toUpperCase().contains("BLOB") ? getBlob(rs.getBlob(j + 1)) : rs.getString(j + 1);
+                    v.put(data.getColumnName(j + 1), value);
+                }
+                columnInfo.add(v);
+            }
+
+            TableListVo vo = new TableListVo();
+            vo.setColumnInfo(columnInfo);
+            vo.setDataList(dataList);
+            return vo;
+        } catch (SQLTimeoutException e) {
+            throw new RuntimeException("执行sql异常，数据库超时>300s");
+        } catch (SQLException | IOException e) {
+            log.error("数据库报错：", e);
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+//    public static void main(String[] args) {
+//        String s="{\"connectName\":\"ss\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"mx\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"25ed3850-5be3-11ec-a23b-f10da0c8ac8e\",\"isConnected\":true}";
+//        TableInputService tableInputService = new TableInputService();
+//        tableInputService.getTablePageService(s,"ok",0,1000);
+//    }
+//
+    public String getTableLastPageService(String databaseInfoStr, String tableName, Integer size) {
+        return null;
+    }
+
 
     /**
      * 获取表
