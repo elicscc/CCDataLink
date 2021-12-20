@@ -107,8 +107,6 @@ public class TableInputService {
                 throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
         }
         try (Connection conn = getConnection(databaseInfo)) {
-
-
             Statement stmt = conn.createStatement();
             stmt.setQueryTimeout(300);
             stmt.execute(selectSql);

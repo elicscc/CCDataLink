@@ -1,6 +1,7 @@
 <template>
-  <div style="height: calc(100vh - 80px)">
+  <div ref="refs" style="height: calc(100vh - 70px);">
     <Table
+        :max-height="size"
         :columns="columns"
         :data="dataList"
         size="small"
@@ -29,6 +30,7 @@ export default {
 
   data () {
     return {
+      size: 0,
       columns: [],
       dataList: []
     }
@@ -43,16 +45,19 @@ export default {
     this.columns = c.map(i => {
       return {
         title: i.COLUMN_NAME,
-        key: i.COLUMN_NAME
+        key: i.COLUMN_NAME,
+        width: 300,
+        resizable: true,
+        ellipsis: true,
+        tooltip: true
       }
     })
+    console.log(this.$refs)
+    console.log(this.$refs.refs.offsetHeight)
+    this.size = this.$refs.refs.offsetHeight - 70
     this.dataList = res.result.data.dataList
   },
 
   methods: {}
 }
 </script>
-
-<style scoped>
-
-</style>

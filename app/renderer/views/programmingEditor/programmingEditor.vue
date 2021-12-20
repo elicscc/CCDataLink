@@ -343,7 +343,6 @@ export default {
       }
       const item = this.proOptions.find(e => e.id === this.selectDatabaseId)
       const res = await son.send('getTableAndColumns', item)
-      // console.log(res.result)
       if (res && res.result.code === 20000) {
         const uid = this.getUUID()
         this.editorTabs.push({
