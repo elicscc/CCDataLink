@@ -1,6 +1,11 @@
 <template>
-  <div>
-    打开了表
+  <div style="height: calc(100vh - 80px)">
+    <Table
+        :columns="columns"
+        :data="dataList"
+        size="small"
+        border
+    ></Table>
   </div>
 </template>
 
@@ -24,7 +29,8 @@ export default {
 
   data () {
     return {
-
+      columns: [],
+      dataList: []
     }
   },
 
@@ -33,6 +39,14 @@ export default {
     console.log(database)
     const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: 0, size: 1000 })
     console.log(res.result)
+    const c = res.result.data.columnInfo
+    this.columns = c.map(i => {
+      return {
+        title: i.COLUMN_NAME,
+        key: i.COLUMN_NAME
+      }
+    })
+    this.dataList = res.result.data.dataList
   },
 
   methods: {}
