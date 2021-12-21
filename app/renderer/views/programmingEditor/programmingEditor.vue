@@ -89,7 +89,7 @@
                   <template v-for="(item, index) in tableList">
                     <drag-select-option :key="item.id" :value="item" :item-index="index">
                       <div class="item-self">
-                        <el-tag style="width: 100%;" :key="item.connectName" @click="tableEvent(item.connectName)">{{ item.connectName }}</el-tag>
+                        <el-tag style="width: 100%;" :key="item.id" @click="tableEvent(item.connectName)">{{ item.connectName }}</el-tag>
                       </div>
                     </drag-select-option>
                   </template>
@@ -381,16 +381,18 @@ export default {
       this.proOptions = store.get('databaseList') || []
     },
     openTable () {
-      const data = this.proOptions.find(item => item.id === this.selectDatabaseId)
-      const uid = this.getUUID()
-      this.editorTabs.push({
-        title: this.selectTables[0].connectName,
-        name: uid,
-        dataBaseInfo: data,
-        close: true,
-        tagType: -2
-      })
-      this.currentTabsName = uid
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      const i = this.editorTabs.findIndex(tab => tab.name === this.selectTables[0].id)
+      if (i === -1) {
+        this.editorTabs.push({
+          title: this.selectTables[0].connectName,
+          name: this.selectTables[0].id,
+          dataBaseInfo: d,
+          close: true,
+          tagType: -2
+        })
+      }
+      this.currentTabsName = this.selectTables[0].id
     },
     designTable () {
       const uid = this.getUUID()
