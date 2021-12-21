@@ -581,14 +581,27 @@ export default {
         } else if (this.treeClickCount > 1) {
           this.treeClickCount = 0
           // 双击事件处理
-          if (e.expanded) {
-            if (!data.isConnected) {
-              this.refreshNode(data.id)
-            } else {
-              e.expanded = false
-            }
+          if (data.type === 'table') {
+            const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+            const uid = this.getUUID()
+            this.editorTabs.push({
+              title: data.connectName,
+              name: uid,
+              dataBaseInfo: d,
+              close: true,
+              tagType: -2
+            })
+            this.currentTabsName = uid
           } else {
-            this.refreshNode(data.id)
+            if (e.expanded) {
+              if (!data.isConnected) {
+                this.refreshNode(data.id)
+              } else {
+                e.expanded = false
+              }
+            } else {
+              this.refreshNode(data.id)
+            }
           }
         }
       }, 300)
