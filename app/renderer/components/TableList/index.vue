@@ -50,9 +50,17 @@ export default {
     console.log(res.result)
     const c = res.result.data.columnInfo
     this.columns = c.map(i => {
+      let t, k
+      if (res.result.data.databaseType === '2') {
+        t = i.name
+        k = i.name
+      } else {
+        t = i.COLUMN_NAME
+        k = i.COLUMN_NAME
+      }
       return {
-        title: i.COLUMN_NAME,
-        key: i.COLUMN_NAME,
+        title: t,
+        key: k,
         width: 300,
         resizable: true,
         ellipsis: true,

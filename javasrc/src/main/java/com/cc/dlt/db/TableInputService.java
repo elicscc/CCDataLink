@@ -1,7 +1,6 @@
 package com.cc.dlt.db;
 
 import com.cc.dlt.db.constant.*;
-import com.cc.dlt.db.constant.*;
 import com.cc.dlt.db.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -96,12 +95,21 @@ public class TableInputService {
         List<Map<String, String>> dataList = new ArrayList<>();
         List<Map<String, String>> columnInfo = new ArrayList<>();
         String showColumnsSql, selectSql;
-        String databaseAndTableName = "`" + databaseInfo.getDatabaseName() + "`.`" + tableName + "`";
         switch (databaseInfo.getDatabaseType()) {
             case "1":
             case "4":
+                String databaseAndTableName = "`" + databaseInfo.getDatabaseName() + "`.`" + tableName + "`";
                 showColumnsSql = "SHOW COLUMNS FROM " + databaseAndTableName;
                 selectSql = "SELECT * FROM " + databaseAndTableName + " LIMIT " + num + "," + size;
+                break;
+            case "2":
+                selectSql = "SELECT *, 0 AS _NAV_ORDER_F_ FROM " + tableName + " ORDER BY _NAV_ORDER_F_ OFFSET " + num + " ROWS FETCH NEXT " + size + " ROWS ONLY";
+                showColumnsSql = "SELECT c.name, c.is_nullable, c.is_identity, CAST(CASE WHEN p.column_id IS NULL THEN 0 ELSE 1 END AS bit) AS is_primary_key, t.name system_type_name FROM sys.all_columns c LEFT JOIN (SELECT i.object_id, ic.column_id FROM sys.indexes i LEFT JOIN sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id WHERE i.is_primary_key = 1) p ON p.object_id = c.object_id AND p.column_id = c.column_id LEFT JOIN sys.systypes t ON c.system_type_id = t.xtype AND c.user_type_id = t.xusertype WHERE c.object_id = (SELECT o.object_id FROM sys.all_objects o  WHERE  o.name = N'" + tableName + "' AND o.type = 'U')";
+                break;
+            case "3":
+                String dt = "\"" + databaseInfo.getUsername().toUpperCase() + "\".\"" + tableName + "\"";
+                selectSql = "SELECT * FROM (SELECT \"NAVICAT_TABLE\".*, ROWNUM \"NAVICAT_ROWNUM\" FROM (SELECT " + dt + ".*,ROWID \"NAVICAT_ROWID\" FROM " + dt + ") \"NAVICAT_TABLE\" WHERE ROWNUM <= " + size + ") WHERE \"NAVICAT_ROWNUM\" > " + num;
+                showColumnsSql = "SELECT C.COLUMN_NAME, C.DATA_TYPE, C.DATA_TYPE_OWNER, C.DATA_LENGTH, C.DATA_PRECISION, C.DATA_SCALE, C.NULLABLE, C.COLUMN_ID, C.DATA_DEFAULT, C.CHAR_LENGTH, C.CHAR_USED, COM.COMMENTS FROM \"SYS\".\"ALL_TAB_COLUMNS\" C, \"SYS\".\"ALL_COL_COMMENTS\" COM WHERE COM.OWNER(+) = C.OWNER AND COM.TABLE_NAME(+) = C.TABLE_NAME AND COM.COLUMN_NAME(+) = C.COLUMN_NAME AND C.OWNER = '" + databaseInfo.getUsername().toUpperCase() + "' AND C.TABLE_NAME = '" + tableName + "' ORDER BY C.TABLE_NAME, C.COLUMN_ID ASC";
                 break;
             default:
                 throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
@@ -134,6 +142,7 @@ public class TableInputService {
 
             TableListVo vo = new TableListVo();
             vo.setColumnInfo(columnInfo);
+            vo.setDatabaseType(databaseInfo.getDatabaseType());
             vo.setDataList(dataList);
             return vo;
         } catch (SQLTimeoutException e) {
@@ -144,12 +153,12 @@ public class TableInputService {
         }
     }
 
-//    public static void main(String[] args) {
-//        String s="{\"connectName\":\"ss\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"mx\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"25ed3850-5be3-11ec-a23b-f10da0c8ac8e\",\"isConnected\":true}";
-//        TableInputService tableInputService = new TableInputService();
-//        tableInputService.getTablePageService(s,"ok",0,1000);
-//    }
-//
+    public static void main(String[] args) {
+        String s = "{\"connectName\":\"oracle\",\"databaseType\":\"3\",\"databaseAddress\":\"172.16.10.70\",\"databaseName\":\"center\",\"port\":\"1521\",\"username\":\"sjz\",\"password\":\"sjz@2020\",\"databaseDescription\":\"\",\"id\":\"4ce41570-5d6c-11ec-be8f-67031276b348\",\"isConnected\":true}";
+        TableInputService tableInputService = new TableInputService();
+        tableInputService.getTablePageService(s, "1_test", 0, 1000);
+    }
+
     public String getTableLastPageService(String databaseInfoStr, String tableName, Integer size) {
         return null;
     }

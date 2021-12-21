@@ -17,6 +17,8 @@ public class TableListVo implements Serializable {
 
     private Integer count;
 
+    private String databaseType;
+
     private List<Map<String, String>> dataList;
 
     private List<Map<String, String>> columnInfo;
