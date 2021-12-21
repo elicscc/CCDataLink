@@ -1,6 +1,6 @@
 {
   "name": "cc_data_link",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "cc",
   "license": "UNLICENSED",
   "description": "CC数据库连接工具",
