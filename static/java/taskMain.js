@@ -51,6 +51,13 @@ function handelMessage ({ action, params, id }) {
         r = exception(e)
       }
       break
+    case 'getTableCount':
+      try {
+        r = getTableCount(params.databaseInfo, params.tableName)
+      } catch (e) {
+        r = exception(e)
+      }
+      break
   }
   process.send({ action, error: null, result: r, id })
 }
@@ -90,6 +97,12 @@ function getTablePage (databaseInfoStr, tableName, num, size) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.getTablePageSync(databaseInfoStr, tableName, num, size))
+}
+
+function getTableCount (databaseInfoStr, tableName) {
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.getTableCountSync(databaseInfoStr, tableName))
 }
 
 process.on('message', handelMessage)

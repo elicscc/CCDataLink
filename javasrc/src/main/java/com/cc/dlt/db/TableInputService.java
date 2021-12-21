@@ -66,9 +66,9 @@ public class TableInputService {
     }
 
 
-    public String getTableLastPage(String databaseInfoStr, String tableName, Integer size) {
+    public String getTableCount(String databaseInfoStr, String tableName) {
         try {
-            return JsonResult.success(getTableLastPageService(databaseInfoStr, tableName, size));
+            return JsonResult.success(getTableCountService(databaseInfoStr, tableName));
         } catch (RuntimeException e) {
             return JsonResult.error(e.getMessage());
         }
@@ -156,11 +156,39 @@ public class TableInputService {
     public static void main(String[] args) {
         String s = "{\"connectName\":\"oracle\",\"databaseType\":\"3\",\"databaseAddress\":\"172.16.10.70\",\"databaseName\":\"center\",\"port\":\"1521\",\"username\":\"sjz\",\"password\":\"sjz@2020\",\"databaseDescription\":\"\",\"id\":\"4ce41570-5d6c-11ec-be8f-67031276b348\",\"isConnected\":true}";
         TableInputService tableInputService = new TableInputService();
-        tableInputService.getTablePageService(s, "1_test", 0, 1000);
+        tableInputService.getTableCountService(s, "1_test");
     }
 
-    public String getTableLastPageService(String databaseInfoStr, String tableName, Integer size) {
-        return null;
+    public Integer getTableCountService(String databaseInfoStr, String tableName) {
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        String countSql;
+        switch (databaseInfo.getDatabaseType()) {
+            case "1":
+            case "4":
+                String databaseAndTableName = "`" + databaseInfo.getDatabaseName() + "`.`" + tableName + "`";
+                countSql = "SELECT count(*) FROM " + databaseAndTableName;
+                break;
+            case "2":
+                countSql = "SELECT count(*) FROM " + tableName;
+                break;
+            case "3":
+                String dt = "\"" + databaseInfo.getUsername().toUpperCase() + "\".\"" + tableName + "\"";
+                countSql = "SELECT count(*) FROM " + dt;
+                break;
+            default:
+                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+            PreparedStatement ps = conn.prepareStatement(countSql);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException("获取表信息失败" + e.getMessage());
+        }
     }
 
 
