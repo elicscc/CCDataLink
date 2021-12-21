@@ -1,6 +1,7 @@
 <template>
-  <div ref="refs" style="height: calc(100vh - 70px);">
+  <div ref="refs" style="height: 100vh;">
     <Table
+        :loading="loading"
         :max-height="size"
         :columns="columns"
         :data="dataList"
@@ -30,6 +31,7 @@ export default {
 
   data () {
     return {
+      loading: true,
       size: 0,
       columns: [],
       dataList: []
@@ -37,6 +39,11 @@ export default {
   },
 
   async  created () {
+    // 编辑器随窗口自适应
+    const self = this
+    window.addEventListener('resize', function () {
+      self.size = self.$refs.refs.offsetHeight - 70
+    })
     const database = JSON.stringify(this.databaseInfo)
     console.log(database)
     const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: 0, size: 1000 })
@@ -52,10 +59,9 @@ export default {
         tooltip: true
       }
     })
-    console.log(this.$refs)
-    console.log(this.$refs.refs.offsetHeight)
     this.size = this.$refs.refs.offsetHeight - 70
     this.dataList = res.result.data.dataList
+    this.loading = false
   },
 
   methods: {}
