@@ -583,15 +583,17 @@ export default {
           // 双击事件处理
           if (data.type === 'table') {
             const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
-            const uid = this.getUUID()
-            this.editorTabs.push({
-              title: data.connectName,
-              name: uid,
-              dataBaseInfo: d,
-              close: true,
-              tagType: -2
-            })
-            this.currentTabsName = uid
+            const i = this.editorTabs.findIndex(tab => tab.name === data.id)
+            if (i === -1) {
+              this.editorTabs.push({
+                title: data.connectName,
+                name: data.id,
+                dataBaseInfo: d,
+                close: true,
+                tagType: -2
+              })
+            }
+            this.currentTabsName = data.id
           } else {
             if (e.expanded) {
               if (!data.isConnected) {
