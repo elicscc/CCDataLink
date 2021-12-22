@@ -153,11 +153,11 @@ public class TableInputService {
         }
     }
 
-    public static void main(String[] args) {
-        String s = "{\"connectName\":\"data_link_transfer_5\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"data_link_transfer_5\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"8843d380-5cc2-11ec-83c2-0f44d8c9b576\",\"isConnected\":true}";
-        TableInputService tableInputService = new TableInputService();
-        tableInputService.executeSql(s, "SELECT * FROM t_collect_log",null);
-    }
+//    public static void main(String[] args) {
+//        String s = "{\"connectName\":\"data_link_transfer_5\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"data_link_transfer_5\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"8843d380-5cc2-11ec-83c2-0f44d8c9b576\",\"isConnected\":true}";
+//        TableInputService tableInputService = new TableInputService();
+//        tableInputService.executeSql(s, "SELECT * FROM t_collect_log",null);
+//    }
 
     public Integer getTableCountService(String databaseInfoStr, String tableName) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);

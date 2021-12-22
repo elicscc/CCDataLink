@@ -364,12 +364,11 @@ export default {
     // 执行transform,并设置定时任务去获取日志
     async run () {
       this.sqlResultList = {}
-      const self = this
       this.runComplete = false
       this.pythonResult = null
       let transformCode = this.codeCopy || this.code
-      const value = self.editor.getValue()
-      const selection = self.editor.getSelection()
+      const value = this.editor.getValue()
+      const selection = this.editor.getSelection()
       const startPosition = selection.getStartPosition()
       const endPosition = selection.getEndPosition()
       if (!startPosition.equals(endPosition)) {
@@ -391,18 +390,13 @@ export default {
       }
       const uuid = this.getUUID()
       const database = JSON.stringify(this.dataBaseInfo)
-      console.log(database)
+      // console.log(database)
       const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
       // console.log(res.result)
       this.runComplete = true
       this.runResult = true
-      if (res && res.result.code === 20000) {
-        self.sqlResultList = res.result.data
-        this.sqlSize = this.$refs.getheight.offsetHeight - 70
-      } else {
-        self.sqlResultList = { errorMessage: res.result.message }
-        this.sqlSize = this.$refs.getheight.offsetHeight - 70
-      }
+      this.sqlResultList = res.result.data
+      this.sqlSize = this.$refs.getheight.offsetHeight - 70
     },
     stop () {
       this.$message.warning('未开发')

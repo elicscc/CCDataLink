@@ -27,7 +27,7 @@
         <Table
             :max-height="size"
             :columns="sqlResult.columns"
-            :data="sqlResult.dataList"
+            :data="sqlResult.list"
             size="small"
             border
         ></Table>
@@ -63,10 +63,11 @@ export default {
     'sqlResultList.id' (v) {
       // const resultSet = JSON.parse(JSON.stringify(this.sqlResultList.resultSet))
       this.convertResultSet(this.sqlResultList.resultSet)
-      if (this.sqlResultList.resultSet && this.sqlResultList.resultSet.length > 0) {
+      if (this.resultSet && this.resultSet.length > 0) {
         this.tab = '结果1'
       }
       if (this.sqlResultList.errorMessage) {
+        this.resultSet = []
         this.tab = '-1'
       }
     }
@@ -74,9 +75,12 @@ export default {
 
   methods: {
     convertResultSet (resultSet) {
+      if (this.sqlResultList.errorMessage) {
+        return
+      }
       for (let i = 0; i < resultSet.length; i++) {
         resultSet[i].count = resultSet[i].dataList.length
-        resultSet[i].dataList = resultSet[i].dataList.slice(0, 20)
+        resultSet[i].list = resultSet[i].dataList.slice(0, 20)
       }
       this.resultSet = resultSet
     //  console.log(this.resultSet)
