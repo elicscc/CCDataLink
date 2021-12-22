@@ -61,8 +61,8 @@ export default {
 
   watch: {
     'sqlResultList.id' (v) {
-      const resultSet = JSON.parse(JSON.stringify(this.sqlResultList.resultSet))
-      this.convertResultSet(resultSet)
+      // const resultSet = JSON.parse(JSON.stringify(this.sqlResultList.resultSet))
+      this.convertResultSet(this.sqlResultList.resultSet)
       if (this.sqlResultList.resultSet && this.sqlResultList.resultSet.length > 0) {
         this.tab = '结果1'
       }
