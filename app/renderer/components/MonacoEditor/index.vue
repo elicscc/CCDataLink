@@ -1,87 +1,78 @@
 <template>
   <div
-    @keydown.ctrl.shift="keyHandler"
-    @keyup.110="keyHandler"
-    @keyup.190="keyHandler"
+      @keydown.ctrl.shift="keyHandler"
+      @keyup.110="keyHandler"
+      @keyup.190="keyHandler"
   >
     <div style="padding-left:10px">
-      <span style="padding-right:10px">当前数据库连接：{{dataBaseInfo.connectName}}</span>
+      <span style="padding-right:10px">当前数据库连接：{{ dataBaseInfo.connectName }}</span>
       <el-button type="success" :disabled="!runComplete" size="small" style="margin-left:10px" @click="run()">
-        <svg-icon icon-class="run" />
+        <svg-icon icon-class="run"/>
         运行
       </el-button>
       <el-button type="success" size="small" @click="stop()">
-        <svg-icon icon-class="stop" />
+        <svg-icon icon-class="stop"/>
         停止
       </el-button>
-      <el-button  type="success" size="small" @click="save()">
-        <svg-icon icon-class="skill" />
+      <el-button type="success" size="small" @click="save()">
+        <svg-icon icon-class="skill"/>
         保存
       </el-button>
       <el-button type="success" :disabled="!runComplete" size="small" @click="formatSql()">
-        <svg-icon icon-class="format" />
+        <svg-icon icon-class="format"/>
         格式化
       </el-button>
       <span class="theme" style="float:right;width: 120px">
         <el-select :value="theme" size="small" placeholder="请选择主题" @change="setTheme">
           <el-option
-            v-for="item in themeOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+              v-for="item in themeOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
       </span>
     </div>
-    <split-pane
-      split="horizontal"
-      style="height: calc(100vh - 100px);margin-top: 15px;margin-bottom: 5px;"
-      @resize="reInitEditor"
-    >
-      <template slot="paneL">
-        <div
+    <div style="height: calc(100vh - 100px);padding :5px;">
+      <div
           ref="container"
-          style="height: 100%;"
-        />
-      </template>
-      <template slot="paneR">
-        <div ref="getheight" style="height: 100%;">
-          <Tabs type="card" :value="tab" :animated="false" v-if="sqlResultList.id">
-            <TabPane
-                v-show="sqlResultList.sql!=null"
-                key="-1"
-                label="message"
-                name="-1"
-            >
-              <div v-if="sqlResultList.errorMessage">
-                sql: {{ sqlResultList.sql }}<br/>
-                报错：{{ sqlResultList.errorMessage }}
-              </div>
-              <div v-else>
-                sql: {{ sqlResultList.sql }}<br/>
-                <span v-show="sqlResultList.count">影响行：{{ sqlResultList.count }}<br/></span>
-                time：{{ sqlResultList.time }}<br/>
-              </div>
-            </TabPane>
-            <TabPane
-                v-for="(sqlResult, index) in resultSet"
-                :key="index"
-                :label="'结果' + (index+1)"
-                :name="'结果' + (index+1)"
-            >
-              <div>总条数： {{ sqlResult.count }}(仅展示前20条) 点此展示全部</div>
-              <Table
-                  :max-height="sqlSize"
-                  :columns="sqlResult.columns"
-                  :data="sqlResult.list"
-                  size="small"
-                  border
-              ></Table>
-            </TabPane>
-          </Tabs>
-        </div>
-      </template>
-    </split-pane>
+          style="height: 60%; cursor: col-resize;"
+      />
+      <div ref="sqlLog" style="height: 40%; cursor: col-resize;">
+        <Tabs type="card" :value="tab" :animated="false" >
+          <TabPane
+              v-show="sqlResultList.sql!=null"
+              key="-1"
+              label="message"
+              name="-1"
+          >
+            <div v-if="sqlResultList.errorMessage">
+              sql: {{ sqlResultList.sql }}<br/>
+              报错：{{ sqlResultList.errorMessage }}
+            </div>
+            <div v-else>
+              sql: {{ sqlResultList.sql }}<br/>
+              <span v-show="sqlResultList.count">影响行：{{ sqlResultList.count }}<br/></span>
+              time：{{ sqlResultList.time }}<br/>
+            </div>
+          </TabPane>
+          <TabPane
+              v-for="(sqlResult, index) in resultSet"
+              :key="index"
+              :label="'结果' + (index+1)"
+              :name="'结果' + (index+1)"
+          >
+            <div>总条数： {{ sqlResult.count }}(仅展示前20条) 点此展示全部</div>
+            <Table
+                :columns="sqlResult.columns"
+                :data="sqlResult.list"
+                size="small"
+                border
+            ></Table>
+          </TabPane>
+        </Tabs>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -91,6 +82,7 @@ import SplitPane from 'vue-splitpane'
 import min from '../../mixin/mixin'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
 import { remote } from 'electron'
+
 const son = remote.getGlobal('son')
 
 // import getSuggestions from '../../components/MonacoEditor/utils/suggestions'
@@ -137,6 +129,8 @@ export default {
   },
   data () {
     return {
+      upDom: null,
+      clientStartX: 0,
       tab: null,
       resultSet: [],
       // tableColumn is look like this
@@ -217,6 +211,19 @@ export default {
     // }
   },
   mounted () {
+    this.upDom = this.$refs.container
+    const moveDom = this.$refs.sqlLog
+    moveDom.onmousedown = e => {
+      this.clientStartX = e.clientX
+      e.preventDefault()
+      document.onmousemove = e => {
+        this.moveHandle(e.clientX, this.upDom)
+      }
+      document.onmouseup = e => {
+        document.onmouseup = null
+        document.onmousemove = null
+      }
+    }
     this.tableColumn = this.type
     this.languageCopy = this.language
     this.codeCopy = this.code
@@ -416,7 +423,6 @@ export default {
       // console.log(res.result)
       this.runComplete = true
       this.sqlResultList = res.result.data
-      this.sqlSize = this.$refs.getheight.offsetHeight - 70
       this.convertResultSet(this.sqlResultList.resultSet)
       if (this.resultSet && this.resultSet.length > 0) {
         this.tab = '结果1'
@@ -448,6 +454,19 @@ export default {
       monaco.editor.setTheme(currentTheme)
       this.$store.dispatch('monaco/setMonacoTheme', currentTheme)
     },
+    moveHandle (nowClientX, upDom) {
+      const computedX = nowClientX - this.clientStartX
+      const leftBoxWidth = parseInt(upDom.style.width)
+      let changeWidth = leftBoxWidth + computedX
+      if (changeWidth < 280) {
+        changeWidth = 280
+      }
+      if (changeWidth > 400) {
+        changeWidth = 400
+      }
+      upDom.style.width = changeWidth + 'px'
+      this.clientStartX = nowClientX
+    },
     reInitEditor () {
       this.editor.dispose()
       this.initEditor()
@@ -461,12 +480,14 @@ export default {
   margin-right: 15px;
   margin-left: 15px;
 }
-::v-deep .splitter-pane-resizer.horizontal{
-    border-top: 2px solid #fff;
-opacity:unset;
-    height: 0;
+
+::v-deep .splitter-pane-resizer.horizontal {
+  border-top: 2px solid #fff;
+  opacity: unset;
+  height: 0;
 }
-.el-tabs__item{
+
+.el-tabs__item {
   color: #dfe4ed;
 }
 </style>
