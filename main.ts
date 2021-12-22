@@ -10,7 +10,6 @@ declare global {
     namespace NodeJS {
         interface Global {
             mainWindow: BrowserWindow,
-            BASE_API: string,
             son:any
         }
     }
