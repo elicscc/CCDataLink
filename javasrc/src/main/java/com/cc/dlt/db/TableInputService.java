@@ -153,11 +153,11 @@ public class TableInputService {
         }
     }
 
-//    public static void main(String[] args) {
-//        String s = "{\"connectName\":\"oracle\",\"databaseType\":\"3\",\"databaseAddress\":\"172.16.10.70\",\"databaseName\":\"center\",\"port\":\"1521\",\"username\":\"sjz\",\"password\":\"sjz@2020\",\"databaseDescription\":\"\",\"id\":\"4ce41570-5d6c-11ec-be8f-67031276b348\",\"isConnected\":true}";
-//        TableInputService tableInputService = new TableInputService();
-//        tableInputService.getTableCountService(s, "1_test");
-//    }
+    public static void main(String[] args) {
+        String s = "{\"connectName\":\"data_link_transfer_5\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"data_link_transfer_5\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"8843d380-5cc2-11ec-83c2-0f44d8c9b576\",\"isConnected\":true}";
+        TableInputService tableInputService = new TableInputService();
+        tableInputService.executeSql(s, "SELECT * FROM t_collect_log",null);
+    }
 
     public Integer getTableCountService(String databaseInfoStr, String tableName) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);

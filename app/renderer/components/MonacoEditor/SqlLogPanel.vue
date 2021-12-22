@@ -79,7 +79,7 @@ export default {
         resultSet[i].dataList = resultSet[i].dataList.slice(0, 20)
       }
       this.resultSet = resultSet
-      console.log(this.resultSet)
+    //  console.log(this.resultSet)
     }
   }
 }

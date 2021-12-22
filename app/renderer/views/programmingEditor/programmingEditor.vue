@@ -4,7 +4,6 @@
       <!--左侧-->
       <el-col :span="5" :xs="24">
         <div style="margin-top:5px">
-
           <el-row :gutter="3">
             <el-col :span="1.5">
               <el-button
@@ -22,14 +21,6 @@
                   @click="query"
               />
             </el-col>
-            <!--            <el-col :span="1.5">-->
-            <!--              <el-button-->
-            <!--                  icon="el-icon-refresh-right"-->
-            <!--                  size="mini"-->
-            <!--                  type="primary"-->
-            <!--                  @click="getTreeList"-->
-            <!--              />-->
-            <!--            </el-col>-->
           </el-row>
         </div>
         <div class="head-container">
@@ -70,10 +61,12 @@
               :name="item.name"
               :closable="item.close"
           >
-            <div  v-if="item.key === -1" style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
+            <div v-if="item.key === -1" style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
               <el-row style="margin-left: 5px">
-                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="openTable">打开表</el-button>
-                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表</el-button>
+                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="openTable">打开表
+                </el-button>
+                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表
+                </el-button>
                 <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新增表</el-button>
               </el-row>
               <div class="result-box">
@@ -89,7 +82,9 @@
                   <template v-for="(item, index) in tableList">
                     <drag-select-option :key="item.id" :value="item" :item-index="index">
                       <div class="item-self">
-                        <el-tag style="width: 100%;" :key="item.id" @click="tableEvent(item.connectName)">{{ item.connectName }}</el-tag>
+                        <el-tag style="width: 100%;" :key="item.id" @click="tableEvent(item.connectName)">
+                          {{ item.connectName }}
+                        </el-tag>
                       </div>
                     </drag-select-option>
                   </template>
@@ -100,7 +95,7 @@
                         :tableName="item.title"
                         :databaseInfo="item.dataBaseInfo"
             />
-            <div v-else-if="item.tagType === -3">设计表</div>
+            <design-table v-else-if="item.tagType === -3"/>
             <monaco-editor
                 v-else
                 :id="item.name"
@@ -223,6 +218,7 @@
 <script>
 import MonacoEditor from '../../components/MonacoEditor'
 import TableList from '../../components/TableList'
+import DesignTable from '../../components/DesignTable'
 import mix from '../../mixin/mixin'
 import { remote } from 'electron'
 import Store from 'electron-store'
@@ -232,7 +228,7 @@ const son = remote.getGlobal('son')
 const store = new Store()
 
 export default {
-  components: { MonacoEditor, TableList },
+  components: { MonacoEditor, TableList, DesignTable },
   mixins: [mix],
   props: {
     type: {
@@ -651,7 +647,7 @@ export default {
 }
 
 .result-box {
-margin-top: 10px;
+  margin-top: 10px;
   width: 100%;
   height: 100%;
   transition: all 0.3s;

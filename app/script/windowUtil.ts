@@ -1,11 +1,10 @@
-import { BrowserWindow, Menu } from 'electron'
+import { BrowserWindow } from 'electron'
 
 import path from 'path'
 import stringUtil from '../utils/stringUtil'
 
 export default class WindowUtil {
   public static createMainWindow (): void {
-    // Menu.setApplicationMenu(null)
     global.mainWindow = new BrowserWindow({
       icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
       useContentSize: true,
@@ -29,9 +28,6 @@ export default class WindowUtil {
     process.env.NODE_ENV === 'development'
       ? global.mainWindow.loadURL('http://localhost:9080')
       : global.mainWindow.loadFile(`${__dirname}/index.html`)
-    // global.mainWindow.once('ready-to-show', function () {
-    //   global.mainWindow.show() // 初始化后再显示
-    // })
     global.mainWindow.on('closed', function () {
       global.mainWindow = null
     })
