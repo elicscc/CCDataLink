@@ -46,11 +46,39 @@
       </template>
       <template slot="paneR">
         <div ref="getheight" style="height: 100%;">
-          <sql-log-panel
-            style="height:98%;"
-            :size="sqlSize"
-            :sqlResultList="sqlResultList"
-          />
+          <Tabs type="card" :value="tab" :animated="false" v-if="sqlResultList.id">
+            <TabPane
+                v-show="sqlResultList.sql!=null"
+                key="-1"
+                label="message"
+                name="-1"
+            >
+              <div v-if="sqlResultList.errorMessage">
+                sql: {{ sqlResultList.sql }}<br/>
+                报错：{{ sqlResultList.errorMessage }}
+              </div>
+              <div v-else>
+                sql: {{ sqlResultList.sql }}<br/>
+                <span v-show="sqlResultList.count">影响行：{{ sqlResultList.count }}<br/></span>
+                time：{{ sqlResultList.time }}<br/>
+              </div>
+            </TabPane>
+            <TabPane
+                v-for="(sqlResult, index) in resultSet"
+                :key="index"
+                :label="'结果' + (index+1)"
+                :name="'结果' + (index+1)"
+            >
+              <div>总条数： {{ sqlResult.count }}(仅展示前20条) 点此展示全部</div>
+              <Table
+                  :max-height="sqlSize"
+                  :columns="sqlResult.columns"
+                  :data="sqlResult.list"
+                  size="small"
+                  border
+              ></Table>
+            </TabPane>
+          </Tabs>
         </div>
       </template>
     </split-pane>
@@ -58,9 +86,8 @@
 </template>
 <script>
 import * as monaco from 'monaco-editor'
-import SqlLogPanel from './SqlLogPanel'
 import SplitPane from 'vue-splitpane'
-import formatter from 'sql-formatter'
+// import formatter from 'sql-formatter'
 import min from '../../mixin/mixin'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
 import { remote } from 'electron'
@@ -70,7 +97,7 @@ const son = remote.getGlobal('son')
 
 export default {
   name: 'MyMonacoEditor',
-  components: { SplitPane, SqlLogPanel },
+  components: { SplitPane },
   mixins: [min],
   props: {
     insertTableName: {
@@ -110,6 +137,8 @@ export default {
   },
   data () {
     return {
+      tab: null,
+      resultSet: [],
       // tableColumn is look like this
       // tableColumn: {
       //   t1: ['column1_t1_1', 'column1_t1_2'],
@@ -127,31 +156,13 @@ export default {
           label: '黑色主题'
         }
       ],
-      languageOption: [
-
-        {
-          value: 'sql',
-          label: 'SQL'
-        }
-
-      ],
-      // 循环获取日志 定时任务 的引用
-      interval: null,
       editor: null,
       languageCopy: 'sql',
       sqlResultList: {},
-      pythonResult: null,
       pythonConsoleSize: -1,
       runResultLogType: null,
-      asyncResult: {
-        uniqueId: null,
-        toolType: null,
-        sqlNums: null
-      },
       // 执行是否完成
       runComplete: true,
-      // 执行是否成功
-      runResult: false,
       codeCopy: ''// 内容备份
     }
   },
@@ -212,7 +223,18 @@ export default {
     this.initEditor()
   },
   methods: {
-
+    convertResultSet (resultSet) {
+      if (this.sqlResultList.errorMessage) {
+        return
+      }
+      if (resultSet && resultSet.length) {
+        for (let i = 0; i < resultSet.length; i++) {
+          resultSet[i].count = resultSet[i].dataList.length
+          resultSet[i].list = resultSet[i].dataList.slice(0, 20)
+        }
+        this.resultSet = resultSet
+      }
+    },
     // 根据sql语法解析提示信息
     resolveSuggestion (suggestInfo) {
       const self = this
@@ -365,7 +387,6 @@ export default {
     async run () {
       this.sqlResultList = {}
       this.runComplete = false
-      this.pythonResult = null
       let transformCode = this.codeCopy || this.code
       const value = this.editor.getValue()
       const selection = this.editor.getSelection()
@@ -394,9 +415,16 @@ export default {
       const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
       // console.log(res.result)
       this.runComplete = true
-      this.runResult = true
       this.sqlResultList = res.result.data
       this.sqlSize = this.$refs.getheight.offsetHeight - 70
+      this.convertResultSet(this.sqlResultList.resultSet)
+      if (this.resultSet && this.resultSet.length > 0) {
+        this.tab = '结果1'
+      }
+      if (this.sqlResultList.errorMessage) {
+        this.resultSet = []
+        this.tab = '-1'
+      }
     },
     stop () {
       this.$message.warning('未开发')
