@@ -4,7 +4,7 @@
 CCDataLink
 CC数据库连接工具 基于eletron + vue + node + ts + java
 
-v1.0.1 预览版已发布
+v1.0.1 预览版已发布 （没买代码签名，安装报毒请忽略）
 
 包含 数据库连接 数据库sql执行 关键词提示等
 
@@ -14,7 +14,7 @@ v1.0.1 预览版已发布
 
 外链地址：
 
-https://share.weiyun.com/Brn3DkOP
+https://share.weiyun.com/Brn3DkOP 
 
 #### 软件架构
 软件架构说明
