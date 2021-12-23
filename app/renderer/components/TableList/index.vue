@@ -61,19 +61,9 @@ export default {
 
   data () {
     return {
-      tableData: [
-        { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
-        { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
-        { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
-        { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 23, address: 'test abc' },
-        { id: 10005, name: 'Test5', role: 'Develop', sex: 'Women', age: 30, address: 'Shanghai' },
-        { id: 10006, name: 'Test6', role: 'Designer', sex: 'Women', age: 21, address: 'test abc' },
-        { id: 10007, name: 'Test7', role: 'Test', sex: 'Man', age: 29, address: 'test abc' },
-        { id: 10008, name: 'Test8', role: 'Develop', sex: 'Man', age: 35, address: 'test abc' }
-      ],
       loading: true,
       maxSize: 0,
-      size: 100,
+      pageSize: 1000,
       page: 1,
       columns: [],
       dataList: []
@@ -82,10 +72,10 @@ export default {
 
   async created () {
     // 编辑器随窗口自适应
-    const self = this
-    window.addEventListener('resize', function () {
-      self.maxSize = self.$refs.refs.offsetHeight - 100
-    })
+    // const self = this
+    // window.addEventListener('resize', function () {
+    //   self.maxSize = self.$refs.refs.offsetHeight - 100
+    // })
     await this.getList()
     this.loading = false
   },
@@ -93,7 +83,7 @@ export default {
   methods: {
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: ((this.page - 1) * this.size), size: this.size })
+      const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: ((this.page - 1) * this.pageSize), size: this.pageSize })
       const c = res.result.data.columnInfo
       this.columns = c.map(i => {
         let t, k
@@ -136,7 +126,7 @@ export default {
       const database = JSON.stringify(this.databaseInfo)
       const res = await son.send('getTableCount', { databaseInfo: database, tableName: this.tableName })
       if (res.result.data) {
-        const page = this.pageCount(res.result.data, this.size)
+        const page = this.pageCount(res.result.data, this.pageSize)
         if (this.page !== page) {
           this.page = page
           await this.changePage()

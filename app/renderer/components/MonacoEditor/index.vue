@@ -62,12 +62,27 @@
               :name="'结果' + (index+1)"
           >
             <div>总条数： {{ sqlResult.count }}(仅展示前20条) 点此展示全部</div>
-            <Table
-                :columns="sqlResult.columns"
-                :data="sqlResult.list"
-                size="small"
+<!--            <Table-->
+<!--                :columns="sqlResult.columns"-->
+<!--                :data="sqlResult.list"-->
+<!--                size="small"-->
+<!--                border-->
+<!--            ></Table>-->
+            <vxe-table
                 border
-            ></Table>
+                max-height="700"
+                show-overflow
+                highlight-hover-row
+                :data="sqlResult.dataList">
+              <vxe-column
+                  v-for="config in sqlResult.columns"
+                  :key="config.key"
+                  :field="config.title"
+                  :title="config.title"
+                  :width="config.width"
+              >
+              </vxe-column>
+            </vxe-table>
           </TabPane>
         </Tabs>
       </div>
@@ -420,10 +435,11 @@ export default {
       // console.log(database)
       const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
       const startTime = Date.parse(new Date())
-      console.log('已经接受到')
+      console.log('已经接受到', res.result.data)
       this.runComplete = true
       this.sqlResultList = res.result.data
-      this.convertResultSet(this.sqlResultList.resultSet)
+      this.resultSet = res.result.data.resultSet
+      // this.convertResultSet(this.sqlResultList.resultSet)
       if (this.resultSet && this.resultSet.length > 0) {
         this.tab = '结果1'
       }
