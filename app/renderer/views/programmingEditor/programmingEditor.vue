@@ -369,7 +369,7 @@ export default {
     designTable () {
       const uid = this.getUUID()
       this.editorTabs.push({
-        title: 'edite',
+        title: '设计表',
         name: uid,
         close: true,
         tagType: -3
@@ -377,7 +377,14 @@ export default {
       this.currentTabsName = uid
     },
     addTable () {
-      this.$message.warning('未开发')
+      const uid = this.getUUID()
+      this.editorTabs.push({
+        title: '设计表',
+        name: uid,
+        close: true,
+        tagType: -3
+      })
+      this.currentTabsName = uid
     },
     async editDataBase (id) {
       this.dataBaseInfo = this.proOptions.find(e => e.id === id)

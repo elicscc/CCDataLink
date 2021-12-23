@@ -1,6 +1,7 @@
 <template>
+  <div>
     <vxe-toolbar ref="xToolbar" :loading="loading">
-      <template>
+      <template #buttons>
         <vxe-button status="primary" content="临时新增" @click="insertEvent"></vxe-button>
         <vxe-button status="warning" content="临时删除" @click="removeSelectEvent"></vxe-button>
         <vxe-button status="danger" content="直接删除" @click="deleteSelectEvent"></vxe-button>
@@ -54,6 +55,7 @@
         </template>
       </vxe-column>
     </vxe-table>
+  </div>
 </template>
 
 <script>
@@ -103,8 +105,8 @@ export default {
     async loadList () {
       this.loading = true
       try {
-        const res = await fetch('https://api.xuliangzhan.com:10443/demo/api/pub/all').then(response => response.json())
-        this.tableData = res
+        // const res = await fetch('https://api.xuliangzhan.com:10443/demo/api/pub/all').then(response => response.json())
+        // this.tableData = res
       } catch (e) {
         this.tableData = []
       }
