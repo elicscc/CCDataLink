@@ -91,7 +91,6 @@
 </template>
 <script>
 import * as monaco from 'monaco-editor'
-import SplitPane from 'vue-splitpane'
 // import formatter from 'sql-formatter'
 import min from '../../mixin/mixin'
 import sqlAutocompleteParser from 'gethue/parsers/hiveAutocompleteParser'
@@ -103,7 +102,6 @@ const son = remote.getGlobal('son')
 
 export default {
   name: 'MyMonacoEditor',
-  components: { SplitPane },
   mixins: [min],
   props: {
     insertTableName: {

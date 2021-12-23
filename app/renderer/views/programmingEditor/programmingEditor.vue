@@ -116,7 +116,7 @@
         title="数据库连接"
         :visible.sync="addDataBaseDialogVisible"
         :show-close="true"
-        width="50%"
+        width="40%"
         top="50"
         :close-on-click-modal="false"
         :modal="false"
@@ -124,94 +124,63 @@
         @close="addDataBaseDialogVisible = false"
     >
       <!-- 新增数据库弹窗 -->
-      <div>
-        <Form
-            ref="dataBaseInfo"
-            :model="dataBaseInfo"
-            :rules="dataBaseInfoRules"
-            :label-width="100"
-        >
-          <Row>
-            <Col span="18" offset="3" style="margin-top: 20px">
-              <FormItem label="连接名称:" prop="connectName" class="title">
-                <Input v-model="dataBaseInfo.connectName" placeholder="请输入连接名称" maxlength="30"></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="数据库类型:" prop="databaseType" class="title">
-                <Select v-model="dataBaseInfo.databaseType" style="width:100%;text-align:left;" clearable
-                        placeholder="请选择数据库类型">
-                  <Option v-for="item in databaseTypeList" :value="item.value" :key="item.value">{{
-                      item.label
-                    }}
-                  </Option>
-                </Select>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="数据库地址:" prop="databaseAddress" class="title">
-                <Input v-model="dataBaseInfo.databaseAddress" placeholder="请输入数据库地址" maxlength="30"></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="数据库名称:" prop="databaseName" class="title">
-                <Input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30"></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="端口号:" prop="port" class="title">
-                <Input v-model="dataBaseInfo.port" placeholder="请输入端口号" maxlength="30"></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="用户名:" prop="username" class="title">
-                <Input v-model="dataBaseInfo.username" placeholder="请输入用户名" maxlength="30"></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="密码:" prop="password" class="title">
-                <Input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password"
-                       password></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="18" offset="3">
-              <FormItem label="数据库说明:" prop="databaseDescription" class="title">
-                <Input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300"
-                       show-word-limit></Input>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row style="margin-left:12.5%;">
-            <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')"
-                       :loading="testConnectShow">连接测试
-            </el-button>
-          </Row>
-        </Form>
-        <el-row class="bottomSide rowPadding">
-          <el-col :span="3" :offset="16">
-            <el-button @click="addDataBaseDialogVisible = false" size="small">取 消</el-button>
-          </el-col>
-          <el-col :span="3">
-            <el-button type="primary" @click="saveDatabaseInfo('dataBaseInfo')" size="small">确 定</el-button>
-          </el-col>
-        </el-row>
-      </div>
-    </el-dialog>
+      <el-form
+          ref="dataBaseInfo"
+          :model="dataBaseInfo"
+          :rules="dataBaseInfoRules"
+          label-width="130px" :inline="true"
+      >
+            <el-form-item label="连接名称:" prop="connectName" >
+              <el-input v-model="dataBaseInfo.connectName" placeholder="请输入连接名称" maxlength="30" size="small" class="form_item"></el-input>
+            </el-form-item>
 
+            <el-form-item label="数据库类型:" prop="databaseType" >
+              <el-select v-model="dataBaseInfo.databaseType"  clearable size="small" class="form_item"
+                         placeholder="请选择数据库类型">
+                <el-option v-for="item in databaseTypeList" :value="item.value" :key="item.value" :label="item.label"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="数据库地址:" prop="databaseAddress" >
+              <el-input v-model="dataBaseInfo.databaseAddress" placeholder="请输入数据库地址" class="form_item" maxlength="30" size="small"></el-input>
+            </el-form-item>
+
+            <el-form-item label="数据库名称:" prop="databaseName">
+              <el-input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30" size="small" class="form_item"></el-input>
+            </el-form-item>
+
+            <el-form-item label="端口号:" prop="port" >
+              <el-input v-model="dataBaseInfo.port" placeholder="请输入端口号" maxlength="30" size="small" class="form_item"></el-input>
+            </el-form-item>
+
+            <el-form-item label="用户名:" prop="username" >
+              <el-input v-model="dataBaseInfo.username" placeholder="请输入用户名" maxlength="30" size="small" class="form_item"></el-input>
+            </el-form-item>
+
+            <el-form-item label="密码:" prop="password" >
+              <el-input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password" size="small" class="form_item"
+                        password></el-input>
+            </el-form-item>
+
+            <el-form-item label="数据库说明:" prop="databaseDescription" >
+              <el-input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300" size="small" class="form_item"
+                        show-word-limit></el-input>
+            </el-form-item>
+
+        <el-row style="margin-left:12.5%;">
+          <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')"
+                     :loading="testConnectShow">连接测试
+          </el-button>
+        </el-row>
+      </el-form>
+      <el-row class="bottomSide rowPadding">
+        <el-col :span="3" :offset="16">
+          <el-button @click="addDataBaseDialogVisible = false" size="small">取 消</el-button>
+        </el-col>
+        <el-col :span="3">
+          <el-button type="primary" @click="saveDatabaseInfo('dataBaseInfo')" size="small">确 定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -610,6 +579,10 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
+
+.form_item {
+  width: 200px;
+}
 .left_title {
   font-weight: 650;
   font-size: 18px;

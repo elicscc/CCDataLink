@@ -1897,11 +1897,6 @@ async-limiter@~1.0.0:
   resolved "https://registry.nlark.com/async-limiter/download/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha1-3TeelPDbgxCwgpH51kwyCXZmF/0=
 
-async-validator@^3.3.0:
-  version "3.5.2"
-  resolved "https://registry.npmmirror.com/async-validator/download/async-validator-3.5.2.tgz?cache=0&sync_timestamp=1634529574100&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fasync-validator%2Fdownload%2Fasync-validator-3.5.2.tgz#68e866a96824e8b2694ff7a831c1a25c44d5e500"
-  integrity sha1-aOhmqWgk6LJpT/eoMcGiXETV5QA=
-
 async-validator@~1.8.1:
   version "1.8.5"
   resolved "https://registry.npmmirror.com/async-validator/download/async-validator-1.8.5.tgz?cache=0&sync_timestamp=1634529574100&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fasync-validator%2Fdownload%2Fasync-validator-1.8.5.tgz#dc3e08ec1fd0dddb67e60842f02c0cd1cec6d7f0"
@@ -2074,11 +2069,6 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
-
-batch-processor@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npm.taobao.org/batch-processor/download/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
-  integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
 
 batch@0.6.1:
   version "0.6.1"
@@ -3705,11 +3695,6 @@ deepmerge@^1.2.0:
   resolved "https://registry.nlark.com/deepmerge/download/deepmerge-1.5.2.tgz#10499d868844cdad4fee0842df8c7f6f0c95a753"
   integrity sha1-EEmdhohEza1P7ghC34x/bwyVp1M=
 
-deepmerge@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.nlark.com/deepmerge/download/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
-  integrity sha1-XT/yKgHAD2RUBaL7wX0HeKGAEXA=
-
 deepmerge@^4.2.2:
   version "4.2.2"
   resolved "https://registry.nlark.com/deepmerge/download/deepmerge-4.2.2.tgz#44d2ea3679b8f4d4ffba33f03d865fc1e7bf4955"
@@ -4141,13 +4126,6 @@ electron@^10.4.7:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
     extract-zip "^1.0.3"
-
-element-resize-detector@^1.2.0:
-  version "1.2.4"
-  resolved "https://registry.npmmirror.com/element-resize-detector/download/element-resize-detector-1.2.4.tgz#3e6c5982dd77508b5fa7e6d5c02170e26325c9b1"
-  integrity sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg==
-  dependencies:
-    batch-processor "1.0.0"
 
 element-ui@^2.15.1:
   version "2.15.6"
@@ -6408,11 +6386,6 @@ js-base64@^2.1.9:
   resolved "https://registry.npmmirror.com/js-base64/download/js-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"
   integrity sha1-9OaGxd4eofhn28rT1G2WlCjfmMQ=
 
-js-calendar@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.npm.taobao.org/js-calendar/download/js-calendar-1.2.3.tgz#a583b0644b4e695ba394f344d103dbcc7a7a7d3e"
-  integrity sha1-pYOwZEtOaVujlPNE0QPbzHp6fT4=
-
 js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.nlark.com/js-tokens/download/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
@@ -6881,11 +6854,6 @@ lodash.restparam@^3.0.0:
   version "3.6.1"
   resolved "https://registry.npm.taobao.org/lodash.restparam/download/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
   integrity sha1-k2pOMJ7zMKdkXtQUWYbIWuWyCAU=
-
-lodash.throttle@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.nlark.com/lodash.throttle/download/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
-  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
 lodash.toplainobject@^3.0.0:
   version "3.0.0"
@@ -8084,11 +8052,6 @@ plotly.js-dist@1.45.3:
   version "1.45.3"
   resolved "https://registry.npmmirror.com/plotly.js-dist/download/plotly.js-dist-1.45.3.tgz#7af1b8b587378540c556d787b1b6daaca973c493"
   integrity sha1-evG4tYc3hUDFVteHsbbarKlzxJM=
-
-popper.js@^1.14.6:
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/popper.js/download/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
-  integrity sha1-KiI8s9x7YhPXQOQDcr5A3kPmWxs=
 
 portfinder@^1.0.26:
   version "1.0.28"
@@ -10019,11 +9982,6 @@ tiny-emitter@^2.0.0:
   resolved "https://registry.npm.taobao.org/tiny-emitter/download/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha1-HRpW7fxRxD6GPLtTgqcjMONVVCM=
 
-tinycolor2@^1.4.1:
-  version "1.4.2"
-  resolved "https://registry.nlark.com/tinycolor2/download/tinycolor2-1.4.2.tgz#3f6a4d1071ad07676d7fa472e1fac40a719d8803"
-  integrity sha1-P2pNEHGtB2dtf6Ry4frECnGdiAM=
-
 title-case@^2.1.0:
   version "2.1.1"
   resolved "https://registry.npm.taobao.org/title-case/download/title-case-2.1.1.tgz?cache=0&sync_timestamp=1606867672211&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftitle-case%2Fdownload%2Ftitle-case-2.1.1.tgz#3e127216da58d2bc5becf137ab91dae3a7cd8faa"
@@ -10486,11 +10444,6 @@ uuid@^8.1.0, uuid@^8.3.2:
   resolved "https://registry.npmmirror.com/uuid/download/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha1-gNW1ztJxu5r2xEXyGhoExgbO++I=
 
-v-click-outside-x@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.nlark.com/v-click-outside-x/download/v-click-outside-x-3.7.1.tgz#aa03eaa0e41e44cb5207dcf86c2d9f0dd64084c1"
-  integrity sha1-qgPqoOQeRMtSB9z4bC2fDdZAhME=
-
 v8-compile-cache@^2.0.3, v8-compile-cache@^2.1.1:
   version "2.3.0"
   resolved "https://registry.nlark.com/v8-compile-cache/download/v8-compile-cache-2.3.0.tgz#2de19618c66dc247dcfb6f99338035d8245a2cee"
@@ -10523,20 +10476,6 @@ verror@^1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-view-design@^4.7.0:
-  version "4.7.0"
-  resolved "https://registry.npmmirror.com/view-design/download/view-design-4.7.0.tgz#98c4ec18ed70d1b58157007f8107a77158334846"
-  integrity sha512-WRvVRfsZciN0aJYlz+6b1zxs5G8tLFb4OUKOu+PiN0QyIGmdgWVziEyEmioYtJahQpueWiQpRYGzyxrpz3UkWQ==
-  dependencies:
-    async-validator "^3.3.0"
-    deepmerge "^2.2.1"
-    element-resize-detector "^1.2.0"
-    js-calendar "^1.2.3"
-    lodash.throttle "^4.1.1"
-    popper.js "^1.14.6"
-    tinycolor2 "^1.4.1"
-    v-click-outside-x "^3.7.1"
 
 vm-browserify@^1.0.1:
   version "1.1.2"
@@ -10595,11 +10534,6 @@ vue-property-decorator@9.0.0:
   version "9.0.0"
   resolved "https://registry.npm.taobao.org/vue-property-decorator/download/vue-property-decorator-9.0.0.tgz#0a5f6d47d33ca62a8876108ccfa65c2c4fb7325a"
   integrity sha1-Cl9tR9M8piqIdhCMz6ZcLE+3Mlo=
-
-vue-splitpane@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npm.taobao.org/vue-splitpane/download/vue-splitpane-1.0.6.tgz#c4667bfdd8e10ced5d23d09fe8a129585c2c04c0"
-  integrity sha1-xGZ7/djhDO1dI9Cf6KEpWFwsBMA=
 
 vue-style-loader@^4.1.0:
   version "4.1.3"
