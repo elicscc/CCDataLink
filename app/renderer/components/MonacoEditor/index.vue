@@ -38,10 +38,9 @@
           ref="container"
           style="height: 60%; cursor: col-resize;"
       />
-      <div ref="sqlLog" style="height: 40%; cursor: col-resize;">
+      <div ref="sqlLog" style="height: 40%; cursor: col-resize;" v-show="sqlResultList.id">
         <Tabs type="card" :value="tab" :animated="false" >
           <TabPane
-              v-show="sqlResultList.sql!=null"
               key="-1"
               label="message"
               name="-1"
@@ -420,7 +419,8 @@ export default {
       const database = JSON.stringify(this.dataBaseInfo)
       // console.log(database)
       const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
-      // console.log(res.result)
+      const startTime = Date.parse(new Date())
+      console.log('已经接受到')
       this.runComplete = true
       this.sqlResultList = res.result.data
       this.convertResultSet(this.sqlResultList.resultSet)
@@ -431,6 +431,9 @@ export default {
         this.resultSet = []
         this.tab = '-1'
       }
+      const endTime = new Date()
+      const time = (endTime - startTime) / 1000 + 's'
+      console.log('over', time)
     },
     stop () {
       this.$message.warning('未开发')
