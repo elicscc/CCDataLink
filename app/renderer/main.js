@@ -1,4 +1,7 @@
 import Vue from 'vue'
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
 import App from './App'
 import store from './store'
 import './components/dialog/dragDialog'
@@ -12,6 +15,7 @@ import 'vue-drag-select-pro/lib/vueDragSelectPro.css'
 
 Vue.use(vueDragSelectPro)
 Vue.use(Element)
+Vue.use(VXETable)
 Vue.use(ViewUI)
 
 /* eslint-disable no-new */

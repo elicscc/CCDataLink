@@ -4112,7 +4112,7 @@ electron-publish@22.14.5:
     lazy-val "^1.0.5"
     mime "^2.5.2"
 
-electron-re@1.1.1:
+electron-re@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npmmirror.com/electron-re/download/electron-re-1.1.1.tgz#135272bd4069acebf955d7e9d989c06a29e91117"
   integrity sha512-8KdhFxxhh/jXQgkDceVx3HqIF9AThErJr9Gptr3vfNlFZi8sXeHtR61hsNb2dMs33kVUSJXWbCANjyw+iGvKag==
@@ -10658,6 +10658,11 @@ vuex@3.0.1:
   resolved "https://registry.nlark.com/vuex/download/vuex-3.0.1.tgz#e761352ebe0af537d4bb755a9b9dc4be3df7efd2"
   integrity sha1-52E1Lr4K9TfUu3Vam53Evj3379I=
 
+vxe-table@3.4.12:
+  version "3.4.12"
+  resolved "https://registry.npmmirror.com/vxe-table/download/vxe-table-3.4.12.tgz#5c92de2fd6ec78e1cf6983ff6870b909d3f153e5"
+  integrity sha512-0sPhh1GRA0xV8DtCloaqJ5QJ3vjPkHnfH/bZxu1EuyXVE/AZ+dtvYy8syqPevnsLTW9oL8CNTWOHl6WJUdmsuQ==
+
 watchpack-chokidar2@^2.0.1:
   version "2.0.1"
   resolved "https://registry.nlark.com/watchpack-chokidar2/download/watchpack-chokidar2-2.0.1.tgz#38500072ee6ece66f3769936950ea1771be1c957"
@@ -10966,6 +10971,11 @@ xdg-basedir@^4.0.0:
   version "4.0.0"
   resolved "https://registry.nlark.com/xdg-basedir/download/xdg-basedir-4.0.0.tgz#4bc8d9984403696225ef83a1573cbbcb4e79db13"
   integrity sha1-S8jZmEQDaWIl74OhVzy7y0552xM=
+
+xe-utils@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.npmmirror.com/xe-utils/download/xe-utils-3.5.1.tgz#ac034fbbafeb5290c5dfb7653084b6730f1bc030"
+  integrity sha512-cA0iSbAaF7qRdaft4LCxWUvo6CIUob61Cq4yZCieQc1kGW7Pde9WpTLz27ZWtfzwxUuWSrif3qOy0zvRFkTN1A==
 
 xmlbuilder@>=11.0.1:
   version "15.1.1"

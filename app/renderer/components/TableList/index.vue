@@ -1,13 +1,20 @@
 <template>
   <div ref="refs" style="height: 100vh;">
-    <Table
-        :loading="loading"
-        :max-height="maxSize"
-        :columns="columns"
-        :data="dataList"
-        size="small"
+    <vxe-table
         border
-    ></Table>
+        :max-height="maxSize"
+        show-overflow
+        highlight-hover-row
+        :data="dataList">
+      <vxe-column
+          v-for="config in columns"
+          :key="config.key"
+          :field="config.title"
+          :title="config.title"
+          :width="config.width"
+      >
+      </vxe-column>
+    </vxe-table>
     <el-row type="flex" style="margin-top: 8px">
       <el-col :span="3" :offset="15">
       <el-button type="primary" size="mini" icon="el-icon-back" @click="startPage"></el-button>
@@ -54,6 +61,16 @@ export default {
 
   data () {
     return {
+      tableData: [
+        { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
+        { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
+        { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
+        { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 23, address: 'test abc' },
+        { id: 10005, name: 'Test5', role: 'Develop', sex: 'Women', age: 30, address: 'Shanghai' },
+        { id: 10006, name: 'Test6', role: 'Designer', sex: 'Women', age: 21, address: 'test abc' },
+        { id: 10007, name: 'Test7', role: 'Test', sex: 'Man', age: 29, address: 'test abc' },
+        { id: 10008, name: 'Test8', role: 'Develop', sex: 'Man', age: 35, address: 'test abc' }
+      ],
       loading: true,
       maxSize: 0,
       size: 100,
