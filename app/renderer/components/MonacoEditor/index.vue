@@ -36,11 +36,11 @@
     <div style="height: calc(100vh - 100px);padding :5px;">
       <div
           ref="container"
-          style="height: 60%; cursor: col-resize;"
+          style="height: 60%;"
       />
-      <div ref="sqlLog" style="height: 40%; cursor: col-resize;" v-show="sqlResultList.id">
-        <Tabs type="card" :value="tab" :animated="false" >
-          <TabPane
+      <div ref="sqlLog" style="height: 40%;" v-show="sqlResultList.id">
+        <el-tabs type="card" v-model="tab" >
+          <el-tab-pane
               key="-1"
               label="message"
               name="-1"
@@ -54,23 +54,17 @@
               <span v-show="sqlResultList.count">影响行：{{ sqlResultList.count }}<br/></span>
               time：{{ sqlResultList.time }}<br/>
             </div>
-          </TabPane>
-          <TabPane
+          </el-tab-pane>
+          <el-tab-pane
               v-for="(sqlResult, index) in resultSet"
               :key="index"
               :label="'结果' + (index+1)"
               :name="'结果' + (index+1)"
           >
-            <div>总条数： {{ sqlResult.count }}(仅展示前20条) 点此展示全部</div>
-<!--            <Table-->
-<!--                :columns="sqlResult.columns"-->
-<!--                :data="sqlResult.list"-->
-<!--                size="small"-->
-<!--                border-->
-<!--            ></Table>-->
+            <div>总条数： {{ sqlResult.count }}</div>
             <vxe-table
                 border
-                max-height="700"
+                max-height="500"
                 show-overflow
                 highlight-hover-row
                 :data="sqlResult.dataList">
@@ -83,8 +77,8 @@
               >
               </vxe-column>
             </vxe-table>
-          </TabPane>
-        </Tabs>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
   </div>

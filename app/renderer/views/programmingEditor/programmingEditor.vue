@@ -130,41 +130,48 @@
           :rules="dataBaseInfoRules"
           label-width="130px" :inline="true"
       >
-            <el-form-item label="连接名称:" prop="connectName" >
-              <el-input v-model="dataBaseInfo.connectName" placeholder="请输入连接名称" maxlength="30" size="small" class="form_item"></el-input>
-            </el-form-item>
+        <el-form-item label="连接名称:" prop="connectName">
+          <el-input v-model="dataBaseInfo.connectName" placeholder="请输入连接名称" maxlength="30" size="small"
+                    class="form_item"></el-input>
+        </el-form-item>
 
-            <el-form-item label="数据库类型:" prop="databaseType" >
-              <el-select v-model="dataBaseInfo.databaseType"  clearable size="small" class="form_item"
-                         placeholder="请选择数据库类型">
-                <el-option v-for="item in databaseTypeList" :value="item.value" :key="item.value" :label="item.label"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="数据库地址:" prop="databaseAddress" >
-              <el-input v-model="dataBaseInfo.databaseAddress" placeholder="请输入数据库地址" class="form_item" maxlength="30" size="small"></el-input>
-            </el-form-item>
+        <el-form-item label="数据库类型:" prop="databaseType">
+          <el-select v-model="dataBaseInfo.databaseType" clearable size="small" class="form_item"
+                     placeholder="请选择数据库类型">
+            <el-option v-for="item in databaseTypeList" :value="item.value" :key="item.value" :label="item.label"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数据库地址:" prop="databaseAddress">
+          <el-input v-model="dataBaseInfo.databaseAddress" placeholder="请输入数据库地址" class="form_item" maxlength="30"
+                    size="small"></el-input>
+        </el-form-item>
 
-            <el-form-item label="数据库名称:" prop="databaseName">
-              <el-input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30" size="small" class="form_item"></el-input>
-            </el-form-item>
+        <el-form-item label="数据库名称:" prop="databaseName">
+          <el-input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30" size="small"
+                    class="form_item"></el-input>
+        </el-form-item>
 
-            <el-form-item label="端口号:" prop="port" >
-              <el-input v-model="dataBaseInfo.port" placeholder="请输入端口号" maxlength="30" size="small" class="form_item"></el-input>
-            </el-form-item>
+        <el-form-item label="端口号:" prop="port">
+          <el-input v-model="dataBaseInfo.port" placeholder="请输入端口号" maxlength="30" size="small"
+                    class="form_item"></el-input>
+        </el-form-item>
 
-            <el-form-item label="用户名:" prop="username" >
-              <el-input v-model="dataBaseInfo.username" placeholder="请输入用户名" maxlength="30" size="small" class="form_item"></el-input>
-            </el-form-item>
+        <el-form-item label="用户名:" prop="username">
+          <el-input v-model="dataBaseInfo.username" placeholder="请输入用户名" maxlength="30" size="small"
+                    class="form_item"></el-input>
+        </el-form-item>
 
-            <el-form-item label="密码:" prop="password" >
-              <el-input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password" size="small" class="form_item"
-                        password></el-input>
-            </el-form-item>
+        <el-form-item label="密码:" prop="password">
+          <el-input v-model="dataBaseInfo.password" placeholder="请输入密码" maxlength="30" type="password" size="small"
+                    class="form_item"
+                    password></el-input>
+        </el-form-item>
 
-            <el-form-item label="数据库说明:" prop="databaseDescription" >
-              <el-input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300" size="small" class="form_item"
-                        show-word-limit></el-input>
-            </el-form-item>
+        <el-form-item label="数据库说明:" prop="databaseDescription">
+          <el-input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300" size="small"
+                    class="form_item"
+                    show-word-limit></el-input>
+        </el-form-item>
 
         <el-row style="margin-left:12.5%;">
           <el-button size="mini" type="primary" style="margin-left:100px;" @click="connectTest('dataBaseInfo')"
@@ -583,6 +590,7 @@ export default {
 .form_item {
   width: 200px;
 }
+
 .left_title {
   font-weight: 650;
   font-size: 18px;
