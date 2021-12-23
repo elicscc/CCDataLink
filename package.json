@@ -1,9 +1,9 @@
 {
   "name": "cc_data_link",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "cc",
   "license": "UNLICENSED",
-  "description": "CC数据库连接工具",
+  "description": "CC数据库管理工具",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build:ToC": "cross-env INDUSTRY=toc TOC_URL=https://www.cc.com node .electron-vue/build.js && node .electron-vue/en_code.js && electron-builder --windows nsis",
@@ -18,7 +18,7 @@
     "lint:fix": "eslint --ext .js,.ts,.vue -f ./node_modules/eslint-friendly-formatter --fix app"
   },
   "build": {
-    "productName": "CC数据库连接",
+    "productName": "CC数据库管理工具",
     "appId": "www.cc.cn",
     "asar": false,
     "directories": {
