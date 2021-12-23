@@ -39,7 +39,7 @@
           style="height: 60%;"
       />
       <div ref="sqlLog" style="height: 40%;" v-show="sqlResultList.id">
-        <el-tabs type="card" v-model="tab" >
+        <el-tabs type="border-card" v-model="tab" >
           <el-tab-pane
               key="-1"
               label="message"
@@ -56,7 +56,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane
-              v-for="(sqlResult, index) in resultSet"
+              v-for="(sqlResult, index) in sqlResultList.resultSet"
               :key="index"
               :label="'结果' + (index+1)"
               :name="'结果' + (index+1)"
@@ -64,7 +64,7 @@
             <div>总条数： {{ sqlResult.count }}</div>
             <vxe-table
                 border
-                max-height="500"
+                :max-height="300"
                 show-overflow
                 highlight-hover-row
                 :data="sqlResult.dataList">
@@ -138,7 +138,6 @@ export default {
       upDom: null,
       clientStartX: 0,
       tab: null,
-      resultSet: [],
       // tableColumn is look like this
       // tableColumn: {
       //   t1: ['column1_t1_1', 'column1_t1_2'],
@@ -426,22 +425,14 @@ export default {
       const database = JSON.stringify(this.dataBaseInfo)
       // console.log(database)
       const res = await son.send('exeSql', { databaseInfo: database, sql: transformCode, id: uuid })
-      const startTime = Date.parse(new Date())
-      console.log('已经接受到', res.result.data)
       this.runComplete = true
       this.sqlResultList = res.result.data
-      this.resultSet = res.result.data.resultSet
-      // this.convertResultSet(this.sqlResultList.resultSet)
-      if (this.resultSet && this.resultSet.length > 0) {
+      if (this.sqlResultList.resultSet && this.sqlResultList.resultSet.length > 0) {
         this.tab = '结果1'
       }
       if (this.sqlResultList.errorMessage) {
-        this.resultSet = []
         this.tab = '-1'
       }
-      const endTime = new Date()
-      const time = (endTime - startTime) / 1000 + 's'
-      console.log('over', time)
     },
     stop () {
       this.$message.warning('未开发')
