@@ -1,10 +1,65 @@
 <template>
- <div>设计</div>
+    <vxe-toolbar ref="xToolbar" :loading="loading">
+      <template>
+        <vxe-button status="primary" content="临时新增" @click="insertEvent"></vxe-button>
+        <vxe-button status="warning" content="临时删除" @click="removeSelectEvent"></vxe-button>
+        <vxe-button status="danger" content="直接删除" @click="deleteSelectEvent"></vxe-button>
+        <vxe-button content="提交（将临时操作持久化）" @click="saveEvent"></vxe-button>
+      </template>
+    </vxe-toolbar>
+    <vxe-table
+        border
+        resizable
+        show-overflow
+        keep-source
+        ref="xTable"
+        height="500"
+        :loading="loading"
+        :data="tableData"
+        :edit-rules="validRules"
+        :edit-config="{trigger: 'click', mode: 'row', showUpdateStatus: true, showInsertStatus: true}">
+      <vxe-column type="checkbox" width="60"></vxe-column>
+      <vxe-column field="name" title="Name" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.name" type="text"></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="nickname" title="Nickname" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.nickname" type="text"></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="sex" title="Sex" :edit-render="{}">
+        <template #default="{ row }">
+          <span>{{ formatSex(row.sex) }}</span>
+        </template>
+        <template #edit="{ row }">
+          <vxe-select v-model="row.sex" type="text" :options="sexList" transfer></vxe-select>
+        </template>
+      </vxe-column>
+      <vxe-column field="amount" title="Amount" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.amount" type="float" :digits="2"></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="updateDate" title="Date" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.updateDate" type="date"></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column title="操作" width="240">
+        <template #default="{ row }">
+          <vxe-button status="warning" content="临时删除" @click="removeRowEvent(row)"></vxe-button>
+          <vxe-button status="danger" content="直接删除" @click="deleteRowEvent(row)"></vxe-button>
+        </template>
+      </vxe-column>
+    </vxe-table>
 </template>
 
 <script>
 import { remote } from 'electron'
 const son = remote.getGlobal('son')
+
 export default {
   name: 'designTable',
   props: {
@@ -22,77 +77,117 @@ export default {
 
   data () {
     return {
-      loading: true,
-      maxSize: 0,
-      size: 100,
-      page: 1,
-      columns: [],
-      dataList: []
+      loading: false,
+      tableData: [],
+      validRules: {
+        name: [
+          { required: true, message: '名称必须填写' }
+        ]
+      },
+      sexList: [
+        { label: '男', value: '1' },
+        { label: '女', value: '0' }
+      ]
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      // 将表格和工具栏进行关联
+      const $table = this.$refs.xTable
+      $table.connect(this.$refs.xToolbar)
+    })
+    this.loadList()
   },
 
   methods: {
-    async getList () {
-      const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: ((this.page - 1) * this.size), size: this.size })
-      const c = res.result.data.columnInfo
-      this.columns = c.map(i => {
-        let t, k
-        if (res.result.data.databaseType === '2') {
-          t = i.name
-          k = i.name
-        } else {
-          t = i.COLUMN_NAME
-          k = i.COLUMN_NAME
-        }
-        return {
-          title: t,
-          key: k,
-          width: 300,
-          resizable: true,
-          ellipsis: true,
-          tooltip: true
-        }
-      })
-      this.maxSize = this.$refs.refs.offsetHeight - 100
-      this.dataList = res.result.data.dataList
-    },
-    async  startPage () {
-      if (this.page !== 1) {
-        this.page = 1
-        await this.changePage()
-      }
-    },
-    async  prevClick () {
-      if (this.page > 1) {
-        this.page--
-        await this.changePage()
-      }
-    },
-    async  nextClick () {
-      this.page++
-      await this.changePage()
-    },
-    async  endPage () {
-      const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTableCount', { databaseInfo: database, tableName: this.tableName })
-      if (res.result.data) {
-        const page = this.pageCount(res.result.data, this.size)
-        if (this.page !== page) {
-          this.page = page
-          await this.changePage()
-        }
-      }
-    },
-    async changePage () {
+    async loadList () {
       this.loading = true
-      await this.getList()
+      try {
+        const res = await fetch('https://api.xuliangzhan.com:10443/demo/api/pub/all').then(response => response.json())
+        this.tableData = res
+      } catch (e) {
+        this.tableData = []
+      }
       this.loading = false
     },
-    pageCount (totalNum, limit) {
-      return totalNum > 0 ? ((totalNum < limit) ? 1 : ((totalNum % limit) ? (parseInt(totalNum / limit) + 1) : (totalNum / limit))) : 0
+    formatSex (value) {
+      if (value === '1') {
+        return '男'
+      }
+      if (value === '0') {
+        return '女'
+      }
+      return ''
+    },
+    async insertEvent () {
+      const $table = this.$refs.xTable
+      const newRecord = {}
+      const { row: newRow } = await $table.insert(newRecord)
+      await $table.setActiveRow(newRow)
+    },
+    async removeSelectEvent () {
+      const $table = this.$refs.xTable
+      await $table.removeCheckboxRow()
+    },
+    async deleteSelectEvent () {
+      const type = await this.$confirm('您确定要删除选中的数据?')
+      if (type !== 'confirm') {
+        return
+      }
+      const $table = this.$refs.xTable
+      const checkboxRecords = $table.getCheckboxRecords()
+      this.loading = true
+      try {
+        const body = { removeRecords: checkboxRecords }
+        // await XEAjax.post('https://api.xuliangzhan.com:10443/demo/api/pub/save', body)
+        await this.loadList()
+      } catch (e) {
+      }
+      this.loading = false
+    },
+    async removeRowEvent (row) {
+      const $table = this.$refs.xTable
+      await $table.remove(row)
+    },
+    async deleteRowEvent (row) {
+      const type = await this.$confirm('您确定要删除该数据?')
+      if (type !== 'confirm') {
+        return
+      }
+      this.loading = true
+      try {
+        const body = { removeRecords: [row] }
+        // await XEAjax.post('https://api.xuliangzhan.com:10443/demo/api/pub/save', body)
+        await this.loadList()
+      } catch (e) {
+      }
+    },
+    async saveEvent () {
+      const $table = this.$refs.xTable
+      const { insertRecords, removeRecords, updateRecords } = $table.getRecordset()
+      if (insertRecords.length <= 0 && removeRecords.length <= 0 && updateRecords.length <= 0) {
+        this.$message.warning('数据未改动')
+        return
+      }
+      const errMap = await $table.validate().catch(errMap => errMap)
+      if (errMap) {
+        return
+      }
+      this.loading = true
+      try {
+        const body = { insertRecords, removeRecords, updateRecords }
+        // await XEAjax.post('https://api.xuliangzhan.com:10443/demo/api/pub/save', body)
+        await this.loadList()
+        this.$message.success('操作成功')
+      } catch (e) {
+        if (e && e.message) {
+          this.$message.error(e.message)
+        }
+      }
+      this.loading = false
     }
 
   }
+
 }
 </script>
