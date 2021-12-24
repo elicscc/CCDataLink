@@ -1,40 +1,47 @@
 <template>
   <div ref="refs" style="height: 100vh;">
     <vxe-table
+        :data="dataList"
         border
         :max-height="maxSize"
         show-overflow
         highlight-hover-row
-        :data="dataList">
+        :edit-config="{trigger: 'click', mode: 'cell'}">
       <vxe-column
           v-for="config in columns"
           :key="config.key"
           :field="config.title"
           :title="config.title"
           :width="config.width"
+          :params="config.colt"
+          :edit-render="{}"
       >
+        <template #edit="{ row, column }">
+          <vxe-input v-if="column.params.colType === 'datetime' " v-model="row[column.property]" type="datetime" transfer></vxe-input>
+          <vxe-input v-else v-model="row[column.property]" type="text"></vxe-input>
+        </template>
       </vxe-column>
     </vxe-table>
     <el-row type="flex" style="margin-top: 8px">
       <el-col :span="3" :offset="15">
-      <el-button type="primary" size="mini" icon="el-icon-back" @click="startPage"></el-button>
+        <el-button type="primary" size="mini" icon="el-icon-back" @click="startPage"></el-button>
       </el-col>
       <el-col :span="3">
-      <el-button type="primary" size="mini" icon="el-icon-caret-left" @click="prevClick"></el-button>
+        <el-button type="primary" size="mini" icon="el-icon-caret-left" @click="prevClick"></el-button>
       </el-col>
       <el-col :span="3">
-      <el-input
-          size="mini"
-          type="number"
-          v-model="page"
-          @change="changePage"
-      />
+        <el-input
+            size="mini"
+            type="number"
+            v-model="page"
+            @change="changePage"
+        />
       </el-col>
       <el-col :span="3">
-      <el-button type="primary" size="mini" icon="el-icon-caret-right" @click="nextClick"></el-button>
-      </el-col >
+        <el-button type="primary" size="mini" icon="el-icon-caret-right" @click="nextClick"></el-button>
+      </el-col>
       <el-col :span="3">
-      <el-button type="primary" size="mini" icon="el-icon-right" @click="endPage"></el-button>
+        <el-button type="primary" size="mini" icon="el-icon-right" @click="endPage"></el-button>
       </el-col>
     </el-row>
   </div>
@@ -81,50 +88,62 @@ export default {
   },
 
   methods: {
+    test (column) {
+      console.log(column)
+    },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTablePage', { databaseInfo: database, tableName: this.tableName, num: ((this.page - 1) * this.pageSize), size: this.pageSize })
+      const res = await son.send('getTablePage', {
+        databaseInfo: database,
+        tableName: this.tableName,
+        num: ((this.page - 1) * this.pageSize),
+        size: this.pageSize
+      })
+      // console.log(res.result.data)
       const c = res.result.data.columnInfo
       this.columns = c.map(i => {
-        let t, k
+        let t, k, p
         if (res.result.data.databaseType === '2') {
           t = i.name
           k = i.name
+          p = i.type
         } else {
           t = i.COLUMN_NAME
           k = i.COLUMN_NAME
+          p = i.COLUMN_TYPE
         }
         return {
           title: t,
           key: k,
-          width: 300,
-          resizable: true,
-          ellipsis: true,
-          tooltip: true
+          colt: { colType: p },
+          width: 300
         }
       })
       this.maxSize = this.$refs.refs.offsetHeight - 100
       this.dataList = res.result.data.dataList
     },
-    async  startPage () {
+    async startPage () {
       if (this.page !== 1) {
         this.page = 1
         await this.changePage()
       }
     },
-    async  prevClick () {
+    async prevClick () {
       if (this.page > 1) {
         this.page--
         await this.changePage()
       }
     },
-    async  nextClick () {
+    async nextClick () {
       this.page++
       await this.changePage()
     },
-    async  endPage () {
+    async endPage () {
       const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTableCount', { databaseInfo: database, tableName: this.tableName })
+      const res = await son.send('getTableCount', {
+        databaseInfo: database,
+        tableName: this.tableName
+      })
       if (res.result.data) {
         const page = this.pageCount(res.result.data, this.pageSize)
         if (this.page !== page) {
