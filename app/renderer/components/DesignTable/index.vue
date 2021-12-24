@@ -2,10 +2,15 @@
   <div>
     <vxe-toolbar ref="xToolbar" :loading="loading">
       <template #buttons>
-        <vxe-button status="primary" content="临时新增" @click="insertEvent"></vxe-button>
-        <vxe-button status="warning" content="临时删除" @click="removeSelectEvent"></vxe-button>
-        <vxe-button status="danger" content="直接删除" @click="deleteSelectEvent"></vxe-button>
-        <vxe-button content="提交（将临时操作持久化）" @click="saveEvent"></vxe-button>
+        <vxe-button status="primary" content="保存" @click="saveEvent"></vxe-button>
+        <span>
+        <vxe-button status="primary" content="新增字段" @click="insertEvent"></vxe-button>
+        <vxe-button status="warning" content="删除字段" @click="removeSelectEvent"></vxe-button>
+        </span>
+        <span>
+        <vxe-button status="primary" content="新增索引" @click="insertEvent"></vxe-button>
+        <vxe-button status="warning" content="删除索引" @click="removeSelectEvent"></vxe-button>
+        </span>
       </template>
     </vxe-toolbar>
     <vxe-table
@@ -15,7 +20,6 @@
         keep-source
         ref="xTable"
         height="500"
-        :loading="loading"
         :data="tableData"
         :edit-rules="validRules"
         :edit-config="{trigger: 'click', mode: 'row', showUpdateStatus: true, showInsertStatus: true}">
@@ -25,41 +29,54 @@
           <vxe-input v-model="row.name" type="text"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="nickname" title="Nickname" :edit-render="{}">
+      <vxe-column field="type" title="Type" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.nickname" type="text"></vxe-input>
+          <vxe-select v-model="row.type" type="text" :options="typeList" transfer></vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="sex" title="Sex" :edit-render="{}">
-        <template #default="{ row }">
-          <span>{{ formatSex(row.sex) }}</span>
-        </template>
+      <vxe-column field="length" title="Length" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-select v-model="row.sex" type="text" :options="sexList" transfer></vxe-select>
+          <vxe-input v-model="row.length" type="integer"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="amount" title="Amount" :edit-render="{}">
+      <vxe-column field="decimal" title="Decimal" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.amount" type="float" :digits="2"></vxe-input>
+          <vxe-input v-model="row.decimal" type="integer" :digits="2"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="updateDate" title="Date" :edit-render="{}">
+      <vxe-column field="notNull" title="Not null" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.updateDate" type="date"></vxe-input>
+          <vxe-checkbox v-model="row.key ? row.key : row.notNull"></vxe-checkbox>
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="240">
-        <template #default="{ row }">
-          <vxe-button status="warning" content="临时删除" @click="removeRowEvent(row)"></vxe-button>
-          <vxe-button status="danger" content="直接删除" @click="deleteRowEvent(row)"></vxe-button>
+      <vxe-column field="virtual" title="Virtual" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-checkbox v-model="row.virtual"></vxe-checkbox>
         </template>
       </vxe-column>
+      <vxe-column field="key" title="Key" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-checkbox v-model="row.key"></vxe-checkbox>
+        </template>
+      </vxe-column>
+      <vxe-column field="comment" title="Comment" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.comment" type="text"></vxe-input>
+        </template>
+      </vxe-column>
+<!--      <vxe-column title="操作" width="240">-->
+<!--        <template #default="{ row }">-->
+<!--          <vxe-button status="warning" content="临时删除" @click="removeRowEvent(row)"></vxe-button>-->
+<!--          <vxe-button status="danger" content="直接删除" @click="deleteRowEvent(row)"></vxe-button>-->
+<!--        </template>-->
+<!--      </vxe-column>-->
     </vxe-table>
   </div>
 </template>
 
 <script>
 import { remote } from 'electron'
+
 const son = remote.getGlobal('son')
 
 export default {
@@ -86,9 +103,10 @@ export default {
           { required: true, message: '名称必须填写' }
         ]
       },
-      sexList: [
-        { label: '男', value: '1' },
-        { label: '女', value: '0' }
+      typeList: [
+        { label: 'bigint', value: 'bigint' },
+        { label: 'binary', value: 'binary' },
+        { label: 'bit', value: 'bit' }
       ]
     }
   },
@@ -124,7 +142,7 @@ export default {
     async insertEvent () {
       const $table = this.$refs.xTable
       const newRecord = {}
-      const { row: newRow } = await $table.insert(newRecord)
+      const { row: newRow } = await $table.insertAt(newRecord, -1)
       await $table.setActiveRow(newRow)
     },
     async removeSelectEvent () {
