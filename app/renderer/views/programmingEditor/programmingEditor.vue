@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="wrapper">
     <el-row :gutter="20">
       <!--左侧-->
       <el-col :span="5" :xs="24">
@@ -199,12 +199,19 @@ import mix from '../../mixin/mixin'
 import { remote } from 'electron'
 import Store from 'electron-store'
 
-const { Menu, MenuItem } = remote
+const {
+  Menu,
+  MenuItem
+} = remote
 const son = remote.getGlobal('son')
 const store = new Store()
 
 export default {
-  components: { MonacoEditor, TableList, DesignTable },
+  components: {
+    MonacoEditor,
+    TableList,
+    DesignTable
+  },
   mixins: [mix],
   props: {
     type: {
@@ -227,19 +234,59 @@ export default {
         databaseDescription: ''
       },
       dataBaseInfoRules: {
-        connectName: [{ required: true, message: ' ', trigger: 'blur' }],
-        databaseType: [{ required: true, message: ' ', trigger: 'change' }],
-        databaseAddress: [{ required: true, message: ' ', trigger: 'blur' }],
-        databaseName: [{ required: true, message: ' ', trigger: 'blur' }],
-        port: [{ required: true, message: ' ', trigger: 'blur' }],
-        username: [{ required: true, message: ' ', trigger: 'blur' }],
-        password: [{ required: true, message: ' ', trigger: 'blur' }]
+        connectName: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }],
+        databaseType: [{
+          required: true,
+          message: ' ',
+          trigger: 'change'
+        }],
+        databaseAddress: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }],
+        databaseName: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }],
+        port: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }],
+        username: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }],
+        password: [{
+          required: true,
+          message: ' ',
+          trigger: 'blur'
+        }]
       },
       databaseTypeList: [
-        { label: 'MySQL', value: '1' },
-        { label: 'Mariadb', value: '4' },
-        { label: 'SQLServer', value: '2' },
-        { label: 'Oracle', value: '3' }
+        {
+          label: 'MySQL',
+          value: '1'
+        },
+        {
+          label: 'Mariadb',
+          value: '4'
+        },
+        {
+          label: 'SQLServer',
+          value: '2'
+        },
+        {
+          label: 'Oracle',
+          value: '3'
+        }
       ],
       selectDatabaseId: null,
       tableList: null,
@@ -460,7 +507,11 @@ export default {
         }
         const self = this
         const s = res.result.data.map(i => {
-          return { connectName: i.name, id: self.getUUID(), type: 'table' }
+          return {
+            connectName: i.name,
+            id: self.getUUID(),
+            type: 'table'
+          }
         })
         this.tableList = s
         node.data.isConnected = true
@@ -593,6 +644,10 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
+#wrapper {
+  width: 100vw;
+  height: 100vh;
+}
 
 .form_item {
   width: 200px;

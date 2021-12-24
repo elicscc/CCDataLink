@@ -70,7 +70,7 @@ export default {
     }
   },
 
-  async created () {
+  async mounted () {
     // 编辑器随窗口自适应
     // const self = this
     // window.addEventListener('resize', function () {
