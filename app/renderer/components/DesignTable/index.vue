@@ -13,72 +13,101 @@
         </span>
       </template>
     </vxe-toolbar>
-    <el-table
-        :data="tableData"
-        :border="true"
-        highlight-current-row
-        @row-click="rowClick"
-        size="small"
-    >
-      <el-table-column  width="35">
-        <template slot-scope="scope">
-          <el-radio v-model="radioId" :label="scope.row.id"></el-radio>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name" align="center">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.name" type="text"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="Type" align="center">
-        <template slot-scope="scope">
-          <el-select v-model="scope.row.type" size="mini"  filterable>
-              <el-option
-                  v-for="item in typeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              ></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column label="Length" align="center">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.length" type="number" oninput ="value=value.replace(/[^\d]/g,'')"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="Decimal" align="center">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.decimal" type="number" oninput ="value=value.replace(/[^\d]/g,'')"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="Not null" align="center">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.notNull" ></el-checkbox>
-        </template>
-      </el-table-column>
-      <el-table-column label="Virtual" align="center">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.virtual" ></el-checkbox>
-        </template>
-      </el-table-column>
-      <el-table-column label="Key" align="center">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.key" ></el-checkbox>
-        </template>
-      </el-table-column>
-      <el-table-column label="Comment" align="center">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.comment" type="text"></el-input>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-tabs type="border-card" v-model="tabValue" style="height: calc(100vh - 100px);padding :5px;">
+      <el-tab-pane
+          key="Fields"
+          label="Fields"
+          name="Fields"
+      >
+        <el-table
+            :data="tableData"
+            :border="true"
+            highlight-current-row
+            @row-click="rowClick"
+            size="small"
+        >
+          <el-table-column width="35">
+            <template slot-scope="scope">
+              <el-radio v-model="radioId" :label="scope.row.id"></el-radio>
+            </template>
+          </el-table-column>
+          <el-table-column label="Name" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.name" type="text"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="Type" align="center">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.type" size="mini" filterable>
+                <el-option
+                    v-for="item in typeList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="Length" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.length" type="number" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="Decimal" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.decimal" type="number" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="Not null" align="center">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.notNull"></el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label="Virtual" align="center">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.virtual"></el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label="Key" align="center">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.key"></el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label="Comment" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.comment" type="text"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane
+          key="Indexes"
+          label="Indexes"
+          name="Indexes"
+      >
+        <el-table
+            :data="indexesTableData"
+            :border="true"
+            highlight-current-row
+            @row-click="rowClick"
+            size="small"
+        ></el-table>
+      </el-tab-pane>
+
+      <el-tab-pane
+          key="SQL Preview"
+          label="SQL Preview"
+          name="SQL Preview"
+      >
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
 import { remote } from 'electron'
 import mix from '../../mixin/mixin'
+
 const son = remote.getGlobal('son')
 
 export default {
@@ -102,6 +131,8 @@ export default {
       radioId: null,
       loading: false,
       tableData: [],
+      tabValue: 'Fields',
+      indexesTableData: [],
       validRules: {
         name: [
           { required: true, message: '名称必须填写' }
