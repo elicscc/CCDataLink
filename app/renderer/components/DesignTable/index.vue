@@ -13,74 +13,77 @@
         </span>
       </template>
     </vxe-toolbar>
-    <vxe-table
-        border
-        resizable
-        show-overflow
-        keep-source
-        ref="xTable"
-        height="500"
+    <el-table
         :data="tableData"
-        :edit-rules="validRules"
-        :edit-config="{trigger: 'click', mode: 'row', showUpdateStatus: true, showInsertStatus: true}">
-      <vxe-column type="checkbox" width="60"></vxe-column>
-      <vxe-column field="name" title="Name" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.name" type="text"></vxe-input>
+        :border="true"
+        highlight-current-row
+        @row-click="rowClick"
+        size="small"
+    >
+      <el-table-column  width="35">
+        <template slot-scope="scope">
+          <el-radio v-model="radioId" :label="scope.row.id"></el-radio>
         </template>
-      </vxe-column>
-      <vxe-column field="type" title="Type" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.type" type="text" :options="typeList" transfer></vxe-select>
+      </el-table-column>
+      <el-table-column label="Name" align="center">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.name" type="text"></el-input>
         </template>
-      </vxe-column>
-      <vxe-column field="length" title="Length" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.length" type="integer"></vxe-input>
+      </el-table-column>
+      <el-table-column label="Type" align="center">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.type" size="mini"  filterable>
+              <el-option
+                  v-for="item in typeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              ></el-option>
+          </el-select>
         </template>
-      </vxe-column>
-      <vxe-column field="decimal" title="Decimal" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.decimal" type="integer" :digits="2"></vxe-input>
+      </el-table-column>
+      <el-table-column label="Length" align="center">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.length" type="number" oninput ="value=value.replace(/[^\d]/g,'')"></el-input>
         </template>
-      </vxe-column>
-      <vxe-column field="notNull" title="Not null" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-checkbox v-model="row.key ? row.key : row.notNull"></vxe-checkbox>
+      </el-table-column>
+      <el-table-column label="Decimal" align="center">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.decimal" type="number" oninput ="value=value.replace(/[^\d]/g,'')"></el-input>
         </template>
-      </vxe-column>
-      <vxe-column field="virtual" title="Virtual" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-checkbox v-model="row.virtual"></vxe-checkbox>
+      </el-table-column>
+      <el-table-column label="Not null" align="center">
+        <template slot-scope="scope">
+          <el-checkbox v-model="scope.row.notNull" ></el-checkbox>
         </template>
-      </vxe-column>
-      <vxe-column field="key" title="Key" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-checkbox v-model="row.key"></vxe-checkbox>
+      </el-table-column>
+      <el-table-column label="Virtual" align="center">
+        <template slot-scope="scope">
+          <el-checkbox v-model="scope.row.virtual" ></el-checkbox>
         </template>
-      </vxe-column>
-      <vxe-column field="comment" title="Comment" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.comment" type="text"></vxe-input>
+      </el-table-column>
+      <el-table-column label="Key" align="center">
+        <template slot-scope="scope">
+          <el-checkbox v-model="scope.row.key" ></el-checkbox>
         </template>
-      </vxe-column>
-<!--      <vxe-column title="操作" width="240">-->
-<!--        <template #default="{ row }">-->
-<!--          <vxe-button status="warning" content="临时删除" @click="removeRowEvent(row)"></vxe-button>-->
-<!--          <vxe-button status="danger" content="直接删除" @click="deleteRowEvent(row)"></vxe-button>-->
-<!--        </template>-->
-<!--      </vxe-column>-->
-    </vxe-table>
+      </el-table-column>
+      <el-table-column label="Comment" align="center">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.comment" type="text"></el-input>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
 import { remote } from 'electron'
-
+import mix from '../../mixin/mixin'
 const son = remote.getGlobal('son')
 
 export default {
   name: 'designTable',
+  mixins: [mix],
   props: {
     databaseInfo: {
       type: Object,
@@ -96,6 +99,7 @@ export default {
 
   data () {
     return {
+      radioId: null,
       loading: false,
       tableData: [],
       validRules: {
@@ -111,15 +115,19 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      // 将表格和工具栏进行关联
-      const $table = this.$refs.xTable
-      $table.connect(this.$refs.xToolbar)
-    })
-    this.loadList()
+    // this.$nextTick(() => {
+    //   // 将表格和工具栏进行关联
+    //   const $table = this.$refs.xTable
+    //   $table.connect(this.$refs.xToolbar)
+    // })
+    // this.loadList()
   },
 
   methods: {
+    rowClick (row) {
+      console.log(row)
+      this.radioId = row.id
+    },
     async loadList () {
       this.loading = true
       try {
@@ -130,20 +138,10 @@ export default {
       }
       this.loading = false
     },
-    formatSex (value) {
-      if (value === '1') {
-        return '男'
-      }
-      if (value === '0') {
-        return '女'
-      }
-      return ''
-    },
-    async insertEvent () {
-      const $table = this.$refs.xTable
-      const newRecord = {}
-      const { row: newRow } = await $table.insertAt(newRecord, -1)
-      await $table.setActiveRow(newRow)
+    insertEvent () {
+      const uid = this.getUUID()
+      this.tableData.push({ id: uid })
+      this.radioId = uid
     },
     async removeSelectEvent () {
       const $table = this.$refs.xTable
@@ -211,3 +209,10 @@ export default {
 
 }
 </script>
+<style lang="scss">
+.custom-radio {
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+</style>
