@@ -1,8 +1,10 @@
-# CCDataLink
+# CC数据库管理工具
 
 #### 介绍
 
-CC数据库连接工具 基于eletron + vue + node + ts + java
+CC数据库管理工具 一款为热门数据库系统打造的管理客户端，支持建表、查询等常用功能，力求打造成简便好用的SQL工具
+
+基于eletron + vue + node + ts + java
 
 v1.0.2 预览版已发布 （没买代码签名，安装报毒请忽略）
 
