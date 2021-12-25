@@ -18,7 +18,7 @@ v1.0.2 预览版已发布 （没买代码签名，安装报毒请忽略）
 
 外链地址：
 
-https://share.weiyun.com/Brn3DkOP 
+https://share.weiyun.com/z6qlN8Es
 
 #### 软件架构
 软件架构说明
