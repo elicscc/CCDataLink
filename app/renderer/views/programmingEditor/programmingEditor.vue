@@ -95,7 +95,9 @@
                         :tableName="item.title"
                         :databaseInfo="item.dataBaseInfo"
             />
-            <design-table v-else-if="item.tagType === -3"/>
+            <design-table v-else-if="item.tagType === -3"
+                          :databaseInfo="item.dataBaseInfo"
+                          :tableName="item.tableName"/>
             <monaco-editor
                 v-else
                 :id="item.name"
@@ -415,20 +417,26 @@ export default {
     },
     designTable () {
       const uid = this.getUUID()
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
       this.editorTabs.push({
         title: '设计表',
         name: uid,
+        dataBaseInfo: d,
         close: true,
+        tableName: this.selectTables[0].connectName,
         tagType: -3
       })
       this.currentTabsName = uid
     },
     addTable () {
       const uid = this.getUUID()
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
       this.editorTabs.push({
         title: '设计表',
         name: uid,
+        dataBaseInfo: d,
         close: true,
+        tableName: null,
         tagType: -3
       })
       this.currentTabsName = uid
