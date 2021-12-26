@@ -8,7 +8,7 @@ export default class WindowUtil {
     global.mainWindow = new BrowserWindow({
       icon: path.join(stringUtil.getStaticPath(), 'logo/logo.ico'),
       useContentSize: true,
-      title: 'CC数据库连接工具',
+      title: 'CC数据库管理工具',
       frame: true,
       width: 1200,
       height: 763,

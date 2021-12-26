@@ -10,7 +10,7 @@
     <el-tabs type="border-card" v-model="tabValue" style="margin-top:10px" :before-leave="beforeLeave">
       <el-tab-pane
           key="Fields"
-          label="Fields"
+          label="字段"
           name="Fields"
       >
         <el-table
@@ -28,14 +28,14 @@
               <el-radio v-model="radioId" :label="scope.row.id" size="mini"></el-radio>
             </template>
           </el-table-column>
-          <el-table-column label="Name" align="center" prop="name">
+          <el-table-column label="字段名称" align="center" prop="name">
             <template slot-scope="scope">
               <el-input v-model="scope.row.name" size="mini" type="text"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="Type" align="center" prop="type">
+          <el-table-column label="类型" align="center" prop="type">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.type" size="mini" filterable>
+              <el-select v-model="scope.row.type" size="mini" filterable @change="typeChange(scope.row)">
                 <el-option
                     v-for="item in typeList"
                     :key="item.value"
@@ -45,43 +45,73 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Length" align="center" prop="length">
+          <el-table-column label="长度" align="center" prop="length">
             <template slot-scope="scope">
               <el-input v-model="scope.row.length" type="number" size="mini"
                         oninput="value=value.replace(/[^\d]/g,'')"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="Decimal" align="center" prop="decimal">
+          <el-table-column label="小数" align="center" prop="decimal">
             <template slot-scope="scope">
               <el-input v-model="scope.row.decimal" type="number" size="mini"
                         oninput="value=value.replace(/[^\d]/g,'')"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="Not null" align="center" prop="notNull">
+          <el-table-column label="非空" align="center" prop="notNull">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.notNull"   size="mini"></el-checkbox>
+              <el-checkbox v-model="scope.row.notNull" size="mini"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label="Virtual" align="center" prop="virtual">
+          <el-table-column label="虚拟" align="center" prop="virtual">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.virtual" size="mini"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label="Key" align="center" prop="key">
+          <el-table-column label="主键" align="center" prop="key">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.key" size="mini" ></el-checkbox>
+              <el-checkbox v-model="scope.row.key" size="mini"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label="Comment" align="center" prop="comment">
+          <el-table-column label="注释" align="center" prop="comment">
             <template slot-scope="scope">
               <el-input v-model="scope.row.comment" type="text" size="mini"></el-input>
             </template>
           </el-table-column>
         </el-table>
+        <div style="margin-top:30px">
+
+          <el-row class="rowPadding">
+            <el-col :span="5" class="title">默认值：</el-col>
+            <el-col :span="8">
+              <el-select v-model="fieldData.default" size="mini" filterable allow-create default-first-option
+                         style="width:200px">
+                <el-option
+                    v-for="item in defaultValueList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="8">
+              提示：手动输入默认值按回车保存
+            </el-col>
+          </el-row>
+          <el-row class="rowPadding"
+                  v-show="fieldData.type && (fieldData.type.indexOf('char') !== -1 || fieldData.type.indexOf('text') !== -1)">
+            <el-col :span="5" class="title">主键长度：</el-col>
+            <el-col :span="8">
+              <el-input v-model="fieldData.keyLength" type="number" size="mini" style="width:200px"
+                        oninput="value=value.replace(/[^\d]/g,'')" :disabled="!fieldData.key"></el-input>
+            </el-col>
+          </el-row>
+
+        </div>
+
       </el-tab-pane>
       <el-tab-pane
           key="Indexes"
-          label="Indexes"
+          label="索引"
           name="Indexes"
       >
         <el-table
@@ -97,12 +127,12 @@
               <el-radio v-model="indexesRadioId" :label="scope.row.id" size="mini"></el-radio>
             </template>
           </el-table-column>
-          <el-table-column label="Name" align="center" prop="name">
+          <el-table-column label="名字" align="center" prop="name">
             <template slot-scope="scope">
               <el-input v-model="scope.row.name" size="mini" type="text"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="Fields" align="center" prop="fields">
+          <el-table-column label="数据列" align="center" prop="fields">
             <template slot-scope="scope">
               <el-select multiple v-model="scope.row.fields" size="mini" filterable>
                 <el-option
@@ -114,7 +144,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Index Type" align="center" prop="indexType">
+          <el-table-column label="索引类型" align="center" prop="indexType">
             <template slot-scope="scope">
               <el-select v-model="scope.row.indexType" size="mini" clearable>
                 <el-option
@@ -126,7 +156,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Index method" align="center" prop="indexMethod">
+          <el-table-column label="索引方法" align="center" prop="indexMethod">
             <template slot-scope="scope">
               <el-select v-model="scope.row.indexMethod" size="mini" clearable>
                 <el-option
@@ -138,18 +168,24 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Comment" align="center" prop="comment">
+          <el-table-column label="注释" align="center" prop="comment">
             <template slot-scope="scope">
               <el-input v-model="scope.row.comment" type="text" size="mini"></el-input>
             </template>
           </el-table-column>
-
         </el-table>
       </el-tab-pane>
-
+      <el-tab-pane
+          key="comment"
+          label="注释"
+          name="comment"
+      >
+        <el-input v-model="tableComment"  type="textarea"
+                  :rows="50" ></el-input>
+      </el-tab-pane>
       <el-tab-pane
           key="SQL Preview"
-          label="SQL Preview"
+          label="SQL预览"
           name="SQL Preview"
       >
         <pre>
@@ -164,6 +200,7 @@
 import { remote } from 'electron'
 import mix from '../../mixin/mixin'
 import Constant from '../../../utils/constant'
+
 const son = remote.getGlobal('son')
 
 export default {
@@ -184,6 +221,8 @@ export default {
 
   data () {
     return {
+      tableComment: null,
+      fieldData: {},
       radioId: null,
       indexesRadioId: null,
       loading: false,
@@ -192,6 +231,16 @@ export default {
       maxSize: 0,
       tabValue: 'Fields',
       indexesTableData: [],
+      defaultValueList: [
+        {
+          label: 'EMPTY STRING',
+          value: '\'\''
+        },
+        {
+          label: 'NULL',
+          value: 'NULL'
+        }
+      ],
       validRules: {
         name: [
           {
@@ -236,7 +285,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.databaseInfo.databaseType)
     switch (this.databaseInfo.databaseType) {
       case '1':
       case '4':
@@ -250,7 +298,7 @@ export default {
         break
     }
     this.$nextTick().then(() => {
-      this.maxSize = this.$refs.designRef.offsetHeight - 140
+      this.maxSize = this.$refs.designRef.offsetHeight - 400
     })
     this.insertField()
     this.insertIndex()
@@ -259,6 +307,7 @@ export default {
   methods: {
     rowClick (row) {
       this.radioId = row.id
+      this.fieldData = row
     },
     beforeLeave (activeName) {
       if (activeName === 'SQL Preview') {
@@ -276,18 +325,38 @@ export default {
         type: 'varchar',
         length: 255
       })
-      this.radioId = uid
+      this.rowClick(this.tableData[this.tableData.length - 1])
     },
     insertIndex () {
       const uid = this.getUUID()
       this.indexesTableData.push({ id: uid })
       this.indexesRadioId = uid
     },
-    keyChange (scope) {
-      if (scope.row.key) {
-        scope.row.notNull = true
+    keyChange (value, row) {
+      if (value) {
+        row.notNull = true
       }
     },
+    typeChange (row) {
+      row.default = null
+      row.keyLength = null
+    },
+    checkKeyLengthShow (fieldData) {
+      return (fieldData.type.indexOf('char') !== -1) || (fieldData.type.indexOf('text') !== -1)
+    },
+    getSqlPre (tableName) {
+      switch (this.databaseInfo.databaseType) {
+        case '1':
+        case '4':
+          this.mysqlPre(tableName)
+          break
+        case '2':
+          break
+        case '3':
+          break
+      }
+    },
+
     /**
      * DROP TABLE IF EXISTS {{=it.entity.defKey}};
      * CREATE TABLE {{=it.entity.defKey}}(
@@ -303,8 +372,8 @@ export default {
      * $blankline
      * @param tableName
      */
-    getSqlPre (tableName) {
-      tableName = tableName || 'Untitled'
+    mysqlPre (tableName) {
+      tableName = tableName || ''
       let col = ''
       const pkList = []
       for (let i = 0; i < this.tableData.length; i++) {
