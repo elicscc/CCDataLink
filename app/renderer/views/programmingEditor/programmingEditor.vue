@@ -148,8 +148,8 @@
                     size="small"></el-input>
         </el-form-item>
 
-        <el-form-item label="数据库名称:" prop="databaseName">
-          <el-input v-model="dataBaseInfo.databaseName" placeholder="请输入数据库名称" maxlength="30" size="small"
+        <el-form-item label="库名/服务名:" prop="databaseName">
+          <el-input v-model="dataBaseInfo.databaseName" placeholder="请输入库名或服务名" maxlength="30" size="small"
                     class="form_item"></el-input>
         </el-form-item>
 
@@ -169,7 +169,7 @@
                     password></el-input>
         </el-form-item>
 
-        <el-form-item label="数据库说明:" prop="databaseDescription">
+        <el-form-item label="备注:" prop="databaseDescription">
           <el-input v-model="dataBaseInfo.databaseDescription" type="textarea" :rows="3" maxlength="300" size="small"
                     class="form_item"
                     show-word-limit></el-input>
@@ -286,7 +286,7 @@ export default {
           value: '2'
         },
         {
-          label: 'Oracle',
+          label: 'Oracle(Thin)',
           value: '3'
         }
       ],
@@ -700,7 +700,7 @@ export default {
 .result-box {
   margin-top: 10px;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 120px);
   transition: all 0.3s;
 
   .vue-drag-select {
