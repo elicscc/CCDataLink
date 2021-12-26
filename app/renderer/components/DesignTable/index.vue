@@ -180,8 +180,8 @@
           label="注释"
           name="comment"
       >
-        <el-input v-model="tableComment"  type="textarea"
-                  :rows="50" ></el-input>
+        <el-input v-model="tableComment" type="textarea"
+                  :rows="50"></el-input>
       </el-tab-pane>
       <el-tab-pane
           key="SQL Preview"
@@ -337,6 +337,25 @@ export default {
         row.notNull = true
       }
     },
+
+    tableCommentEscape (str) {
+      if (!str) {
+        return ';'
+      }
+      return 'COMMENT = \'' + this.commentEscape(str) + ' \';'
+    },
+    fieldCommentEscape (str) {
+      if (!str) {
+        return ''
+      }
+      return 'COMMENT \'' + this.commentEscape(str) + ' \';'
+    },
+    commentEscape (str) {
+      if (!str) {
+        return ''
+      }
+      return str.replace(/"/g, '\\"').replace(/'/g, '\\\'')
+    },
     typeChange (row) {
       row.default = null
       row.keyLength = null
@@ -384,15 +403,32 @@ export default {
         const name = this.tableData[i].name ? n : ''
         const decimal = this.tableData[i].decimal > 0 ? ',' + this.tableData[i].decimal : ''
         const length = this.tableData[i].length > 0 ? '(' + this.tableData[i].length + decimal + ')' : ''
-        const notNull = this.tableData[i].notNull ? 'NOT NULL' : 'NULL'
-        col += name + ' ' + this.tableData[i].type + length + ' ' + notNull + (i < this.tableData.length - 1 ? ',' : '') + '\n'
+        const info = this.mysqlColumnExInfo(this.tableData[i])
+        col += name + ' ' + this.tableData[i].type + length + ' ' + info + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',' : '') + '\n'
       }
       if (pkList.length > 0) {
         col += 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
       }
-      this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ');'
+      const com = this.tableCommentEscape(this.tableComment)
+      // console.log(com)
+      this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ')' + com
+    },
+    mysqlColumnExInfo (data) {
+      return data.notNull ? 'NOT NULL' : 'NULL'
+    },
+    /**
+     *解析表的comment
+     * @param str
+     * @returns {null|*}
+     */
+    getTableComment (str) {
+      str = str.substring(str.lastIndexOf(')') + 1, str.length)
+      if (str.match(/COMMENT='(\S*?)'/)) {
+        return str.match(/COMMENT='(\S*?)'/)[1]
+      } else {
+        return null
+      }
     }
-
   }
 
 }
