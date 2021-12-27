@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column label="主键" align="center" prop="key">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.key" size="mini"></el-checkbox>
+              <el-checkbox v-model="scope.row.key" size="mini" @change="keyChange(scope)"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="注释" align="center" prop="comment">
@@ -131,10 +131,10 @@
             </el-col>
           </el-row>
           <div v-show="fieldData.type && (fieldData.type.indexOf('int') !== -1)">
-            <el-row class="rowPadding">
+            <el-row class="rowPadding" v-show="!fieldData.virtual">
               <el-col :span="5" class="title">自动增长</el-col>
               <el-col :span="8">
-                <el-checkbox v-model="fieldData.autoIncrement" size="mini" v-show="!fieldData.virtual"></el-checkbox>
+                <el-checkbox v-model="fieldData.autoIncrement" size="mini" ></el-checkbox>
               </el-col>
             </el-row>
             <el-row class="rowPadding">
@@ -382,8 +382,23 @@ export default {
       const uid = this.getUUID()
       this.tableData.push({
         id: uid,
+        name: null,
         type: 'varchar',
-        length: 255
+        length: 255,
+        decimal: null,
+        notNull: null,
+        virtual: null,
+        key: null,
+        comment: null,
+        virtualType: null,
+        expression: null,
+        generatedAlways: null,
+        default: null,
+        keyLength: null,
+        autoIncrement: null,
+        unsigned: null,
+        zeroFill: null,
+        onUpdateCurrentTime: null
       })
       this.rowClick(this.tableData[this.tableData.length - 1])
     },
@@ -392,9 +407,9 @@ export default {
       this.indexesTableData.push({ id: uid })
       this.indexesRadioId = uid
     },
-    keyChange (value, row) {
-      if (value) {
-        row.notNull = true
+    keyChange (value) {
+      if (value.row.key) {
+        value.row.notNull = true
       }
     },
 
@@ -502,5 +517,8 @@ export default {
   font-size: 18px;
   cursor: pointer;
   user-select: none;
+}
+.rowPadding{
+  margin-top:10px;
 }
 </style>
