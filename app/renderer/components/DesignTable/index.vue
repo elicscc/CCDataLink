@@ -79,11 +79,36 @@
           </el-table-column>
         </el-table>
         <div style="margin-top:30px">
-
+          <el-row class="rowPadding" v-show="fieldData.virtual">
+            <el-col :span="5" class="title">虚拟类型</el-col>
+            <el-col :span="8">
+              <el-select v-model="fieldData.virtualType" size="mini"  style="width:200px">
+                <el-option
+                    v-for="item in virtualTypeList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+          <el-row class="rowPadding"
+                  v-show="fieldData.virtual">
+            <el-col :span="5" class="title">表达式</el-col>
+            <el-col :span="8">
+              <el-input v-model="fieldData.expression" type="text" size="mini" style="width:200px"></el-input>
+            </el-col>
+          </el-row>
+          <el-row class="rowPadding" v-show="fieldData.virtual">
+            <el-col :span="5" class="title">总是产生</el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="fieldData.generatedAlways" size="mini"></el-checkbox>
+            </el-col>
+          </el-row>
           <el-row class="rowPadding">
             <el-col :span="5" class="title">默认值：</el-col>
             <el-col :span="8">
-              <el-select v-model="fieldData.default" size="mini" filterable allow-create default-first-option
+              <el-select v-model="fieldData.default" size="mini" filterable allow-create default-first-option :disabled="fieldData.virtual"
                          style="width:200px">
                 <el-option
                     v-for="item in defaultValueList"
@@ -105,7 +130,32 @@
                         oninput="value=value.replace(/[^\d]/g,'')" :disabled="!fieldData.key"></el-input>
             </el-col>
           </el-row>
-
+          <div v-show="fieldData.type && (fieldData.type.indexOf('int') !== -1)">
+            <el-row class="rowPadding">
+              <el-col :span="5" class="title">自动增长</el-col>
+              <el-col :span="8">
+                <el-checkbox v-model="fieldData.autoIncrement" size="mini" v-show="!fieldData.virtual"></el-checkbox>
+              </el-col>
+            </el-row>
+            <el-row class="rowPadding">
+            <el-col :span="5" class="title">无符号</el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="fieldData.unsigned" size="mini"></el-checkbox>
+            </el-col>
+            </el-row>
+            <el-row class="rowPadding">
+              <el-col :span="5" class="title">零值填充</el-col>
+              <el-col :span="8">
+                <el-checkbox v-model="fieldData.zeroFill" size="mini"></el-checkbox>
+              </el-col>
+            </el-row>
+          </div>
+          <el-row class="rowPadding" v-show="!fieldData.virtual && fieldData.type && (fieldData.type === 'datetime')">
+            <el-col :span="5" class="title">当前时间更新</el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="fieldData.onUpdateCurrentTime" size="mini"></el-checkbox>
+            </el-col>
+          </el-row>
         </div>
 
       </el-tab-pane>
@@ -241,6 +291,16 @@ export default {
           value: 'NULL'
         }
       ],
+      virtualTypeList: [
+        {
+          label: 'PERSISTENT',
+          value: 'PERSISTENT'
+        },
+        {
+          label: 'VIRTUAL',
+          value: 'VIRTUAL'
+        }
+      ],
       validRules: {
         name: [
           {
@@ -359,6 +419,10 @@ export default {
     typeChange (row) {
       row.default = null
       row.keyLength = null
+      row.autoIncrement = null
+      row.unsigned = null
+      row.zeroFill = null
+      row.onUpdateCurrentTime = null
     },
     checkKeyLengthShow (fieldData) {
       return (fieldData.type.indexOf('char') !== -1) || (fieldData.type.indexOf('text') !== -1)
@@ -398,7 +462,8 @@ export default {
       for (let i = 0; i < this.tableData.length; i++) {
         const n = '`' + this.tableData[i].name + '`'
         if (this.tableData[i].key && this.tableData[i].name) {
-          pkList.push(n)
+          const keyL = this.tableData[i].keyLength ? n + '(' + this.tableData[i].keyLength + ')' : n
+          pkList.push(keyL)
         }
         const name = this.tableData[i].name ? n : ''
         const decimal = this.tableData[i].decimal > 0 ? ',' + this.tableData[i].decimal : ''
@@ -410,7 +475,6 @@ export default {
         col += 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
       }
       const com = this.tableCommentEscape(this.tableComment)
-      // console.log(com)
       this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ')' + com
     },
     mysqlColumnExInfo (data) {
