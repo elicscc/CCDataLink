@@ -191,6 +191,41 @@ public class TableInputService {
         }
     }
 
+    public String showCreateSql(String databaseInfoStr, String tableName) {
+        try {
+            return JsonResult.success(showCreateTable(databaseInfoStr, tableName));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
+    }
+
+    public String showCreateTable(String databaseInfoStr, String tableName) {
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        String sql;
+        switch (databaseInfo.getDatabaseType()) {
+            case "1":
+            case "4":
+                sql = "SHOW CREATE TABLE `" + tableName + "`";
+                break;
+            case "3":
+                sql = "select dbms_metadata.get_ddl('TABLE','" + tableName + "') from dual";
+                break;
+            default:
+                throw new RuntimeException("Unexpected value: " + databaseInfo.getDatabaseType());
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            return resultSet.getString(1);
+        } catch (SQLException e) {
+            throw new RuntimeException("获取表信息失败" + e.getMessage());
+        }
+    }
+
 
     /**
      * 获取表

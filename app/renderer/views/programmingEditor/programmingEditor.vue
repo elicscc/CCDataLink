@@ -11,7 +11,7 @@
                   size="mini"
                   type="primary"
                   @click="openDataBaseDialog"
-              />
+              >连接</el-button>
             </el-col>
             <el-col :span="1.5">
               <el-button
@@ -19,7 +19,7 @@
                   size="mini"
                   type="primary"
                   @click="query"
-              />
+              >查询</el-button>
             </el-col>
           </el-row>
         </div>
@@ -418,19 +418,25 @@ export default {
     designTable () {
       const uid = this.getUUID()
       const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
-      this.editorTabs.push({
-        title: '设计表',
-        name: uid,
-        dataBaseInfo: d,
-        close: true,
-        tableName: this.selectTables[0].connectName,
-        tagType: -3
-      })
-      this.currentTabsName = uid
+      if (d.databaseType === '2' || d.databaseType === '3') {
+        return this.$message.warning('暂不支持sqlserver和oracle')
+      }
+      // this.editorTabs.push({
+      //   title: '设计表',
+      //   name: uid,
+      //   dataBaseInfo: d,
+      //   close: true,
+      //   tableName: this.selectTables[0].connectName,
+      //   tagType: -3
+      // })
+      // this.currentTabsName = uid
     },
     addTable () {
       const uid = this.getUUID()
       const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      if (d.databaseType === '2' || d.databaseType === '3') {
+        return this.$message.warning('暂不支持sqlserver和oracle')
+      }
       this.editorTabs.push({
         title: '设计表',
         name: uid,
