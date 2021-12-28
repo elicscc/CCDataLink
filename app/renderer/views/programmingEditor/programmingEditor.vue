@@ -11,7 +11,8 @@
                   size="mini"
                   type="primary"
                   @click="openDataBaseDialog"
-              >连接</el-button>
+              >连接
+              </el-button>
             </el-col>
             <el-col :span="1.5">
               <el-button
@@ -19,7 +20,8 @@
                   size="mini"
                   type="primary"
                   @click="query"
-              >查询</el-button>
+              >查询
+              </el-button>
             </el-col>
           </el-row>
         </div>
@@ -68,6 +70,9 @@
                 <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表
                 </el-button>
                 <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新增表</el-button>
+                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="getCreateSql">
+                  查看create
+                </el-button>
               </el-row>
               <div class="result-box">
                 <vue-drag-select
@@ -401,6 +406,21 @@ export default {
     getTreeList () {
       this.proOptions = store.get('databaseList') || []
     },
+    async getCreateSql () {
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      if (d.databaseType === '2') {
+        return this.$message.warning('暂不支持sqlserver')
+      }
+      const database = JSON.stringify(d)
+      const res = await son.send('showCreateSql', {
+        databaseInfo: database,
+        tableName: this.selectTables[0].connectName
+      })
+      console.log(res)
+      await this.$alert(res.result.data, '建表语句', {
+        dangerouslyUseHTMLString: true
+      })
+    },
     openTable () {
       const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
       const i = this.editorTabs.findIndex(tab => tab.name === this.selectTables[0].id)
@@ -603,7 +623,7 @@ export default {
     async connectTest (name) {
       this.testConnectShow = true
       const res = await son.send('connectTest', this.dataBaseInfo)
-      console.log('connectTest', res.result)
+      // console.log('connectTest', res.result)
       if (res.result.code === 20000) {
         this.$message.success('连接成功')
       } else {

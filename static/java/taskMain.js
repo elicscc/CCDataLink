@@ -58,6 +58,13 @@ function handelMessage ({ action, params, id }) {
         r = exception(e)
       }
       break
+    case 'showCreateSql':
+      try {
+        r = showCreateSql(params.databaseInfo, params.tableName)
+      } catch (e) {
+        r = exception(e)
+      }
+      break
   }
   process.send({ action, error: null, result: r, id })
 }
@@ -103,6 +110,12 @@ function getTableCount (databaseInfoStr, tableName) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.getTableCountSync(databaseInfoStr, tableName))
+}
+
+function showCreateSql (databaseInfoStr, tableName) {
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.showCreateSqlSync(databaseInfoStr, tableName))
 }
 
 process.on('message', handelMessage)

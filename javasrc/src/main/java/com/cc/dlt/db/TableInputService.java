@@ -154,9 +154,10 @@ public class TableInputService {
     }
 
 //    public static void main(String[] args) {
-//        String s = "{\"connectName\":\"data_link_transfer_5\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"data_link_transfer_5\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"8843d380-5cc2-11ec-83c2-0f44d8c9b576\",\"isConnected\":true}";
+//        String s = "{\"connectName\":\"ss\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"mx\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"25ed3850-5be3-11ec-a23b-f10da0c8ac8e\",\"isConnected\":true}";
 //        TableInputService tableInputService = new TableInputService();
-//        tableInputService.executeSql(s, "SELECT * FROM t_collect_log",null);
+//        String i = tableInputService.showCreateTable(s, "t_mx");
+//        System.err.println(i);
 //    }
 
     public Integer getTableCountService(String databaseInfoStr, String tableName) {
@@ -220,7 +221,8 @@ public class TableInputService {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet resultSet = ps.executeQuery();
             resultSet.next();
-            return resultSet.getString(1);
+            int s = "3".equals(databaseInfo.getDatabaseType()) ? 1 : 2;
+            return resultSet.getString(s);
         } catch (SQLException e) {
             throw new RuntimeException("获取表信息失败" + e.getMessage());
         }
