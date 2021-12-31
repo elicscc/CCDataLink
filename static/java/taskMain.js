@@ -65,6 +65,13 @@ function handelMessage ({ action, params, id }) {
         r = exception(e)
       }
       break
+    case 'exeUpdateSql':
+      try {
+        r = exeUpdateSql(params.databaseInfo, params.sql)
+      } catch (e) {
+        r = exception(e)
+      }
+      break
   }
   process.send({ action, error: null, result: r, id })
 }
@@ -116,6 +123,12 @@ function showCreateSql (databaseInfoStr, tableName) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.showCreateSqlSync(databaseInfoStr, tableName))
+}
+
+function exeUpdateSql (databaseInfoStr, sql) {
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.exeUpdateSqlSync(databaseInfoStr, sql))
 }
 
 process.on('message', handelMessage)

@@ -1,7 +1,7 @@
 <template>
   <div ref="designRef" style="height: 100vh;">
     <el-row style="margin-left: 5px">
-      <el-button type="primary" size="small">保存</el-button>
+      <el-button type="primary" size="small" @click="save">保存</el-button>
       <el-button type="primary" size="small" @click="insertField" v-show="tabValue==='Fields'">新增字段</el-button>
       <el-button type="primary" size="small" v-show="tabValue==='Fields'">删除字段</el-button>
       <el-button type="primary" size="small" @click="insertIndex" v-show="tabValue==='Indexes'">新增索引</el-button>
@@ -414,6 +414,10 @@ export default {
       }
     },
 
+    save () {
+      console.log('')
+    },
+
     tableCommentEscape (str) {
       if (!str) {
         return ';'
@@ -478,7 +482,20 @@ export default {
       this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ')' + com
     },
     mysqlColumnExInfo (data) {
-      return data.notNull ? 'NOT NULL' : 'NULL'
+      let r
+      if (data.virtual) {
+        const g = data.generatedAlways ? 'GENERATED ALWAYS' : ''
+        r = g + 'AS (' + data.expression + ') ' + data.virtualType
+      } else {
+        const u = data.unsigned ? 'UNSIGNED ' : ''
+        const z = data.zeroFill ? 'ZEROFILL ' : ''
+        const n = data.notNull ? 'NOT NULL ' : 'NULL'
+        const d = data.default ? 'DEFAULT ' + data.default + ' ' : ''
+        const a = data.autoIncrement ? 'AUTO_INCREMENT ' : ''
+        const t = data.onUpdateCurrentTime ? 'ON UPDATE CURRENT_TIMESTAMP ' : ''
+        r = u + z + n + d + a + t
+      }
+      return r
     },
     /**
      *解析表的comment

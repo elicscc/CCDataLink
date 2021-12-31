@@ -74,6 +74,37 @@ public class TableInputService {
         }
     }
 
+    public String exeUpdateSql(String databaseInfoStr, String sql) {
+        try {
+            return JsonResult.success(exeUpdateSqlService(databaseInfoStr, sql));
+        } catch (RuntimeException e) {
+            QuerySqlVo s = new QuerySqlVo();
+            s.setErrorMessage(e.getMessage());
+            s.setSql(sql);
+            return JsonResult.success(s);
+        }
+    }
+
+    private QuerySqlVo exeUpdateSqlService(String databaseInfoStr, String sql) {
+        DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
+        if (null == databaseInfo) {
+            throw new RuntimeException("数据库不存在！");
+        }
+        if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
+            sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
+        }
+        try (Connection conn = getConnection(databaseInfo)) {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            QuerySqlVo querySqlVo = new QuerySqlVo();
+            querySqlVo.setCount(stmt.getUpdateCount());
+            return querySqlVo;
+        } catch (SQLException e) {
+            log.error("数据库报错：", e);
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     /**
      * SELECT * FROM `data_link_transfer_5`.`t_online_class_info` LIMIT 0,1000
      * <p>
@@ -346,8 +377,6 @@ public class TableInputService {
         if (null == databaseInfo) {
             throw new RuntimeException("数据库不存在！");
         }
-        //oracle的sql需要支持分号
-
         ResultSet rs;
         String sql = sqlStr.trim();
         if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
