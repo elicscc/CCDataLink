@@ -18,6 +18,7 @@
       >
         <template #edit="{ row, column }">
           <vxe-input v-if="column.params.colType === 'datetime' " v-model="row[column.property]" type="datetime" transfer></vxe-input>
+          <vxe-input v-else-if="column.params.colType === 'date' " v-model="row[column.property]" type="date" transfer></vxe-input>
           <vxe-input v-else v-model="row[column.property]" type="text"></vxe-input>
         </template>
       </vxe-column>
