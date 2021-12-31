@@ -25,7 +25,7 @@ gitee: https://gitee.com/elicscc/ccdata-link
 
 #### 下载
 
-win64版本下载： [下载链接](https://objects.githubusercontent.com/github-production-release-asset-2e65be/440697917/778477da-9446-4477-999f-d4af62c6f6ac?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20211225%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20211225T044250Z&X-Amz-Expires=300&X-Amz-Signature=165938df9f0050ea443750a1d161d6b3d1034c367bb91cf33d86be73c424aa66&X-Amz-SignedHeaders=host&actor_id=59130064&key_id=0&repo_id=440697917&response-content-disposition=attachment%3B%20filename%3DCC.1.0.2.exe&response-content-type=application%2Foctet-stream)
+win64版本下载： [下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.2-alpha/CC.1.0.2.exe)
 
 外链地址： https://share.weiyun.com/z6qlN8Es
 

@@ -82,7 +82,7 @@
           <el-row class="rowPadding" v-show="fieldData.virtual">
             <el-col :span="5" class="title">虚拟类型</el-col>
             <el-col :span="8">
-              <el-select v-model="fieldData.virtualType" size="mini"  style="width:200px">
+              <el-select v-model="fieldData.virtualType" size="mini" style="width:200px">
                 <el-option
                     v-for="item in virtualTypeList"
                     :key="item.value"
@@ -108,7 +108,8 @@
           <el-row class="rowPadding">
             <el-col :span="5" class="title">默认值：</el-col>
             <el-col :span="8">
-              <el-select v-model="fieldData.default" size="mini" filterable allow-create default-first-option :disabled="fieldData.virtual"
+              <el-select v-model="fieldData.default" size="mini" filterable allow-create default-first-option
+                         :disabled="fieldData.virtual"
                          style="width:200px">
                 <el-option
                     v-for="item in defaultValueList"
@@ -134,14 +135,14 @@
             <el-row class="rowPadding" v-show="!fieldData.virtual">
               <el-col :span="5" class="title">自动增长</el-col>
               <el-col :span="8">
-                <el-checkbox v-model="fieldData.autoIncrement" size="mini" ></el-checkbox>
+                <el-checkbox v-model="fieldData.autoIncrement" size="mini"></el-checkbox>
               </el-col>
             </el-row>
             <el-row class="rowPadding">
-            <el-col :span="5" class="title">无符号</el-col>
-            <el-col :span="8">
-              <el-checkbox v-model="fieldData.unsigned" size="mini"></el-checkbox>
-            </el-col>
+              <el-col :span="5" class="title">无符号</el-col>
+              <el-col :span="8">
+                <el-checkbox v-model="fieldData.unsigned" size="mini"></el-checkbox>
+              </el-col>
             </el-row>
             <el-row class="rowPadding">
               <el-col :span="5" class="title">零值填充</el-col>
@@ -468,8 +469,7 @@ export default {
         const name = this.tableData[i].name ? n : ''
         const decimal = this.tableData[i].decimal > 0 ? ',' + this.tableData[i].decimal : ''
         const length = this.tableData[i].length > 0 ? '(' + this.tableData[i].length + decimal + ')' : ''
-        const info = this.mysqlColumnExInfo(this.tableData[i])
-        col += name + ' ' + this.tableData[i].type + length + ' ' + info + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',' : '') + '\n'
+        col += name + ' ' + this.tableData[i].type + length + ' ' + this.mysqlColumnExInfo(this.tableData[i]) + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',' : '') + '\n'
       }
       if (pkList.length > 0) {
         col += 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
@@ -503,7 +503,8 @@ export default {
   cursor: pointer;
   user-select: none;
 }
-.rowPadding{
-  margin-top:10px;
+
+.rowPadding {
+  margin-top: 10px;
 }
 </style>
