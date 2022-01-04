@@ -555,7 +555,7 @@ export default {
       switch (this.databaseInfo.databaseType) {
         case '1':
         case '4':
-          this.mysqlPre(tableName)
+          this.mysqlCreatePre(tableName)
           break
         case '2':
           break
@@ -564,7 +564,7 @@ export default {
       }
     },
 
-    mysqlPre (tableName) {
+    mysqlCreatePre (tableName) {
       tableName = tableName || ''
       let col = ''
       const pkList = []

@@ -442,7 +442,7 @@ export default {
         return this.$message.warning('暂不支持sqlserver和oracle')
       }
       this.editorTabs.push({
-        title: '设计表',
+        title: this.selectTables[0].connectName,
         name: uid,
         dataBaseInfo: d,
         close: true,
