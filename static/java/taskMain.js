@@ -13,7 +13,11 @@ dependencies.forEach(function (dependency) {
   java.classpath.push(baseDir + '/' + dependency)
 })
 
-function handelMessage ({ action, params, id }) {
+function handelMessage ({
+  action,
+  params,
+  id
+}) {
   let r
   switch (action) {
     case 'connectTest':
@@ -72,8 +76,20 @@ function handelMessage ({ action, params, id }) {
         r = exception(e)
       }
       break
+    case 'getTableInfo':
+      try {
+        r = getTableInfo(params.databaseInfo, params.tableName)
+      } catch (e) {
+        r = exception(e)
+      }
+      break
   }
-  process.send({ action, error: null, result: r, id })
+  process.send({
+    action,
+    error: null,
+    result: r,
+    id
+  })
 }
 
 function exception (e) {
@@ -129,6 +145,12 @@ function exeUpdateSql (databaseInfoStr, sql) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
   return JSON.parse(service.exeUpdateSqlSync(databaseInfoStr, sql))
+}
+
+function getTableInfo (databaseInfoStr, tableName) {
+  const TableInputService = java.import('com.cc.dlt.db.TableInputService')
+  const service = new TableInputService()
+  return JSON.parse(service.getTableInfoSync(databaseInfoStr, tableName))
 }
 
 process.on('message', handelMessage)
