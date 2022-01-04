@@ -441,15 +441,15 @@ export default {
       if (d.databaseType === '2' || d.databaseType === '3') {
         return this.$message.warning('暂不支持sqlserver和oracle')
       }
-      // this.editorTabs.push({
-      //   title: '设计表',
-      //   name: uid,
-      //   dataBaseInfo: d,
-      //   close: true,
-      //   tableName: this.selectTables[0].connectName,
-      //   tagType: -3
-      // })
-      // this.currentTabsName = uid
+      this.editorTabs.push({
+        title: '设计表',
+        name: uid,
+        dataBaseInfo: d,
+        close: true,
+        tableName: this.selectTables[0].connectName,
+        tagType: -3
+      })
+      this.currentTabsName = uid
     },
     addTable () {
       const uid = this.getUUID()

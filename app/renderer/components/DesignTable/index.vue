@@ -346,8 +346,9 @@ export default {
       ]
     }
   },
-  mounted () {
+  async mounted () {
     this.tableNameCopy = this.tableName
+    await this.initEditor()
     switch (this.databaseInfo.databaseType) {
       case '1':
       case '4':
@@ -374,7 +375,7 @@ export default {
     },
     beforeLeave (activeName) {
       if (activeName === 'SQL Preview') {
-        this.getSqlPre(this.tableName)
+        this.getSqlPre(this.tableNameCopy)
       }
     },
     indexRowClick (row) {
@@ -419,16 +420,22 @@ export default {
     save () {
       this.$prompt('请输入表名', '表命名', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
-        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        // inputErrorMessage: '邮箱格式不正确'
+        cancelButtonText: '取消',
+        inputPattern: /^[^\s]*$/,
+        inputErrorMessage: '不能含有空格'
       }).then(async ({ value }) => {
+        if (!value) {
+          return this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        }
         this.getSqlPre(value)
-        console.log(this.sqlPre)
+        // console.log(this.sqlPre)
         const database = JSON.stringify(this.databaseInfo)
         // console.log(database)
         const res = await son.send('exeUpdateSql', { databaseInfo: database, sql: this.sqlPre })
-        console.log(res.result)
+        //  console.log(res.result)
         if (res.result.data.errorMessage) {
           this.$message({
             type: 'error',
@@ -440,7 +447,7 @@ export default {
             message: '创建成功'
           })
           this.tableNameCopy = value
-          this.initEditor()
+          await this.initEditor()
         }
       }).catch(() => {
         this.$message({
@@ -453,11 +460,14 @@ export default {
     /**
      * 初始化编辑表结构配置
      */
-    initEditor () {
+    async  initEditor () {
       if (!this.tableNameCopy) {
         return
       }
       this.sqlPre = null
+      const database = JSON.stringify(this.databaseInfo)
+      const res = await son.send('getTableInfo', { databaseInfo: database, tableName: this.tableNameCopy })
+      console.log(res.result)
     },
 
     tableCommentEscape (str) {
