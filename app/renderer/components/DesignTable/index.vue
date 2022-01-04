@@ -272,6 +272,7 @@ export default {
 
   data () {
     return {
+      tableDataCopy: [],
       tableNameCopy: null,
       tableComment: null,
       fieldData: {},
@@ -496,6 +497,7 @@ export default {
           }
         }
       })
+      this.tableDataCopy = JSON.parse(JSON.stringify(this.tableData))
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
     },
