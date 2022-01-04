@@ -364,8 +364,10 @@ export default {
     this.$nextTick().then(() => {
       this.maxSize = this.$refs.designRef.offsetHeight - 400
     })
-    this.insertField()
-    this.insertIndex()
+    if (!this.tableNameCopy) {
+      this.insertField()
+      this.insertIndex()
+    }
   },
 
   methods: {
@@ -375,7 +377,9 @@ export default {
     },
     beforeLeave (activeName) {
       if (activeName === 'SQL Preview') {
-        this.getSqlPre(this.tableNameCopy)
+        if (!this.tableNameCopy) {
+          this.getCreateSqlPre(this.tableNameCopy)
+        }
       }
     },
     indexRowClick (row) {
@@ -430,7 +434,7 @@ export default {
             message: '已取消'
           })
         }
-        this.getSqlPre(value)
+        this.getCreateSqlPre(value)
         // console.log(this.sqlPre)
         const database = JSON.stringify(this.databaseInfo)
         // console.log(database)
@@ -468,8 +472,59 @@ export default {
       const database = JSON.stringify(this.databaseInfo)
       const res = await son.send('getTableInfo', { databaseInfo: database, tableName: this.tableNameCopy })
       console.log(res.result)
+      this.tableData = res.result.data.columnList.map(i => {
+        if (res.result.data.databaseType !== '2') {
+          return {
+            /**
+             * COLLATION_NAME: null
+             * COLUMN_COMMENT: ""
+             * COLUMN_DEFAULT: null
+             * COLUMN_KEY: "PRI"
+             * COLUMN_NAME: "asdd"
+             * COLUMN_TYPE: "int(255)"
+             * EXTRA: "auto_increment"
+             * IS_NULLABLE: "NO"
+             * PRIVILEGES: "select,insert,update,references"
+             */
+            id: this.getUUID(),
+            name: i.COLUMN_NAME,
+            notNull: i.IS_NULLABLE === 'NO',
+            key: i.COLUMN_KEY === 'PRI',
+            comment: i.COLUMN_COMMENT,
+            default: i.COLUMN_DEFAULT,
+            ...this.getColumnInfo(i, res.result.data.databaseType)
+          }
+        }
+      })
+      this.tableData.length > 0 && this.rowClick(this.tableData[0])
+      this.tableComment = this.getTableComment(res.result.data.createSql)
     },
-
+    getColumnInfo (data, type) {
+      if (type !== '2') {
+        const ty = data.COLUMN_TYPE.split('(')
+        let l = null
+        let dec = null
+        let t = null
+        if (ty.length > 1) {
+          t = ty[0]
+          let fi = ty[1].replace(')', '')
+          fi = fi.split(',')
+          if (fi.length > 1) {
+            l = fi[0]
+            dec = fi[1]
+          } else {
+            l = fi[0]
+          }
+        } else {
+          t = ty
+        }
+        return {
+          type: t,
+          length: l,
+          decimal: dec
+        }
+      }
+    },
     tableCommentEscape (str) {
       if (!str) {
         return ';'
@@ -496,7 +551,7 @@ export default {
       row.zeroFill = null
       row.onUpdateCurrentTime = null
     },
-    getSqlPre (tableName) {
+    getCreateSqlPre (tableName) {
       switch (this.databaseInfo.databaseType) {
         case '1':
         case '4':
