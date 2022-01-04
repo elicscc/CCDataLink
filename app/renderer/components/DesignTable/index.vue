@@ -444,9 +444,6 @@ export default {
       row.zeroFill = null
       row.onUpdateCurrentTime = null
     },
-    checkKeyLengthShow (fieldData) {
-      return (fieldData.type.indexOf('char') !== -1) || (fieldData.type.indexOf('text') !== -1)
-    },
     getSqlPre (tableName) {
       switch (this.databaseInfo.databaseType) {
         case '1':
