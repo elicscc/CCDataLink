@@ -415,7 +415,42 @@ export default {
     },
 
     save () {
-      console.log('')
+      this.$prompt('请输入表名', '表命名', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        // inputErrorMessage: '邮箱格式不正确'
+      }).then(async ({ value }) => {
+        this.getSqlPre(value)
+        console.log(this.sqlPre)
+        const database = JSON.stringify(this.databaseInfo)
+        // console.log(database)
+        const res = await son.send('exeUpdateSql', { databaseInfo: database, sql: this.sqlPre })
+        console.log(res.result)
+        if (res.result.data.errorMessage) {
+          this.$message({
+            type: 'error',
+            message: res.result.data.errorMessage
+          })
+        } else if (res.result.data.count >= 0) {
+          this.$message({
+            type: 'success',
+            message: '创建成功'
+          })
+          this.initEditor()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    /**
+     * 初始化编辑表
+     */
+    initEditor () {
+      this.sqlPre = null
     },
 
     tableCommentEscape (str) {

@@ -39,15 +39,6 @@ public class TableInputService {
     }
 
 
-    public String getBlob(Blob blob) throws SQLException, IOException {
-        if (null == blob) {
-            return null;
-        }
-        byte[] data = blob.getBytes(1, (int) blob.length());
-        return new String(data);
-    }
-
-
     public String getTableNames(String databaseInfoStr) {
         try {
             return JsonResult.success(getTables(databaseInfoStr));
@@ -73,6 +64,27 @@ public class TableInputService {
             return JsonResult.error(e.getMessage());
         }
     }
+
+    public String exeSql(String databaseInfoStr, String sql, String id) {
+        try {
+            return JsonResult.success(executeSql(databaseInfoStr, sql, id));
+        } catch (RuntimeException e) {
+            QuerySqlVo s = new QuerySqlVo();
+            s.setErrorMessage(e.getMessage());
+            s.setSql(sql);
+            s.setId(id);
+            return JsonResult.success(s);
+        }
+    }
+
+    public String showCreateSql(String databaseInfoStr, String tableName) {
+        try {
+            return JsonResult.success(showCreateTable(databaseInfoStr, tableName));
+        } catch (RuntimeException e) {
+            return JsonResult.error(e.getMessage());
+        }
+    }
+
 
     public String exeUpdateSql(String databaseInfoStr, String sql) {
         try {
@@ -223,13 +235,6 @@ public class TableInputService {
         }
     }
 
-    public String showCreateSql(String databaseInfoStr, String tableName) {
-        try {
-            return JsonResult.success(showCreateTable(databaseInfoStr, tableName));
-        } catch (RuntimeException e) {
-            return JsonResult.error(e.getMessage());
-        }
-    }
 
     public String showCreateTable(String databaseInfoStr, String tableName) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
@@ -358,17 +363,12 @@ public class TableInputService {
         }
     }
 
-
-    public String exeSql(String databaseInfoStr, String sql, String id) {
-        try {
-            return JsonResult.success(executeSql(databaseInfoStr, sql, id));
-        } catch (RuntimeException e) {
-            QuerySqlVo s = new QuerySqlVo();
-            s.setErrorMessage(e.getMessage());
-            s.setSql(sql);
-            s.setId(id);
-            return JsonResult.success(s);
+    public String getBlob(Blob blob) throws SQLException, IOException {
+        if (null == blob) {
+            return null;
         }
+        byte[] data = blob.getBytes(1, (int) blob.length());
+        return new String(data);
     }
 
 
