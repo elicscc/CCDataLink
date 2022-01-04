@@ -272,6 +272,7 @@ export default {
 
   data () {
     return {
+      tableNameCopy: null,
       tableComment: null,
       fieldData: {},
       radioId: null,
@@ -346,6 +347,7 @@ export default {
     }
   },
   mounted () {
+    this.tableNameCopy = this.tableName
     switch (this.databaseInfo.databaseType) {
       case '1':
       case '4':
@@ -437,6 +439,7 @@ export default {
             type: 'success',
             message: '创建成功'
           })
+          this.tableNameCopy = value
           this.initEditor()
         }
       }).catch(() => {
@@ -446,10 +449,14 @@ export default {
         })
       })
     },
+
     /**
-     * 初始化编辑表
+     * 初始化编辑表结构配置
      */
     initEditor () {
+      if (!this.tableNameCopy) {
+        return
+      }
       this.sqlPre = null
     },
 
@@ -463,7 +470,7 @@ export default {
       if (!str) {
         return ''
       }
-      return 'COMMENT \'' + this.commentEscape(str) + ' \';'
+      return 'COMMENT \'' + this.commentEscape(str) + ' \''
     },
     commentEscape (str) {
       if (!str) {
@@ -508,7 +515,7 @@ export default {
         col += name + ' ' + this.tableData[i].type + length + ' ' + this.mysqlColumnExInfo(this.tableData[i]) + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',' : '') + '\n'
       }
       if (pkList.length > 0) {
-        col += 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
+        col += ',' + 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
       }
       const com = this.tableCommentEscape(this.tableComment)
       this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ')' + com

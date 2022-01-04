@@ -454,6 +454,9 @@ export default {
     addTable () {
       const uid = this.getUUID()
       const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      if (!d.databaseType) {
+        return
+      }
       if (d.databaseType === '2' || d.databaseType === '3') {
         return this.$message.warning('暂不支持sqlserver和oracle')
       }
