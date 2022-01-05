@@ -284,6 +284,7 @@ export default {
       maxSize: 0,
       tabValue: 'Fields',
       indexesTableData: [],
+      indexesTableDataCopy: [],
       defaultValueList: [
         {
           label: 'EMPTY STRING',
@@ -320,7 +321,7 @@ export default {
         },
         {
           label: 'NORMAL',
-          value: 'NORMAL'
+          value: ''
         },
         {
           label: 'SPATIAL',
@@ -391,7 +392,7 @@ export default {
       const uid = this.getUUID()
       this.tableData.push({
         id: uid,
-        name: null,
+        name: '',
         type: 'varchar',
         length: 255,
         decimal: null,
@@ -413,7 +414,14 @@ export default {
     },
     insertIndex () {
       const uid = this.getUUID()
-      this.indexesTableData.push({ id: uid })
+      this.indexesTableData.push({
+        id: uid,
+        name: '',
+        fields: null,
+        indexType: null,
+        indexMethod: null,
+        comment: null
+      })
       this.indexesRadioId = uid
     },
     keyChange (value) {
@@ -569,23 +577,36 @@ export default {
     mysqlCreatePre (tableName) {
       tableName = tableName || ''
       let col = ''
+      let ind = ''
+      let pk = ''
       const pkList = []
       for (let i = 0; i < this.tableData.length; i++) {
-        const n = '`' + this.tableData[i].name + '`'
-        if (this.tableData[i].key && this.tableData[i].name) {
-          const keyL = this.tableData[i].keyLength ? n + '(' + this.tableData[i].keyLength + ')' : n
-          pkList.push(keyL)
+        if (this.tableData[i].name) {
+          const n = '`' + this.tableData[i].name + '`'
+          if (this.tableData[i].key && this.tableData[i].name) {
+            const keyL = this.tableData[i].keyLength ? n + '(' + this.tableData[i].keyLength + ')' : n
+            pkList.push(keyL)
+          }
+          const name = this.tableData[i].name ? n : ''
+          const decimal = this.tableData[i].decimal > 0 ? ',' + this.tableData[i].decimal : ''
+          const length = this.tableData[i].length > 0 ? '(' + this.tableData[i].length + decimal + ')' : ''
+          col += name + ' ' + this.tableData[i].type + length + ' ' + this.mysqlColumnExInfo(this.tableData[i]) + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',\n' : '')
         }
-        const name = this.tableData[i].name ? n : ''
-        const decimal = this.tableData[i].decimal > 0 ? ',' + this.tableData[i].decimal : ''
-        const length = this.tableData[i].length > 0 ? '(' + this.tableData[i].length + decimal + ')' : ''
-        col += name + ' ' + this.tableData[i].type + length + ' ' + this.mysqlColumnExInfo(this.tableData[i]) + ' ' + this.fieldCommentEscape(this.tableData[i].comment) + (i < this.tableData.length - 1 ? ',' : '') + '\n'
+      }
+      for (let i = 0; i < this.indexesTableData.length; i++) {
+        if (this.indexesTableData[i].name) {
+          const n = '`' + this.indexesTableData[i].name + '`'
+          const indexType = this.indexesTableData[i].indexType ? this.indexesTableData[i].indexType + ' INDEX' : 'INDEX'
+          const indexMethod = this.indexesTableData[i].indexMethod ? ' USING ' + this.indexesTableData[i].indexMethod : ''
+          const fields = this.indexesTableData[i].fields ? '(' + this.indexesTableData[i].fields + ')' : '()'
+          ind += indexType + ' ' + n + fields + indexMethod + ' ' + this.fieldCommentEscape(this.indexesTableData[i].comment) + (i < this.indexesTableData.length - 1 ? ',\n' : '')
+        }
       }
       if (pkList.length > 0) {
-        col += ',' + 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
+        pk += 'PRIMARY KEY ' + '(' + pkList.toString() + ')'
       }
       const com = this.tableCommentEscape(this.tableComment)
-      this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (' + '\n' + col + ')' + com
+      this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (\n' + col + (pk ? ',\n' : '') + pk + (ind ? ',\n' : '') + ind + '\n)' + com
     },
     mysqlColumnExInfo (data) {
       let r

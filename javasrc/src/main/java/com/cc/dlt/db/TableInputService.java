@@ -107,7 +107,7 @@ public class TableInputService {
         }
     }
 
-    private QuerySqlVo exeUpdateSqlService(String databaseInfoStr, String sql) {
+    public QuerySqlVo exeUpdateSqlService(String databaseInfoStr, String sql) {
         DatabaseInfo databaseInfo = JsonUtil.parseObject(databaseInfoStr, DatabaseInfo.class);
         if (null == databaseInfo) {
             throw new RuntimeException("数据库不存在！");
@@ -115,16 +115,35 @@ public class TableInputService {
         if (Oracle.getCode().equals(databaseInfo.getDatabaseType())) {
             sql = sql.endsWith(";") ? sql.substring(0, sql.length() - 1) : sql;
         }
-        try (Connection conn = getConnection(databaseInfo)) {
+        QuerySqlVo querySqlVo = new QuerySqlVo();
+        Connection conn = null;
+        try {
+            conn = getConnection(databaseInfo);
+            conn.setAutoCommit(false);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
-            QuerySqlVo querySqlVo = new QuerySqlVo();
             querySqlVo.setCount(stmt.getUpdateCount());
-            return querySqlVo;
+            conn.commit();
         } catch (SQLException e) {
-            log.error("数据库报错：", e);
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException e1) {
+                log.error("数据库回滚报错：", e1);
+            }
+            log.error("exeUpdateSqlService方法报错：", e);
             throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException se) {
+                log.error("数据库关闭连接报错：", se);
+            }
         }
+        return querySqlVo;
     }
 
     /**
@@ -447,7 +466,7 @@ public class TableInputService {
     }
 
 
-    private Connection getConnection(DatabaseInfo databaseInfo) {
+    public Connection getConnection(DatabaseInfo databaseInfo) {
         String url = DatabaseService.getConnectionUrl(databaseInfo);
         try {
             Properties p = new Properties();

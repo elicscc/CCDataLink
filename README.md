@@ -23,7 +23,7 @@ v1.0.2 预览版已发布 （没买代码签名，安装报毒请忽略）
 |   MySQL    | 支持      | 计划中    | 计划中 | 支持 |
 | MariaDB |  支持      | 计划中    | 计划中 | 支持 |
 | Oracle  |  支持      | 计划中     | 计划中 | 支持 |
-| SQL Server   | 支持      | 计划中     | 计划中 | 支持 |
+| SQL Server   | 支持      | 计划中     | | 支持 |
 | PostgreSQL  |         |        |
 | Redis  |         |        |
 | SQLite  |         |        |
