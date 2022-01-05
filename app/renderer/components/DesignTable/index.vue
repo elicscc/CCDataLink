@@ -3,9 +3,9 @@
     <el-row style="margin-left: 5px">
       <el-button type="primary" size="small" @click="save">保存</el-button>
       <el-button type="primary" size="small" @click="insertField" v-show="tabValue==='Fields'">新增字段</el-button>
-      <el-button type="primary" size="small" v-show="tabValue==='Fields'">删除字段</el-button>
+      <el-button type="primary" size="small" @click="deleteField" v-show="tabValue==='Fields'">删除字段</el-button>
       <el-button type="primary" size="small" @click="insertIndex" v-show="tabValue==='Indexes'">新增索引</el-button>
-      <el-button type="primary" size="small" v-show="tabValue==='Indexes'">删除索引</el-button>
+      <el-button type="primary" size="small" @click="deleteIndex" v-show="tabValue==='Indexes'">删除索引</el-button>
     </el-row>
     <el-tabs type="border-card" v-model="tabValue" style="margin-top:10px" :before-leave="beforeLeave">
       <el-tab-pane
@@ -424,6 +424,37 @@ export default {
       })
       this.indexesRadioId = uid
     },
+
+    deleteField () {
+      if (this.radioId) {
+        const index = this.tableData.findIndex((e) => {
+          return e.id === this.radioId
+        })
+        // 假设没有找到
+        if (index === -1) {
+          return console.log('删除失败')
+        }
+        // 删除元素
+        this.tableData.splice(index, 1)
+        this.tableData.length > 0 && this.rowClick(this.tableData[this.tableData.length - 1])
+      }
+    },
+
+    deleteIndex () {
+      if (this.indexesRadioId) {
+        const index = this.indexesTableData.findIndex((e) => {
+          return e.id === this.indexesRadioId
+        })
+        // 假设没有找到
+        if (index === -1) {
+          return console.log('删除失败')
+        }
+        // 删除元素
+        this.indexesTableData.splice(index, 1)
+        this.indexesTableData.length > 0 && this.indexRowClick(this.indexesTableData[this.indexesTableData.length - 1])
+      }
+    },
+
     keyChange (value) {
       if (value.row.key) {
         value.row.notNull = true
