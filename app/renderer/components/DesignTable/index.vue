@@ -251,6 +251,7 @@
 import { remote } from 'electron'
 import mix from '../../mixin/mixin'
 import Constant from '../../../utils/constant'
+import fi from 'element-ui/src/locale/lang/fi'
 
 const son = remote.getGlobal('son')
 
@@ -521,7 +522,7 @@ export default {
              * COLUMN_DEFAULT: null
              * COLUMN_KEY: "PRI"
              * COLUMN_NAME: "asdd"
-             * COLUMN_TYPE: "int(255)"
+             * COLUMN_TYPE: "int(255) unsigned zerofill"
              * EXTRA: "auto_increment"
              * IS_NULLABLE: "NO"
              * PRIVILEGES: "select,insert,update,references"
@@ -532,7 +533,7 @@ export default {
             key: i.COLUMN_KEY === 'PRI',
             comment: i.COLUMN_COMMENT,
             default: i.COLUMN_DEFAULT,
-            ...this.getColumnInfo(i, res.result.data.databaseType)
+            ...this.getColumnInfo(i, res.result.data.databaseType, res.result.data.indexList)
           }
         }
       })
@@ -540,9 +541,21 @@ export default {
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
     },
-    getColumnInfo (data, type) {
+    getColumnInfo (data, type, indexList) {
       if (type !== '2') {
-        const ty = data.COLUMN_TYPE.split('(')
+        let unsigned = false
+        let zerofill = false
+        const s = data.COLUMN_TYPE.split(' ')
+        if (s.length > 1) {
+          for (let i = 1; i < s.length; i++) {
+            if (s[i] === 'unsigned') {
+              unsigned = true
+            } else if (s[i] === 'zerofill') {
+              zerofill = true
+            }
+          }
+        }
+        const ty = s[0].split('(')
         let l = null
         let dec = null
         let t = null
@@ -559,10 +572,41 @@ export default {
         } else {
           t = ty
         }
+        // 获取主键长度
+        /**
+          * indexList: Array(2)
+         * 0: {…}
+         * 1:
+         * CARDINALITY: "0"
+         * COLLATION: "A"
+         * COLUMN_NAME: "sd"
+         * COMMENT: ""
+         * IGNORED: "NO"
+         * INDEX_COMMENT: ""
+         * INDEX_NAME: "PRIMARY"
+         * INDEX_TYPE: "BTREE"
+         * NON_UNIQUE: "0"
+         * NULLABLE: ""
+         * PACKED: null
+         * SEQ_IN_INDEX: "2"
+         * SUB_PART: "6"
+         * TABLE_NAME: "sdada"
+         * get CARDINALITY: ()=>
+         * @type {null}
+         */
+        let keyLen = null
+        if (data.COLUMN_KEY === 'PRI') {
+          const d = indexList.find(item => item.COLUMN_NAME === data.COLUMN_NAME)
+          keyLen = d.SUB_PART
+        }
+        // data.EXTRA
         return {
           type: t,
           length: l,
-          decimal: dec
+          decimal: dec,
+          zeroFill: zerofill,
+          unsigned: zerofill,
+          keyLength: keyLen
         }
       }
     },
