@@ -523,7 +523,7 @@ export default {
         // console.log(database)
         const res = await son.send('exeUpdateSql', {
           databaseInfo: database,
-          sql: this.sqlPre
+          sql: sql
         })
         //  console.log(res.result)
         if (res.result.data.errorMessage) {
@@ -637,6 +637,7 @@ export default {
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
       this.indexesTableData.length > 0 && this.indexRowClick(this.indexesTableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
+      console.log(this.tableComment)
       this.tableCommentCopy = JSON.parse(JSON.stringify(this.tableComment))
     },
     getColumnInfo (data, type, indexList) {
@@ -712,13 +713,13 @@ export default {
       if (!str) {
         return ';'
       }
-      return 'COMMENT = \'' + this.commentEscape(str) + ' \';'
+      return 'COMMENT = \'' + this.commentEscape(str) + '\';'
     },
     fieldCommentEscape (str) {
       if (!str) {
         return ''
       }
-      return 'COMMENT \'' + this.commentEscape(str) + ' \''
+      return 'COMMENT \'' + this.commentEscape(str) + '\''
     },
     commentEscape (str) {
       if (!str) {
@@ -826,9 +827,11 @@ export default {
 
       // 对比comment
       if (this.tableComment !== this.tableCommentCopy) {
-        com = 'COMMENT = ' + this.tableComment
+        com = this.tableCommentEscape(this.tableComment)
       }
-      sql = 'ALTER TABLE `' + this.databaseInfo.databaseName + '`.`' + this.tableNameCopy + '`\n' + table + index + com
+      if (com || index || com) {
+        sql = 'ALTER TABLE `' + this.databaseInfo.databaseName + '`.`' + this.tableNameCopy + '`\n' + table + index + com
+      }
       return sql
     },
     mysqlCreatePre (tableName) {
@@ -884,13 +887,14 @@ export default {
     },
     /**
      *解析表的comment
-     * @param str
+     * @param st
      * @returns {null|*}
      */
-    getTableComment (str) {
-      str = str.substring(str.lastIndexOf(')') + 1, str.length)
-      if (str.match(/COMMENT='(\S*?)'/)) {
-        return str.match(/COMMENT='(\S*?)'/)[1]
+    getTableComment (st) {
+      const str = st.substring(st.lastIndexOf(')') + 1, st.length)
+      const d = str.split('COMMENT=\'')
+      if (d.length > 1) {
+        return (d[1].substring(d[1].length - 1) === '\'') ? d[1].substring(0, d[1].length - 1) : d[1]
       } else {
         return null
       }
