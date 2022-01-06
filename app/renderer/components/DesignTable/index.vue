@@ -487,9 +487,7 @@ export default {
             })
           }
           this.getCreateSqlPre(value)
-          // console.log(this.sqlPre)
           const database = JSON.stringify(this.databaseInfo)
-          // console.log(database)
           const res = await son.send('exeUpdateSql', {
             databaseInfo: database,
             sql: this.sqlPre
@@ -637,7 +635,7 @@ export default {
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
       this.indexesTableData.length > 0 && this.indexRowClick(this.indexesTableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
-      console.log(this.tableComment)
+      // console.log(this.tableComment)
       this.tableCommentCopy = JSON.parse(JSON.stringify(this.tableComment))
     },
     getColumnInfo (data, type, indexList) {
@@ -699,13 +697,36 @@ export default {
           keyLen = d.SUB_PART
         }
         // data.EXTRA
+        // STORED GENERATED VIRTUAL GENERATED
+        let vir = null
+        let virtualType = null
+        let generatedAlways = null
+        let autoIncrement = null
+        const ex = data.EXTRA.split(' ')
+        ex.forEach(i => {
+          if (i === 'STORED') {
+            vir = true
+            virtualType = 'PERSISTENT'
+          } else if (i === 'VIRTUAL') {
+            vir = true
+            virtualType = 'VIRTUAL'
+          } else if (i === 'GENERATED') {
+            generatedAlways = true
+          } else if (i === 'auto_increment') {
+            autoIncrement = true
+          }
+        })
         return {
           type: t,
           length: l,
           decimal: dec,
           zeroFill: zerofill,
           unsigned: zerofill,
-          keyLength: keyLen
+          keyLength: keyLen,
+          virtual: vir,
+          virtualType: virtualType,
+          generatedAlways: generatedAlways,
+          autoIncrement: autoIncrement
         }
       }
     },
