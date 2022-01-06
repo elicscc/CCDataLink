@@ -225,6 +225,11 @@
               <el-input v-model="scope.row.comment" type="text" size="mini"></el-input>
             </template>
           </el-table-column>
+          <el-table-column label="关键字块大小" align="center" prop="keyBlockSize">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.keyBlockSize" type="number" size="mini"></el-input>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane
@@ -421,7 +426,8 @@ export default {
         fields: null,
         // indexType: null,
         indexMethod: null,
-        comment: null
+        comment: null,
+        keyBlockSize: null
       })
       this.indexesRadioId = uid
     },
@@ -716,7 +722,8 @@ export default {
           // const indexType = this.indexesTableData[i].indexType ? this.indexesTableData[i].indexType + ' INDEX' : 'INDEX'
           const indexMethod = this.indexesTableData[i].indexMethod ? ' USING ' + this.indexesTableData[i].indexMethod : ''
           const fields = this.indexesTableData[i].fields ? '(' + this.indexesTableData[i].fields + ')' : '()'
-          ind += n + fields + indexMethod + ' ' + this.fieldCommentEscape(this.indexesTableData[i].comment) + (i < this.indexesTableData.length - 1 ? ',\n' : '')
+          const keyBlockSize = this.indexesTableData[i].keyBlockSize ? ' KEY_BLOCK_SIZE = ' + this.indexesTableData[i].keyBlockSize : ''
+          ind += 'INDEX ' + n + fields + keyBlockSize + indexMethod + ' ' + this.fieldCommentEscape(this.indexesTableData[i].comment) + (i < this.indexesTableData.length - 1 ? ',\n' : '')
         }
       }
       if (pkList.length > 0) {
