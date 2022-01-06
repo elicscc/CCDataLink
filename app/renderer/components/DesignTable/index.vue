@@ -556,10 +556,12 @@ export default {
           }
         }
       })
-
-      this.indexesTableData = res.result.data.indexList.filter(i => i.INDEX_NAME !== 'PRIMARY').map(i => {
-        if (res.result.data.databaseType !== '2') {
-          return {
+      const arr = res.result.data.indexList.filter(i => i.INDEX_NAME !== 'PRIMARY')
+      const map = {}; const dest = []
+      for (let i = 0; i < arr.length; i++) {
+        const ai = arr[i]
+        if (!map[ai.INDEX_NAME]) {
+          dest.push({
             /**
              * CARDINALITY: "0"
              * COLLATION: "A"
@@ -577,13 +579,23 @@ export default {
              * TABLE_NAME: "test_t"
              */
             id: this.getUUID(),
-            name: i.INDEX_NAME,
-            comment: i.INDEX_COMMENT,
-            indexMethod: i.INDEX_TYPE,
-            fields: i.COLUMN_NAME
+            name: ai.INDEX_NAME,
+            comment: ai.INDEX_COMMENT,
+            indexMethod: ai.INDEX_TYPE,
+            fields: ['`' + ai.COLUMN_NAME + '`']
+          })
+          map[ai.INDEX_NAME] = ai
+        } else {
+          for (let j = 0; j < dest.length; j++) {
+            const dj = dest[j]
+            if (dj.name === ai.INDEX_NAME) {
+              dj.fields.push('`' + ai.COLUMN_NAME + '`')
+              break
+            }
           }
         }
-      })
+      }
+      this.indexesTableData = dest
       this.tableDataCopy = JSON.parse(JSON.stringify(this.tableData))
       this.indexesTableDataCopy = JSON.parse(JSON.stringify(this.indexesTableData))
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
