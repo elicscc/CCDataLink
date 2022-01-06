@@ -65,12 +65,12 @@
           >
             <div v-if="item.key === -1" style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
               <el-row style="margin-left: 5px">
-                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="openTable">打开表
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="openTable">打开表
                 </el-button>
-                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="designTable">设计表
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="designTable">设计表
                 </el-button>
                 <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新增表</el-button>
-                <el-button type="primary" size="small" :disabled="selectTables.length===0" @click="getCreateSql">
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="getCreateSql">
                   查看create
                 </el-button>
               </el-row>

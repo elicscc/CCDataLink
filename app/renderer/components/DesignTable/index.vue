@@ -815,16 +815,72 @@ export default {
       let sql = ''
       let com = ''
       let index = ''
-      const table = ''
+      let table = ''
+      let dropKeyStatus = false
       // 对比tableData
       const addTableArr = this.tableData.filter((item) => {
         return this.tableDataCopy.findIndex(e => e.id === item.id) === -1
       }) || []
+      for (let i = 0; i < addTableArr.length; i++) {
+        if (addTableArr[i].key) {
+          dropKeyStatus = true
+        }
+      }
       const delTableArr = this.tableDataCopy.filter((item) => {
         return this.tableData.findIndex(e => e.id === item.id) === -1
       }) || []
-      console.log('addTableArr', addTableArr)
-      console.log('delTableArr', delTableArr)
+      // console.log('addTableArr', addTableArr)
+      // console.log('delTableArr', delTableArr)
+      const changeColumns = []
+      const modifyColumns = []
+      this.tableData.forEach(t => {
+        this.tableDataCopy.forEach(f => {
+          if (t.id === f.id && JSON.stringify(t) !== JSON.stringify(f)) {
+            if (f.key) {
+              dropKeyStatus = true
+            }
+            if (t.name === f.name) {
+              modifyColumns.push(t)
+            } else {
+              t.oldName = f.name
+              changeColumns.push(t)
+            }
+          }
+        })
+      })
+      let dropColumn = ''
+      for (let i = 0; i < delTableArr.length; i++) {
+        if (delTableArr[i].key) {
+          dropKeyStatus = true
+        }
+        dropColumn += 'DROP COLUMN `' + delTableArr[i].name + '`' + (i < delTableArr.length - 1 ? ',\n' : '')
+      }
+      const changeCol = this.mysqlCol(changeColumns, 1)
+      const modifyCol = this.mysqlCol(modifyColumns, 2)
+      const addColumn = this.mysqlCol(addTableArr, 3)
+      // 对比key DROP PRIMARY KEY,
+      //  ADD PRIMARY KEY (`sfdf`, `zsda`, `ASDDS`) USING BTREE;
+      let dropk = ''
+      if (dropKeyStatus) {
+        dropk = 'DROP PRIMARY KEY'
+        const pkList = []
+        for (let i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i].name) {
+            const n = '`' + this.tableData[i].name + '`'
+            if (this.tableData[i].key && this.tableData[i].name) {
+              const keyL = this.tableData[i].keyLength ? n + '(' + this.tableData[i].keyLength + ')' : n
+              pkList.push(keyL)
+            }
+          }
+        }
+        if (pkList.length > 0) {
+          dropk += ',\nADD PRIMARY KEY ' + '(' + pkList.toString() + ')'
+        }
+      }
+      table += dropColumn + (changeCol ? ((dropColumn ? ',\n' : '') + changeCol) : '')
+      table += modifyCol ? ((table ? ',\n' : '') + modifyCol) : ''
+      table += addColumn ? ((table ? ',\n' : '') + addColumn) : ''
+      table += dropk ? ((table ? ',\n' : '') + dropk) : ''
       // 对比index
       const addIndexArr = this.indexesTableData.filter((item) => {
         return this.indexesTableDataCopy.findIndex(e => e.id === item.id) === -1
@@ -856,13 +912,13 @@ export default {
           addIndex += 'ADD INDEX ' + n + fields + indexMethod + ' ' + this.fieldCommentEscape(addIndexArr[i].comment) + (i < addIndexArr.length - 1 ? ',\n' : '')
         }
       }
-      index = dropIndex + (dropIndex ? ',\n' : '') + addIndex
+      index = dropIndex + (addIndex ? ((dropIndex ? ',\n' : '') + addIndex) : '')
 
       // 对比comment
       if (this.tableComment !== this.tableCommentCopy) {
         com = this.tableCommentEscape(this.tableComment)
       }
-      if (com || index || com) {
+      if (com || index || table) {
         sql = 'ALTER TABLE `' + this.databaseInfo.databaseName + '`.`' + this.tableNameCopy + '`\n' + table + index + com
       }
       return sql
@@ -902,6 +958,34 @@ export default {
       const com = this.tableCommentEscape(this.tableComment)
       this.sqlPre = 'CREATE TABLE `' + this.databaseInfo.databaseName + '`.`' + tableName + '`  (\n' + col + (pk ? ',\n' : '') + pk + (ind ? ',\n' : '') + ind + '\n)' + com
     },
+    /**
+     *
+     * @param arr
+     * @param type 1 change 2  modify  3 add
+     * @returns {string}
+     */
+    mysqlCol (arr, type) {
+      let col = ''
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].name) {
+          const n = '`' + arr[i].name + '`'
+          const name = arr[i].name ? n : ''
+          const decimal = arr[i].decimal > 0 ? ',' + arr[i].decimal : ''
+          const length = arr[i].length > 0 ? '(' + arr[i].length + decimal + ')' : ''
+          let typeValue
+          if (type === 1) {
+            typeValue = 'CHANGE COLUMN `' + arr[i].oldName + '` '
+          } else if (type === 2) {
+            typeValue = 'MODIFY COLUMN '
+          } else if (type === 3) {
+            typeValue = 'ADD COLUMN '
+          }
+          col += typeValue + name + ' ' + arr[i].type + length + ' ' + this.mysqlColumnExInfo(arr[i]) + ' ' + this.fieldCommentEscape(arr[i].comment) + (i < arr.length - 1 ? ',\n' : '')
+        }
+      }
+      return col
+    },
+
     mysqlColumnExInfo (data) {
       let r
       if (data.virtual) {
