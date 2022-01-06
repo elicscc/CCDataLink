@@ -196,18 +196,18 @@
               </el-select>
             </template>
           </el-table-column>
-<!--          <el-table-column label="索引类型" align="center" prop="indexType">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-select v-model="scope.row.indexType" size="mini" clearable>-->
-<!--                <el-option-->
-<!--                    v-for="item in indexTypeList"-->
-<!--                    :key="item.value"-->
-<!--                    :label="item.label"-->
-<!--                    :value="item.value"-->
-<!--                ></el-option>-->
-<!--              </el-select>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
+          <!--          <el-table-column label="索引类型" align="center" prop="indexType">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <el-select v-model="scope.row.indexType" size="mini" clearable>-->
+          <!--                <el-option-->
+          <!--                    v-for="item in indexTypeList"-->
+          <!--                    :key="item.value"-->
+          <!--                    :label="item.label"-->
+          <!--                    :value="item.value"-->
+          <!--                ></el-option>-->
+          <!--              </el-select>-->
+          <!--            </template>-->
+          <!--          </el-table-column>-->
           <el-table-column label="索引方法" align="center" prop="indexMethod">
             <template slot-scope="scope">
               <el-select v-model="scope.row.indexMethod" size="mini" clearable>
@@ -225,11 +225,11 @@
               <el-input v-model="scope.row.comment" type="text" size="mini"></el-input>
             </template>
           </el-table-column>
-<!--          <el-table-column label="关键字块大小" align="center" prop="keyBlockSize">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-input v-model="scope.row.keyBlockSize" type="number" size="mini"></el-input>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
+          <!--          <el-table-column label="关键字块大小" align="center" prop="keyBlockSize">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <el-input v-model="scope.row.keyBlockSize" type="number" size="mini"></el-input>-->
+          <!--            </template>-->
+          <!--          </el-table-column>-->
         </el-table>
       </el-tab-pane>
       <el-tab-pane
@@ -281,6 +281,7 @@ export default {
       tableDataCopy: [],
       tableNameCopy: null,
       tableComment: null,
+      tableCommentCopy: null,
       fieldData: {},
       radioId: null,
       indexesRadioId: null,
@@ -387,6 +388,8 @@ export default {
       if (activeName === 'SQL Preview') {
         if (!this.tableNameCopy) {
           this.getCreateSqlPre(this.tableNameCopy)
+        } else {
+          this.sqlPre = this.getChangeSqlPre()
         }
       }
     },
@@ -469,24 +472,59 @@ export default {
       }
     },
 
-    save () {
-      this.$prompt('请输入表名', '表命名', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^[^\s]*$/,
-        inputErrorMessage: '不能含有空格'
-      }).then(async ({ value }) => {
-        if (!value) {
-          return this.$message({
+    async save () {
+      if (!this.tableNameCopy) {
+        this.$prompt('请输入表名', '表命名', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /^[^\s]*$/,
+          inputErrorMessage: '不能含有空格'
+        }).then(async ({ value }) => {
+          if (!value) {
+            return this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+          }
+          this.getCreateSqlPre(value)
+          // console.log(this.sqlPre)
+          const database = JSON.stringify(this.databaseInfo)
+          // console.log(database)
+          const res = await son.send('exeUpdateSql', {
+            databaseInfo: database,
+            sql: this.sqlPre
+          })
+          //  console.log(res.result)
+          if (res.result.data.errorMessage) {
+            this.$message({
+              type: 'error',
+              message: res.result.data.errorMessage
+            })
+          } else if (res.result.data.count >= 0) {
+            this.$message({
+              type: 'success',
+              message: '创建成功'
+            })
+            this.tableNameCopy = value
+            await this.initEditor()
+          }
+        }).catch(() => {
+          this.$message({
             type: 'info',
             message: '已取消'
           })
+        })
+      } else {
+        const sql = this.getChangeSqlPre()
+        if (!sql) {
+          return
         }
-        this.getCreateSqlPre(value)
-        // console.log(this.sqlPre)
         const database = JSON.stringify(this.databaseInfo)
         // console.log(database)
-        const res = await son.send('exeUpdateSql', { databaseInfo: database, sql: this.sqlPre })
+        const res = await son.send('exeUpdateSql', {
+          databaseInfo: database,
+          sql: this.sqlPre
+        })
         //  console.log(res.result)
         if (res.result.data.errorMessage) {
           this.$message({
@@ -496,17 +534,11 @@ export default {
         } else if (res.result.data.count >= 0) {
           this.$message({
             type: 'success',
-            message: '创建成功'
+            message: '修改成功'
           })
-          this.tableNameCopy = value
           await this.initEditor()
         }
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      })
+      }
     },
     async getCreateSql () {
       if (this.databaseInfo.databaseType === '2') {
@@ -524,13 +556,16 @@ export default {
     /**
      * 初始化编辑表结构配置
      */
-    async  initEditor () {
+    async initEditor () {
       if (!this.tableNameCopy) {
         return
       }
       this.sqlPre = null
       const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('getTableInfo', { databaseInfo: database, tableName: this.tableNameCopy })
+      const res = await son.send('getTableInfo', {
+        databaseInfo: database,
+        tableName: this.tableNameCopy
+      })
       console.log(res.result)
       this.tableData = res.result.data.columnList.map(i => {
         if (res.result.data.databaseType !== '2') {
@@ -557,7 +592,8 @@ export default {
         }
       })
       const arr = res.result.data.indexList.filter(i => i.INDEX_NAME !== 'PRIMARY')
-      const map = {}; const dest = []
+      const map = {}
+      const dest = []
       for (let i = 0; i < arr.length; i++) {
         const ai = arr[i]
         if (!map[ai.INDEX_NAME]) {
@@ -601,6 +637,7 @@ export default {
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
       this.indexesTableData.length > 0 && this.indexRowClick(this.indexesTableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
+      this.tableCommentCopy = JSON.parse(JSON.stringify(this.tableComment))
     },
     getColumnInfo (data, type, indexList) {
       if (type !== '2') {
@@ -635,7 +672,7 @@ export default {
         }
         // 获取主键长度
         /**
-          * indexList: Array(2)
+         * indexList: Array(2)
          * 0: {…}
          * 1:
          * CARDINALITY: "0"
@@ -710,6 +747,90 @@ export default {
       }
     },
 
+    getChangeSqlPre () {
+      let sql
+      switch (this.databaseInfo.databaseType) {
+        case '1':
+        case '4':
+          sql = this.mysqlChangePre()
+          break
+        case '2':
+          break
+        case '3':
+          break
+      }
+      return sql
+    },
+    /**
+     * ALTER TABLE `test_cc`.`test_t`
+     * DROP COLUMN `h`,
+     * DROP COLUMN `r`,
+     * CHANGE COLUMN `asd` `asdsdd` timestamp(0) NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP AFTER `sdd`,
+     * MODIFY COLUMN `sds` bigint(255) NOT NULL AFTER `asdsdd`,
+     * ADD COLUMN `re` varchar(255) NULL COMMENT 'dd' AFTER `sds`,
+     * ADD COLUMN `sa` varchar(255) NULL COMMENT '787' AFTER `re`,
+     * DROP PRIMARY KEY,
+     * ADD PRIMARY KEY (`sdd`, `asdsdd`, `sds`) USING BTREE,
+     * DROP INDEX `asd`,
+     * DROP INDEX `a`,
+     * ADD INDEX `asddd`(`sds`, `sa`) USING BTREE COMMENT 'sd',
+     * ADD INDEX `b`(`sds`, `re`),
+     *  COMMENT = 'zxczxc';
+     */
+    mysqlChangePre () {
+      let sql = ''
+      let com = ''
+      let index = ''
+      const table = ''
+      // 对比tableData
+      const addTableArr = this.tableData.filter((item) => {
+        return this.tableDataCopy.findIndex(e => e.id === item.id) === -1
+      }) || []
+      const delTableArr = this.tableDataCopy.filter((item) => {
+        return this.tableData.findIndex(e => e.id === item.id) === -1
+      }) || []
+      console.log('addTableArr', addTableArr)
+      console.log('delTableArr', delTableArr)
+      // 对比index
+      const addIndexArr = this.indexesTableData.filter((item) => {
+        return this.indexesTableDataCopy.findIndex(e => e.id === item.id) === -1
+      }) || []
+      const delIndexArr = this.indexesTableDataCopy.filter((item) => {
+        return this.indexesTableData.findIndex(e => e.id === item.id) === -1
+      }) || []
+      // console.log('addIndexArr', addIndexArr)
+      // console.log('delIndexArr', delIndexArr)
+      // 如果修改index了则分别添加到add和del里面
+      this.indexesTableData.forEach(t => {
+        this.indexesTableDataCopy.forEach(f => {
+          if (t.id === f.id && JSON.stringify(t) !== JSON.stringify(f)) {
+            addIndexArr.push(t)
+            delIndexArr.push(t)
+          }
+        })
+      })
+      let dropIndex = ''
+      let addIndex = ''
+      for (let i = 0; i < delIndexArr.length; i++) {
+        dropIndex += 'DROP INDEX `' + delIndexArr[i].name + '`' + (i < delIndexArr.length - 1 ? ',\n' : '')
+      }
+      for (let i = 0; i < addIndexArr.length; i++) {
+        if (addIndexArr[i].name) {
+          const n = '`' + addIndexArr[i].name + '`'
+          const indexMethod = addIndexArr[i].indexMethod ? ' USING ' + addIndexArr[i].indexMethod : ''
+          const fields = addIndexArr[i].fields ? '(' + addIndexArr[i].fields + ')' : '()'
+          addIndex += 'ADD INDEX ' + n + fields + indexMethod + ' ' + this.fieldCommentEscape(addIndexArr[i].comment) + (i < addIndexArr.length - 1 ? ',\n' : '')
+        }
+      }
+      index = dropIndex + (dropIndex ? ',\n' : '') + addIndex
+
+      // 对比comment
+      if (this.tableComment !== this.tableCommentCopy) {
+        com = 'COMMENT = ' + this.tableComment
+      }
+      sql = 'ALTER TABLE `' + this.databaseInfo.databaseName + '`.`' + this.tableNameCopy + '`\n' + table + index + com
+      return sql
+    },
     mysqlCreatePre (tableName) {
       tableName = tableName || ''
       let col = ''
