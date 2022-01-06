@@ -6,6 +6,7 @@
       <el-button type="primary" size="small" @click="deleteField" v-show="tabValue==='Fields'">删除字段</el-button>
       <el-button type="primary" size="small" @click="insertIndex" v-show="tabValue==='Indexes'">新增索引</el-button>
       <el-button type="primary" size="small" @click="deleteIndex" v-show="tabValue==='Indexes'">删除索引</el-button>
+      <el-button type="primary" size="small" @click="getCreateSql" v-show="tableNameCopy">查看create</el-button>
     </el-row>
     <el-tabs type="border-card" v-model="tabValue" style="margin-top:10px" :before-leave="beforeLeave">
       <el-tab-pane
@@ -195,18 +196,18 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="索引类型" align="center" prop="indexType">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.indexType" size="mini" clearable>
-                <el-option
-                    v-for="item in indexTypeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                ></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
+<!--          <el-table-column label="索引类型" align="center" prop="indexType">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-select v-model="scope.row.indexType" size="mini" clearable>-->
+<!--                <el-option-->
+<!--                    v-for="item in indexTypeList"-->
+<!--                    :key="item.value"-->
+<!--                    :label="item.label"-->
+<!--                    :value="item.value"-->
+<!--                ></el-option>-->
+<!--              </el-select>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column label="索引方法" align="center" prop="indexMethod">
             <template slot-scope="scope">
               <el-select v-model="scope.row.indexMethod" size="mini" clearable>
@@ -251,7 +252,6 @@
 import { remote } from 'electron'
 import mix from '../../mixin/mixin'
 import Constant from '../../../utils/constant'
-import fi from 'element-ui/src/locale/lang/fi'
 
 const son = remote.getGlobal('son')
 
@@ -419,7 +419,7 @@ export default {
         id: uid,
         name: '',
         fields: null,
-        indexType: null,
+        // indexType: null,
         indexMethod: null,
         comment: null
       })
@@ -501,7 +501,19 @@ export default {
         })
       })
     },
-
+    async getCreateSql () {
+      if (this.databaseInfo.databaseType === '2') {
+        return this.$message.warning('暂不支持sqlserver')
+      }
+      const database = JSON.stringify(this.databaseInfo)
+      const res = await son.send('showCreateSql', {
+        databaseInfo: database,
+        tableName: this.tableNameCopy
+      })
+      await this.$alert('<pre><code>' + res.result.data + '</code></pre>', '建表语句', {
+        dangerouslyUseHTMLString: true
+      })
+    },
     /**
      * 初始化编辑表结构配置
      */
@@ -537,8 +549,38 @@ export default {
           }
         }
       })
+
+      this.indexesTableData = res.result.data.indexList.filter(i => i.INDEX_NAME !== 'PRIMARY').map(i => {
+        if (res.result.data.databaseType !== '2') {
+          return {
+            /**
+             * CARDINALITY: "0"
+             * COLLATION: "A"
+             * COLUMN_NAME: "asd"
+             * COMMENT: ""
+             * IGNORED: "NO"
+             * INDEX_COMMENT: "asdd' "
+             * INDEX_NAME: "a"
+             * INDEX_TYPE: "BTREE"
+             * NON_UNIQUE: "1"
+             * NULLABLE: ""
+             * PACKED: null
+             * SEQ_IN_INDEX: "1"
+             * SUB_PART: null
+             * TABLE_NAME: "test_t"
+             */
+            id: this.getUUID(),
+            name: i.INDEX_NAME,
+            comment: i.INDEX_COMMENT,
+            indexMethod: i.INDEX_TYPE,
+            fields: i.COLUMN_NAME
+          }
+        }
+      })
       this.tableDataCopy = JSON.parse(JSON.stringify(this.tableData))
+      this.indexesTableDataCopy = JSON.parse(JSON.stringify(this.indexesTableData))
       this.tableData.length > 0 && this.rowClick(this.tableData[0])
+      this.indexesTableData.length > 0 && this.indexRowClick(this.indexesTableData[0])
       this.tableComment = this.getTableComment(res.result.data.createSql)
     },
     getColumnInfo (data, type, indexList) {
@@ -570,7 +612,7 @@ export default {
             l = fi[0]
           }
         } else {
-          t = ty
+          t = ty[0]
         }
         // 获取主键长度
         /**
@@ -671,10 +713,10 @@ export default {
       for (let i = 0; i < this.indexesTableData.length; i++) {
         if (this.indexesTableData[i].name) {
           const n = '`' + this.indexesTableData[i].name + '`'
-          const indexType = this.indexesTableData[i].indexType ? this.indexesTableData[i].indexType + ' INDEX' : 'INDEX'
+          // const indexType = this.indexesTableData[i].indexType ? this.indexesTableData[i].indexType + ' INDEX' : 'INDEX'
           const indexMethod = this.indexesTableData[i].indexMethod ? ' USING ' + this.indexesTableData[i].indexMethod : ''
           const fields = this.indexesTableData[i].fields ? '(' + this.indexesTableData[i].fields + ')' : '()'
-          ind += indexType + ' ' + n + fields + indexMethod + ' ' + this.fieldCommentEscape(this.indexesTableData[i].comment) + (i < this.indexesTableData.length - 1 ? ',\n' : '')
+          ind += n + fields + indexMethod + ' ' + this.fieldCommentEscape(this.indexesTableData[i].comment) + (i < this.indexesTableData.length - 1 ? ',\n' : '')
         }
       }
       if (pkList.length > 0) {

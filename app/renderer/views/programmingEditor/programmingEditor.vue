@@ -417,7 +417,7 @@ export default {
         tableName: this.selectTables[0].connectName
       })
       console.log(res)
-      await this.$alert(res.result.data, '建表语句', {
+      await this.$alert('<pre><code>' + res.result.data + '</code></pre>', '建表语句', {
         dangerouslyUseHTMLString: true
       })
     },
