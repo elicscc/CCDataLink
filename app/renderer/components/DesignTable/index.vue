@@ -278,6 +278,7 @@ export default {
 
   data () {
     return {
+      createSql: null,
       tableDataCopy: [],
       tableNameCopy: null,
       tableComment: null,
@@ -542,12 +543,18 @@ export default {
       if (this.databaseInfo.databaseType === '2') {
         return this.$message.warning('暂不支持sqlserver')
       }
-      const database = JSON.stringify(this.databaseInfo)
-      const res = await son.send('showCreateSql', {
-        databaseInfo: database,
-        tableName: this.tableNameCopy
-      })
-      await this.$alert('<pre><code>' + res.result.data + '</code></pre>', '建表语句', {
+      let sql
+      if (this.createSql) {
+        sql = this.createSql
+      } else {
+        const database = JSON.stringify(this.databaseInfo)
+        const res = await son.send('showCreateSql', {
+          databaseInfo: database,
+          tableName: this.tableNameCopy
+        })
+        sql = res.result.data
+      }
+      await this.$alert('<pre><code>' + sql + '</code></pre>', '建表语句', {
         dangerouslyUseHTMLString: true
       })
     },
@@ -564,6 +571,7 @@ export default {
         databaseInfo: database,
         tableName: this.tableNameCopy
       })
+      this.createSql = res.result.data.createSql
       console.log(res.result)
       this.tableData = res.result.data.columnList.map(i => {
         if (res.result.data.databaseType !== '2') {
@@ -702,14 +710,17 @@ export default {
         let virtualType = null
         let generatedAlways = null
         let autoIncrement = null
+        let expression = null
         const ex = data.EXTRA.split(' ')
         ex.forEach(i => {
           if (i === 'STORED') {
             vir = true
             virtualType = 'PERSISTENT'
+            expression = this.getExpression(data.COLUMN_NAME)
           } else if (i === 'VIRTUAL') {
             vir = true
             virtualType = 'VIRTUAL'
+            expression = this.getExpression(data.COLUMN_NAME)
           } else if (i === 'GENERATED') {
             generatedAlways = true
           } else if (i === 'auto_increment') {
@@ -726,7 +737,8 @@ export default {
           virtual: vir,
           virtualType: virtualType,
           generatedAlways: generatedAlways,
-          autoIncrement: autoIncrement
+          autoIncrement: autoIncrement,
+          expression: expression
         }
       }
     },
@@ -918,6 +930,19 @@ export default {
         return (d[1].substring(d[1].length - 1) === '\'') ? d[1].substring(0, d[1].length - 1) : d[1]
       } else {
         return null
+      }
+    },
+    getExpression (name) {
+      const reg = new RegExp(/.+GENERATED ALWAYS AS.+/, 'g')
+      const arr = this.createSql.match(reg)
+      if (!arr) {
+        return null
+      }
+      for (let i = 0; i < arr.length; i++) {
+        const a = arr[i].trim()
+        if (a.startsWith('`' + name)) {
+          return a.match(/AS \(([\s\S]*?)\)/)[1]
+        }
       }
     }
   }
