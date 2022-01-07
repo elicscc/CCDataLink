@@ -863,7 +863,12 @@ export default {
       //  ADD PRIMARY KEY (`sfdf`, `zsda`, `ASDDS`) USING BTREE;
       let dropk = ''
       if (dropKeyStatus) {
-        dropk = 'DROP PRIMARY KEY'
+        for (let i = 0; i < this.tableDataCopy.length; i++) {
+          if (this.tableDataCopy[i].key) {
+            dropk = 'DROP PRIMARY KEY'
+            break
+          }
+        }
         const pkList = []
         for (let i = 0; i < this.tableData.length; i++) {
           if (this.tableData[i].name) {
@@ -875,7 +880,7 @@ export default {
           }
         }
         if (pkList.length > 0) {
-          dropk += ',\nADD PRIMARY KEY ' + '(' + pkList.toString() + ')'
+          dropk += (dropk ? ',\n' : '') + 'ADD PRIMARY KEY ' + '(' + pkList.toString() + ')'
         }
       }
       table += dropColumn + (changeCol ? ((dropColumn ? ',\n' : '') + changeCol) : '')
