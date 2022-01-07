@@ -65,12 +65,12 @@
           >
             <div v-if="item.key === -1" style="height: calc(100vh - 80px);margin-top: 3px;margin-bottom: 5px;">
               <el-row style="margin-left: 5px">
-                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="openTable">打开表
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId || (selectTables.length===0)" @click="openTable">打开表
                 </el-button>
-                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="designTable">设计表
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId || (selectTables.length===0)" @click="designTable">设计表
                 </el-button>
-                <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新增表</el-button>
-                <el-button type="primary" size="small" :disabled="!selectDatabaseId && selectTables.length===0" @click="getCreateSql">
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId" @click="addTable">新建表</el-button>
+                <el-button type="primary" size="small" :disabled="!selectDatabaseId || (selectTables.length===0)" @click="getCreateSql">
                   查看create
                 </el-button>
               </el-row>
@@ -102,6 +102,7 @@
             />
             <design-table v-else-if="item.tagType === -3"
                           :databaseInfo="item.dataBaseInfo"
+                          @refreshNode="refreshNodeById(arguments)"
                           :tableName="item.tableName"/>
             <monaco-editor
                 v-else
@@ -241,11 +242,6 @@ export default {
         databaseDescription: ''
       },
       dataBaseInfoRules: {
-        connectName: [{
-          required: true,
-          message: ' ',
-          trigger: 'blur'
-        }],
         databaseType: [{
           required: true,
           message: ' ',
@@ -341,6 +337,9 @@ export default {
       f.isConnected = false
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!f.connectName) {
+            f.connectName = f.databaseAddress + '@' + f.username
+          }
           const list = store.get('databaseList') || []
           if (!f.id) {
             f.id = this.getUUID()
@@ -502,14 +501,87 @@ export default {
       list.splice(i, 1)
       store.set('databaseList', list)
       this.getTreeList()
+      this.selectDatabaseId = null
       this.$message.success('已删除')
     },
-
-    editTable () {
-      this.$message.warning('未开发')
+    openTableForMenu (data) {
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      const i = this.editorTabs.findIndex(tab => tab.name === data.id)
+      if (i === -1) {
+        this.editorTabs.push({
+          title: data.connectName,
+          name: data.id,
+          dataBaseInfo: d,
+          close: true,
+          tagType: -2
+        })
+      }
+      this.currentTabsName = data.id
     },
-    delTable () {
-      this.$message.warning('未开发')
+    designTableForMenu (data) {
+      const uid = this.getUUID()
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      if (d.databaseType === '2' || d.databaseType === '3') {
+        return this.$message.warning('暂不支持sqlserver和oracle')
+      }
+      this.editorTabs.push({
+        title: data.connectName,
+        name: uid,
+        dataBaseInfo: d,
+        close: true,
+        tableName: data.connectName,
+        tagType: -3
+      })
+      this.currentTabsName = uid
+    },
+    async delTable (data, e) {
+      const confirmResult = await this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return
+      }
+      const sql = 'DROP TABLE `' + data.connectName + '`'
+      await this.exeUpdateSql(sql)
+      this.refreshNode(this.selectDatabaseId)
+    },
+    async emptyTable (data) {
+      const confirmResult = await this.$confirm('是否清空?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return
+      }
+      const sql = 'DELETE FROM `' + data.connectName + '`'
+      await this.exeUpdateSql(sql)
+    },
+
+    async exeUpdateSql (sql) {
+      const d = this.proOptions.find(item => item.id === this.selectDatabaseId)
+      if (d.databaseType === '2' || d.databaseType === '3') {
+        return this.$message.warning('暂不支持sqlserver和oracle')
+      }
+      const database = JSON.stringify(d)
+      const res = await son.send('exeUpdateSql', {
+        databaseInfo: database,
+        sql: sql
+      })
+      //  console.log(res.result)
+      if (res.result.data.errorMessage) {
+        this.$message({
+          type: 'error',
+          message: res.result.data.errorMessage
+        })
+      } else if (res.result.data.count >= 0) {
+        this.$message({
+          type: 'success',
+          message: '执行成功'
+        })
+      }
     },
     tableEvent (data) {
       this.treeClickCount++
@@ -537,6 +609,7 @@ export default {
     },
     async loadNode (node, resolve) {
       if (node.level === 1) {
+        this.selectDatabaseId = node.data.id
         const res = await son.send('getTables', node.data)
         if (res.result.code !== 20000) {
           this.$message.error(res.result.message)
@@ -559,16 +632,36 @@ export default {
       }
     },
     rightClick (event, data, e, element) {
+      console.log(data)
+      console.log(e)
+      console.log(element)
       this.$refs.tree.setCurrentKey(data.id)
       let menu
       const that = this
       if (data.type === 'table') {
+        this.selectDatabaseId = e.parent.data.id
         menu = new Menu()
         menu.append(new MenuItem(
           {
-            label: '编辑表结构',
+            label: '打开表',
             click: function () {
-              that.editTable()
+              that.openTableForMenu(data)
+            }
+          }
+        ))
+        menu.append(new MenuItem(
+          {
+            label: '设计表',
+            click: function () {
+              that.designTableForMenu(data)
+            }
+          }
+        ))
+        menu.append(new MenuItem(
+          {
+            label: '新建表',
+            click: function () {
+              that.addTable()
             }
           }
         ))
@@ -576,12 +669,20 @@ export default {
           {
             label: '删除表',
             click: function () {
-              that.delTable()
+              that.delTable(data, e)
             }
           }
         ))
-        this.selectDatabaseId = e.parent.data.id
+        menu.append(new MenuItem(
+          {
+            label: '清空表',
+            click: function () {
+              that.emptyTable(data)
+            }
+          }
+        ))
       } else {
+        this.selectDatabaseId = data.id
         menu = new Menu()
         menu.append(new MenuItem(
           {
@@ -599,7 +700,6 @@ export default {
             }
           }
         ))
-        this.selectDatabaseId = data.id
       }
       menu.popup(remote.getCurrentWindow())
     },
@@ -618,6 +718,13 @@ export default {
     },
     refreshNode (id) {
       const node = this.$refs.tree.getNode(id)
+      //  设置未进行懒加载状态
+      node.loaded = false
+      // 重新展开节点就会间接重新触发load达到刷新效果
+      node.expand()
+    },
+    refreshNodeById (e) {
+      const node = this.$refs.tree.getNode(e[0])
       //  设置未进行懒加载状态
       node.loaded = false
       // 重新展开节点就会间接重新触发load达到刷新效果

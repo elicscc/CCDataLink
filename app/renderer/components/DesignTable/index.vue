@@ -505,6 +505,7 @@ export default {
               message: '创建成功'
             })
             this.tableNameCopy = value
+            this.$emit('refreshNode', this.databaseInfo.id)
             await this.initEditor()
           }
         }).catch(() => {
