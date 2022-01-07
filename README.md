@@ -10,6 +10,10 @@ v1.0.3 预览版已发布 （没买代码签名，安装报毒请忽略）
 
 目前支持mysql MariaDB oracle sqlserver
 
+####  官方网站 / Official website
+
+[中文](https://cc.ccdata.site/) | [英文(English)](https://cc.ccdata.site/)
+
 #### 支持的数据库系统
 
 | *数据库* | *SQL 查询* | *数据编辑* | *表设计器*|*智能提示*|
@@ -49,7 +53,6 @@ win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/
 ![](readmeimg/link.jpg)
 ![](readmeimg/menu.jpg)
 ![](readmeimg/shej1.jpg)
-![](readmeimg/2.jpg)
 ![](readmeimg/3.jpg)
 ![](readmeimg/6.jpg)
 ![](readmeimg/889.jpg)
