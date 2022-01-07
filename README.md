@@ -31,9 +31,9 @@ gitee: https://gitee.com/elicscc/ccdata-link
 
 #### 下载
 
-win64版本下载： [下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.2-alpha/CC.1.0.2.exe)
+win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.3-alpha/CC.Database_manage.Setup.1.0.3.exe)
 
-外链地址： https://share.weiyun.com/l8UQyMq4
+微云下载地址： https://share.weiyun.com/l8UQyMq4
 
 #### 软件架构
 软件架构说明
