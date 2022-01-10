@@ -1,12 +1,13 @@
 <template>
   <div ref="refs" style="height: 100vh;">
     <vxe-table
+        ref="xTable"
         :data="dataList"
         border
         :max-height="maxSize"
         show-overflow
-        highlight-hover-row
-        :edit-config="{trigger: 'click', mode: 'cell'}">
+        keep-source
+        :edit-config="{trigger: 'click', mode: 'cell', showStatus: true}">
       <vxe-column
           v-for="config in columns"
           :key="config.key"
@@ -174,12 +175,80 @@ export default {
       await this.getList()
       this.loading = false
     },
+    pageCount (totalNum, limit) {
+      return totalNum > 0 ? ((totalNum < limit) ? 1 : ((totalNum % limit) ? (parseInt(totalNum / limit) + 1) : (totalNum / limit))) : 0
+    },
+    /**
+     * 有一个主键时 [2022-01-10 11:04:20.695][localhost_3306][173][MARIADB]
+     * INSERT INTO `test_cc`.`dsfgg`(`affsdd`, `asdsd`) VALUES ('AS', 'DDD')
+     * Time: 0.002s
+     *
+     * [2022-01-10 11:04:20.698][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`dsfgg` WHERE `asdsd` = 'DDD'
+     * Time: 0.000s
+     *
+     *
+     * 有多个主键时[2022-01-10 11:07:22.673][localhost_3306][173][MARIADB]
+     * INSERT INTO `test_cc`.`yy`(`sdgfasg`, `FS`, `sdsdf`, `key`) VALUES ('sdd', 9, 8.8, '4')
+     * Time: 0.002s
+     *
+     * [2022-01-10 11:07:22.676][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`yy` WHERE `FS` = 9 AND `sdsdf` = 8.8 AND `key` = '4'
+     * Time: 0.000s
+     *
+     * 无主键 [2022-01-10 11:13:27.211][localhost_3306][173][MARIADB]
+     * INSERT INTO `test_cc`.`nokey`(`asd`, `ffsa`, `da`, `datet`) VALUES ('sd', 'dsd', '2022-01-11', '2022-01-10 11:13:18')
+     * Time: 0.001s
+     *
+     * [2022-01-10 11:13:27.213][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`nokey` WHERE `asd` = 'sd' AND `ffsa` = 'dsd' AND `da` = Cast('2022-01-11' AS Binary(10)) AND `datet` = Cast('2022-01-10 11:13:18' AS Binary(19)) LIMIT 1
+     * Time: 0.002s
+     */
     add () {
       this.$message.warning('未开发')
     },
+    /**
+     * 有一个主键时 DELETE FROM `test_cc`.`dsfgg` WHERE `asdsd` = 'sddc'
+     *
+     *
+     * 有多个主键时 [2022-01-10 11:08:05.626][localhost_3306][173][MARIADB]
+     * DELETE FROM `test_cc`.`yy` WHERE `FS` = 9 AND `sdsdf` = 9 AND `key` = '4'
+     * Time: 0.001s
+     *
+     * 无主键 [2022-01-10 11:17:33.812][localhost_3306][173][MARIADB]
+     * DELETE FROM `test_cc`.`nokey` WHERE `asd` = 'sd' AND `ffsa` = 'dsd' AND `da` = Cast('2022-01-11' AS Binary(10)) AND `datet` = Cast('2022-01-10 11:13:18' AS Binary(19)) LIMIT 1
+     * Time: 0.002s
+     *
+     */
     del () {
       this.$message.warning('未开发')
     },
+    /**
+     * 没key [2022-01-10 11:19:48.77][localhost_3306][173][MARIADB]
+     * UPDATE `test_cc`.`nokey` SET `da` = '2022-01-05' WHERE `asd` = 'asd' AND `ffsa` = '888s' AND `da` = Cast('2022-01-05' AS Binary(10)) AND `datet` = Cast('2022-01-10 11:18:16' AS Binary(19)) LIMIT 1
+     * Time: 0.000s
+     *
+     * [2022-01-10 11:19:48.771][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`nokey` WHERE `asd` = 'asd' AND `ffsa` = '888s' AND `da` = Cast('2022-01-05' AS Binary(10)) AND `datet` = Cast('2022-01-10 11:18:16' AS Binary(19)) LIMIT 1
+     * Time: 0.000s
+     *
+     *
+     *多个key [2022-01-10 11:21:25.18][localhost_3306][173][MARIADB]
+     * UPDATE `test_cc`.`yy` SET `sdsdf` = 78 WHERE `FS` = 7 AND `sdsdf` = 8 AND `key` = '8'
+     * Time: 0.001s
+     *
+     * [2022-01-10 11:21:25.182][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`yy` WHERE `FS` = 7 AND `sdsdf` = 78 AND `key` = '8'
+     * Time: 0.000s
+     *
+     * 一个key[2022-01-10 11:22:23.038][localhost_3306][173][MARIADB]
+     * UPDATE `test_cc`.`dsfgg` SET `asdsd` = 'DDDss' WHERE `asdsd` = 'DDD'
+     * Time: 0.002s
+     *
+     * [2022-01-10 11:22:23.041][localhost_3306][173][MARIADB]
+     * SELECT * FROM `test_cc`.`dsfgg` WHERE `asdsd` = 'DDDss'
+     * Time: 0.000s
+     */
     commit () {
       this.$message.warning('未开发')
     },
@@ -188,9 +257,6 @@ export default {
     },
     refresh () {
       this.$message.warning('未开发')
-    },
-    pageCount (totalNum, limit) {
-      return totalNum > 0 ? ((totalNum < limit) ? 1 : ((totalNum % limit) ? (parseInt(totalNum / limit) + 1) : (totalNum / limit))) : 0
     }
 
   }
