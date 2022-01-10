@@ -24,25 +24,41 @@
       </vxe-column>
     </vxe-table>
     <el-row type="flex" style="margin-top: 8px">
-      <el-col :span="3" :offset="15">
-        <el-button type="primary" size="mini" icon="el-icon-back" @click="startPage"></el-button>
+      <el-col :span="3" >
+        <vxe-button type="text" size="mini" icon="vxe-icon--plus" @click="add">添加</vxe-button>
+      </el-col>
+      <el-col :span="3" >
+        <vxe-button type="text" size="mini" icon="vxe-icon--minus" @click="del">删除</vxe-button>
+      </el-col>
+      <el-col :span="3" >
+        <vxe-button type="text" size="mini" icon="vxe-icon--check" @click="commit">提交</vxe-button>
+      </el-col>
+      <el-col :span="3" >
+        <vxe-button type="text" size="mini" icon="vxe-icon--close" @click="cancel">取消</vxe-button>
       </el-col>
       <el-col :span="3">
-        <el-button type="primary" size="mini" icon="el-icon-caret-left" @click="prevClick"></el-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--refresh" @click="refresh">刷新</vxe-button>
+      </el-col>
+      <el-col :span="3" :offset="8">
+        <vxe-button type="text" size="mini" icon="vxe-icon--d-arrow-left" @click="startPage"></vxe-button>
       </el-col>
       <el-col :span="3">
-        <el-input
+        <vxe-button type="text" size="mini" icon="vxe-icon--arrow-left" @click="prevClick"></vxe-button>
+      </el-col>
+      <el-col :span="3">
+        <vxe-input
+            style="width:50px"
             size="mini"
-            type="number"
+            type="integer"
             v-model="page"
             @change="changePage"
         />
       </el-col>
       <el-col :span="3">
-        <el-button type="primary" size="mini" icon="el-icon-caret-right" @click="nextClick"></el-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--arrow-right" @click="nextClick"></vxe-button>
       </el-col>
       <el-col :span="3">
-        <el-button type="primary" size="mini" icon="el-icon-right" @click="endPage"></el-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--d-arrow-right" @click="endPage"></vxe-button>
       </el-col>
     </el-row>
   </div>
@@ -157,6 +173,21 @@ export default {
       this.loading = true
       await this.getList()
       this.loading = false
+    },
+    add () {
+      this.$message.warning('未开发')
+    },
+    del () {
+      this.$message.warning('未开发')
+    },
+    commit () {
+      this.$message.warning('未开发')
+    },
+    cancel () {
+      this.$message.warning('未开发')
+    },
+    refresh () {
+      this.$message.warning('未开发')
     },
     pageCount (totalNum, limit) {
       return totalNum > 0 ? ((totalNum < limit) ? 1 : ((totalNum % limit) ? (parseInt(totalNum / limit) + 1) : (totalNum / limit))) : 0
