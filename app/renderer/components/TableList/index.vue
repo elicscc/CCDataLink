@@ -6,6 +6,7 @@
         border
         :max-height="maxSize"
         show-overflow
+        :loading="loading"
         keep-source
         :edit-config="{trigger: 'click', mode: 'cell', showStatus: true}">
       <vxe-column
