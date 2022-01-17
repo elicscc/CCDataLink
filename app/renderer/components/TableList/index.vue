@@ -52,6 +52,8 @@
             style="width:50px"
             size="mini"
             type="integer"
+            step="1"
+            min="1"
             v-model="page"
             @change="changePage"
         />
@@ -172,6 +174,9 @@ export default {
       }
     },
     async changePage () {
+      if (this.page <= 0) {
+        return
+      }
       this.loading = true
       await this.getList()
       this.loading = false
