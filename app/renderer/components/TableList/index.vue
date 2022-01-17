@@ -1,5 +1,6 @@
 <template>
   <div ref="refs" style="height: 100vh;">
+    <vxe-button @click="$refs.xTable.setRadioRow(dataList[1])">设置第二行选中</vxe-button>
     <vxe-table
         ref="xTable"
         :data="dataList"
@@ -8,9 +9,15 @@
         show-overflow
         :loading="loading"
         keep-source
+        rowId="row_id_88775778333666"
+        @current-change="currentChangeEvent"
+        :row-config="{isCurrent: true, isHover: true}"
+        :radio-config="{trigger: 'row',highlight: true, isHover: true}"
         :edit-config="{trigger: 'click', mode: 'cell', showStatus: true}">
+      <vxe-column type="radio" title=" " width="40"></vxe-column>
       <vxe-column
           v-for="config in columns"
+          v-if="config.colt.colType!=='id'"
           :key="config.key"
           :field="config.title"
           :title="config.title"
@@ -26,16 +33,16 @@
       </vxe-column>
     </vxe-table>
     <el-row type="flex" style="margin-top: 8px">
-      <el-col :span="3" >
+      <el-col :span="3">
         <vxe-button type="text" size="mini" icon="vxe-icon--plus" @click="add">添加</vxe-button>
       </el-col>
-      <el-col :span="3" >
+      <el-col :span="3">
         <vxe-button type="text" size="mini" icon="vxe-icon--minus" @click="del">删除</vxe-button>
       </el-col>
-      <el-col :span="3" >
+      <el-col :span="3">
         <vxe-button type="text" size="mini" icon="vxe-icon--check" @click="commit">提交</vxe-button>
       </el-col>
-      <el-col :span="3" >
+      <el-col :span="3">
         <vxe-button type="text" size="mini" icon="vxe-icon--close" @click="cancel">取消</vxe-button>
       </el-col>
       <el-col :span="3">
@@ -70,10 +77,11 @@
 
 <script>
 import { remote } from 'electron'
-
+import min from '../../mixin/mixin'
 const son = remote.getGlobal('son')
 export default {
   name: 'tableList',
+  mixins: [min],
   props: {
     databaseInfo: {
       type: Object,
@@ -109,8 +117,11 @@ export default {
   },
 
   methods: {
-    test (column) {
-      console.log(column)
+    currentChangeEvent ({ row }) {
+      console.log('行选中事件', row)
+    },
+    getCurrentEvent () {
+      this.$XModal.alert(JSON.stringify(this.$refs.xTable.getCurrentRecord()))
     },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)

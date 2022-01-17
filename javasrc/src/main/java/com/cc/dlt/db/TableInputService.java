@@ -192,8 +192,10 @@ public class TableInputService {
             stmt.execute(selectSql);
             ResultSet rs = stmt.getResultSet();
             ResultSetMetaData data = rs.getMetaData();
+            int u = 1;
             while (rs.next()) {
                 Map<String, String> v = new HashMap<>(16);
+                v.put("row_id_88775778333666", String.valueOf(u++));
                 for (int j = 0; j < data.getColumnCount(); j++) {
                     String value = data.getColumnTypeName(j + 1).toUpperCase().contains("IMAGE") || data.getColumnTypeName(j + 1).toUpperCase().contains("BLOB") ? getBlob(rs.getBlob(j + 1)) : rs.getString(j + 1);
                     v.put(data.getColumnName(j + 1), value);
@@ -203,6 +205,10 @@ public class TableInputService {
             stmt.execute(showColumnsSql);
             rs = stmt.getResultSet();
             data = rs.getMetaData();
+            Map<String, String> o = new HashMap<>(16);
+            o.put("COLUMN_NAME", "row_id_88775778333666");
+            o.put("COLUMN_TYPE", "id");
+            columnInfo.add(o);
             while (rs.next()) {
                 Map<String, String> v = new HashMap<>(16);
                 for (int j = 0; j < data.getColumnCount(); j++) {
