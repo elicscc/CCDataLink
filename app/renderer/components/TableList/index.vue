@@ -100,7 +100,7 @@ export default {
     return {
       loading: true,
       maxSize: 0,
-      pageSize: 1000,
+      pageSize: 100,
       page: 1,
       columns: [],
       dataList: [],
@@ -124,7 +124,7 @@ export default {
 
   methods: {
     currentChangeEvent ({ row }) {
-      console.log('行选中事件', row)
+      // console.log('行选中事件', row)
     },
     isSelected () {
       if (this.$refs.xTable) {
