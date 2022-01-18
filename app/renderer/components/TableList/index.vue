@@ -24,8 +24,10 @@
           :edit-render="{}"
       >
         <template #edit="{ row, column }">
-          <vxe-input v-if="column.params.colType === 'datetime' " v-model="row[column.property]" type="datetime" transfer></vxe-input>
-          <vxe-input v-else-if="column.params.colType === 'date' " v-model="row[column.property]" type="date" transfer></vxe-input>
+          <vxe-input v-if="column.params.colType === 'datetime' " v-model="row[column.property]" type="datetime"
+                     transfer></vxe-input>
+          <vxe-input v-else-if="column.params.colType === 'date' " v-model="row[column.property]" type="date"
+                     transfer></vxe-input>
           <vxe-input v-else v-model="row[column.property]" type="text"></vxe-input>
         </template>
       </vxe-column>
@@ -76,6 +78,7 @@
 <script>
 import { remote } from 'electron'
 import min from '../../mixin/mixin'
+
 const son = remote.getGlobal('son')
 export default {
   name: 'tableList',
@@ -100,7 +103,8 @@ export default {
       pageSize: 1000,
       page: 1,
       columns: [],
-      dataList: []
+      dataList: [],
+      key: []
     }
   },
 
@@ -124,6 +128,7 @@ export default {
     },
     getCurrentData () {
       console.log(this.$refs.xTable.getRadioRecord())
+      return this.$refs.xTable.getRadioRecord()
     },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
@@ -133,7 +138,7 @@ export default {
         num: ((this.page - 1) * this.pageSize),
         size: this.pageSize
       })
-      // console.log(res.result.data)
+      console.log(res.result.data)
       const c = res.result.data.columnInfo
       this.columns = c.map(i => {
         let t, k, p
@@ -153,6 +158,7 @@ export default {
           width: 300
         }
       })
+      this.key = c.filter(i => i.COLUMN_KEY === 'PRI').map(o => o.COLUMN_NAME)
       this.maxSize = this.$refs.refs.offsetHeight - 100
       this.dataList = res.result.data.dataList
     },
@@ -224,6 +230,9 @@ export default {
      * Time: 0.002s
      */
     add () {
+      if (this.databaseInfo.databaseType === '2' || this.databaseInfo.databaseType === '3') {
+        return this.$message.warning('暂不支持该数据库')
+      }
       this.$message.warning('未开发')
     },
     /**
@@ -236,11 +245,49 @@ export default {
      *
      * 无主键 [2022-01-10 11:17:33.812][localhost_3306][173][MARIADB]
      * DELETE FROM `test_cc`.`nokey` WHERE `asd` = 'sd' AND `ffsa` = 'dsd' AND `da` = Cast('2022-01-11' AS Binary(10)) AND `datet` = Cast('2022-01-10 11:13:18' AS Binary(19)) LIMIT 1
+     *
+     * DELETE FROM `test_cc`.`nokey` WHERE `asd` = 'sdds' AND `ffsa` IS NULL AND `da` IS NULL AND `datet` IS NULL LIMIT 1
      * Time: 0.002s
      *
      */
-    del () {
-      this.$message.warning('未开发')
+    async del () {
+      if (this.databaseInfo.databaseType === '2' || this.databaseInfo.databaseType === '3') {
+        return this.$message.warning('暂不支持该数据库')
+      }
+      console.log(this.key)
+      const confirmResult = await this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return
+      }
+      let where
+      const wh = []
+      const data = this.getCurrentData()
+      if (this.key.length > 0) {
+        for (let i = 0; i < this.key.length; i++) {
+          wh.push(this.key[i] + ' = ' + data[this.key[i]])
+        }
+        where = ' WHERE ' + wh.join(' AND ')
+      } else {
+        // console.log(this.columns)
+        // console.log(data)
+        for (let i = 0; i < this.columns.length; i++) {
+          if (this.columns[i].colt.colType === 'datetime') {
+            // `da` = Cast('2022-01-11' AS Binary(10))
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = Cast('" + data[this.columns[i].key] + "' AS Binary(19))") : (this.columns[i].key + ' IS NULL'))
+          } else if (this.columns[i].colt.colType === 'date') {
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = Cast('" + data[this.columns[i].key] + "' AS Binary(10))") : (this.columns[i].key + ' IS NULL'))
+          } else {
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = '" + data[this.columns[i].key] + "'") : (this.columns[i].key + ' IS NULL'))
+          }
+        }
+        where = ' WHERE ' + wh.join(' AND ') + ' LIMIT 1'
+      }
+      const sql = 'DELETE FROM `' + this.databaseInfo.databaseName + '`.`' + this.tableName + '`' + where
+      await this.exeSql(sql)
     },
     /**
      * 没key [2022-01-10 11:19:48.77][localhost_3306][173][MARIADB]
@@ -269,6 +316,9 @@ export default {
      * Time: 0.000s
      */
     commit () {
+      if (this.databaseInfo.databaseType === '2' || this.databaseInfo.databaseType === '3') {
+        return this.$message.warning('暂不支持该数据库')
+      }
       this.$message.warning('未开发')
     },
     cancel () {
@@ -276,8 +326,28 @@ export default {
     },
     refresh () {
       this.$message.warning('未开发')
+    },
+    async exeSql (sql) {
+      console.log(sql)
+      const database = JSON.stringify(this.databaseInfo)
+      // console.log(database)
+      // const res = await son.send('exeUpdateSql', {
+      //   databaseInfo: database,
+      //   sql: sql
+      // })
+      // //  console.log(res.result)
+      // if (res.result.data.errorMessage) {
+      //   this.$message({
+      //     type: 'error',
+      //     message: res.result.data.errorMessage
+      //   })
+      // } else if (res.result.data.count >= 0) {
+      //   this.$message({
+      //     type: 'success',
+      //     message: '修改成功'
+      //   })
+      // }
     }
-
   }
 }
 </script>
