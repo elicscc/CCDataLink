@@ -1,6 +1,6 @@
 <template>
   <div ref="refs" style="height: 100vh;">
-    <vxe-button @click="$refs.xTable.setRadioRow(dataList[1])">设置第二行选中</vxe-button>
+    <vxe-button @click="getCurrentData">选中行信息</vxe-button>
     <vxe-table
         ref="xTable"
         :data="dataList"
@@ -9,7 +9,6 @@
         show-overflow
         :loading="loading"
         keep-source
-        rowId="row_id_88775778333666"
         @current-change="currentChangeEvent"
         :row-config="{isCurrent: true, isHover: true}"
         :radio-config="{trigger: 'row',highlight: true, isHover: true}"
@@ -17,7 +16,6 @@
       <vxe-column type="radio" title=" " width="40"></vxe-column>
       <vxe-column
           v-for="config in columns"
-          v-if="config.colt.colType!=='id'"
           :key="config.key"
           :field="config.title"
           :title="config.title"
@@ -113,6 +111,10 @@ export default {
     //   self.maxSize = self.$refs.refs.offsetHeight - 100
     // })
     await this.getList()
+    if (this.dataList && this.dataList.length > 0) {
+      this.$refs.xTable.setRadioRow(this.dataList[0])
+      this.currentChangeEvent({ row: this.dataList[0] })
+    }
     this.loading = false
   },
 
@@ -120,8 +122,8 @@ export default {
     currentChangeEvent ({ row }) {
       console.log('行选中事件', row)
     },
-    getCurrentEvent () {
-      this.$XModal.alert(JSON.stringify(this.$refs.xTable.getCurrentRecord()))
+    getCurrentData () {
+      console.log(this.$refs.xTable.getRadioRecord())
     },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
