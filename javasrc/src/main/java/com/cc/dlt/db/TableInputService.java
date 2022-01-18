@@ -24,9 +24,9 @@ public class TableInputService {
 
 
 //    public static void main(String[] args) {
-//        String s = "{\"connectName\":\"ss\",\"databaseType\":\"1\",\"databaseAddress\":\"localhost\",\"databaseName\":\"mx\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"id\":\"25ed3850-5be3-11ec-a23b-f10da0c8ac8e\",\"isConnected\":true}";
+//        String s = "{\"connectName\":\"localhost@root\",\"databaseType\":\"4\",\"databaseAddress\":\"localhost\",\"databaseName\":\"test_cc\",\"port\":\"3306\",\"username\":\"root\",\"password\":\"root\",\"databaseDescription\":\"\",\"isConnected\":true,\"id\":\"2a0ad4b0-6f5c-11ec-8732-49b9a2be8948\"}";
 //        TableInputService tableInputService = new TableInputService();
-//        String i = tableInputService.showCreateTable(s, "t_mx");
+//        String i = tableInputService.getTablePage(s, "registered_resident_comparison", 0, 100);
 //        System.err.println(i);
 //    }
 

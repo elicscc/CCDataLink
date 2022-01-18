@@ -4,6 +4,7 @@
     <vxe-table
         ref="xTable"
         :data="dataList"
+        resizable
         border
         :max-height="maxSize"
         show-overflow
@@ -140,6 +141,8 @@ export default {
     },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
+      console.log(database)
+      console.log(this.tableName)
       const res = await son.send('getTablePage', {
         databaseInfo: database,
         tableName: this.tableName,
