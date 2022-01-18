@@ -37,13 +37,13 @@
         <vxe-button type="text" size="mini" icon="vxe-icon--plus" @click="add">添加</vxe-button>
       </el-col>
       <el-col :span="3">
-        <vxe-button type="text" size="mini" icon="vxe-icon--minus" @click="del">删除</vxe-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--minus" @click="del" :disabled="isSelected()">删除</vxe-button>
       </el-col>
       <el-col :span="3">
-        <vxe-button type="text" size="mini" icon="vxe-icon--check" @click="commit">提交</vxe-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--check" @click="commit" disabled>提交</vxe-button>
       </el-col>
       <el-col :span="3">
-        <vxe-button type="text" size="mini" icon="vxe-icon--close" @click="cancel">取消</vxe-button>
+        <vxe-button type="text" size="mini" icon="vxe-icon--close" @click="cancel" disabled>取消</vxe-button>
       </el-col>
       <el-col :span="3">
         <vxe-button type="text" size="mini" icon="vxe-icon--refresh" @click="refresh">刷新</vxe-button>
@@ -126,8 +126,16 @@ export default {
     currentChangeEvent ({ row }) {
       console.log('行选中事件', row)
     },
+    isSelected () {
+      if (this.$refs.xTable) {
+        return !this.$refs.xTable.getRadioRecord()
+      } else {
+        return false
+      }
+    },
     getCurrentData () {
-      console.log(this.$refs.xTable.getRadioRecord())
+      // todo 需要获取修改前的数据
+      // console.log(this.$refs.xTable.getRadioRecord())
       return this.$refs.xTable.getRadioRecord()
     },
     async getList () {
@@ -138,7 +146,7 @@ export default {
         num: ((this.page - 1) * this.pageSize),
         size: this.pageSize
       })
-      console.log(res.result.data)
+      // console.log(res.result.data)
       const c = res.result.data.columnInfo
       this.columns = c.map(i => {
         let t, k, p
@@ -268,7 +276,7 @@ export default {
       const data = this.getCurrentData()
       if (this.key.length > 0) {
         for (let i = 0; i < this.key.length; i++) {
-          wh.push(this.key[i] + ' = ' + data[this.key[i]])
+          wh.push(this.key[i] + " = '" + data[this.key[i]] + "'")
         }
         where = ' WHERE ' + wh.join(' AND ')
       } else {
@@ -287,7 +295,26 @@ export default {
         where = ' WHERE ' + wh.join(' AND ') + ' LIMIT 1'
       }
       const sql = 'DELETE FROM `' + this.databaseInfo.databaseName + '`.`' + this.tableName + '`' + where
-      await this.exeSql(sql)
+      console.log(sql)
+      const database = JSON.stringify(this.databaseInfo)
+      console.log(database)
+      const res = await son.send('exeUpdateSql', {
+        databaseInfo: database,
+        sql: sql
+      })
+      //  console.log(res.result)
+      if (res.result.data.errorMessage) {
+        this.$message({
+          type: 'error',
+          message: res.result.data.errorMessage
+        })
+      } else if (res.result.data.count >= 0) {
+        this.$refs.xTable.removeRadioRow()
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }
     },
     /**
      * 没key [2022-01-10 11:19:48.77][localhost_3306][173][MARIADB]
@@ -326,27 +353,6 @@ export default {
     },
     refresh () {
       this.$message.warning('未开发')
-    },
-    async exeSql (sql) {
-      console.log(sql)
-      const database = JSON.stringify(this.databaseInfo)
-      // console.log(database)
-      // const res = await son.send('exeUpdateSql', {
-      //   databaseInfo: database,
-      //   sql: sql
-      // })
-      // //  console.log(res.result)
-      // if (res.result.data.errorMessage) {
-      //   this.$message({
-      //     type: 'error',
-      //     message: res.result.data.errorMessage
-      //   })
-      // } else if (res.result.data.count >= 0) {
-      //   this.$message({
-      //     type: 'success',
-      //     message: '修改成功'
-      //   })
-      // }
     }
   }
 }
