@@ -10585,10 +10585,10 @@ vuex@3.0.1:
   resolved "https://registry.nlark.com/vuex/download/vuex-3.0.1.tgz#e761352ebe0af537d4bb755a9b9dc4be3df7efd2"
   integrity sha1-52E1Lr4K9TfUu3Vam53Evj3379I=
 
-vxe-table@3.4.12:
-  version "3.4.12"
-  resolved "https://registry.npmmirror.com/vxe-table/download/vxe-table-3.4.12.tgz#5c92de2fd6ec78e1cf6983ff6870b909d3f153e5"
-  integrity sha512-0sPhh1GRA0xV8DtCloaqJ5QJ3vjPkHnfH/bZxu1EuyXVE/AZ+dtvYy8syqPevnsLTW9oL8CNTWOHl6WJUdmsuQ==
+vxe-table@^3.4.13:
+  version "3.4.13"
+  resolved "https://registry.npmmirror.com/vxe-table/download/vxe-table-3.4.13.tgz#8fb41013ff5f755d4107d1c4c5b2393b3c9114f7"
+  integrity sha512-ngaxb9usb3cVZIkZbjhakK/mW8KI4Pc+Q2AlK9sV9xgirsB3yX+qJhj5JLun2Y2QRFiU4H9eorPKKyqIL6vOuw==
 
 watchpack-chokidar2@^2.0.1:
   version "2.0.1"
@@ -10899,10 +10899,10 @@ xdg-basedir@^4.0.0:
   resolved "https://registry.nlark.com/xdg-basedir/download/xdg-basedir-4.0.0.tgz#4bc8d9984403696225ef83a1573cbbcb4e79db13"
   integrity sha1-S8jZmEQDaWIl74OhVzy7y0552xM=
 
-xe-utils@3.5.1:
-  version "3.5.1"
-  resolved "https://registry.npmmirror.com/xe-utils/download/xe-utils-3.5.1.tgz#ac034fbbafeb5290c5dfb7653084b6730f1bc030"
-  integrity sha512-cA0iSbAaF7qRdaft4LCxWUvo6CIUob61Cq4yZCieQc1kGW7Pde9WpTLz27ZWtfzwxUuWSrif3qOy0zvRFkTN1A==
+xe-utils@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/xe-utils/download/xe-utils-3.5.2.tgz#201ffde737a70ccf0b7f419569d852180e5c6d51"
+  integrity sha512-TIQct9Ed43O5J0YYRMmD15KHKUzGIW+Hetv9/diEMHT5YQVr0csC0FCFOfSgsIcuamziPVAWNFLl1QKYJE2oxA==
 
 xmlbuilder@>=11.0.1:
   version "15.1.1"

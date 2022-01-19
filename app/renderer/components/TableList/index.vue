@@ -1,16 +1,14 @@
 <template>
   <div ref="refs" style="height: 100vh;">
-    <vxe-button @click="getCurrentData">选中行信息</vxe-button>
+    <!--    <vxe-button @click="getCurrentData">选中行信息</vxe-button>-->
     <vxe-table
         ref="xTable"
         :data="dataList"
         resizable
         border
         :max-height="maxSize"
-        show-overflow
         :loading="loading"
         keep-source
-        @current-change="currentChangeEvent"
         :row-config="{isCurrent: true, isHover: true}"
         :radio-config="{trigger: 'row',highlight: true, isHover: true}"
         :edit-config="{trigger: 'click', mode: 'cell', showStatus: true}">
@@ -117,16 +115,13 @@ export default {
     // })
     await this.getList()
     if (this.dataList && this.dataList.length > 0) {
-      this.$refs.xTable.setRadioRow(this.dataList[0])
-      this.currentChangeEvent({ row: this.dataList[0] })
+      await this.$refs.xTable.setRadioRow(this.dataList[0])
+      // this.currentChangeEvent({ row: this.dataList[0] })
     }
     this.loading = false
   },
 
   methods: {
-    currentChangeEvent ({ row }) {
-      // console.log('行选中事件', row)
-    },
     isSelected () {
       if (this.$refs.xTable) {
         return !this.$refs.xTable.getRadioRecord()
@@ -141,17 +136,16 @@ export default {
     },
     async getList () {
       const database = JSON.stringify(this.databaseInfo)
-      console.log(database)
-      console.log(this.tableName)
+      // console.log(database)
+      // console.log(this.tableName)
       const res = await son.send('getTablePage', {
         databaseInfo: database,
         tableName: this.tableName,
         num: ((this.page - 1) * this.pageSize),
         size: this.pageSize
       })
-      // console.log(res.result.data)
-      const c = res.result.data.columnInfo
-      this.columns = c.map(i => {
+      console.log(res.result.data)
+      this.columns = res.result.data.columnInfo.map(i => {
         let t, k, p
         if (res.result.data.databaseType === '2') {
           t = i.name
@@ -169,9 +163,9 @@ export default {
           width: 300
         }
       })
-      this.key = c.filter(i => i.COLUMN_KEY === 'PRI').map(o => o.COLUMN_NAME)
       this.maxSize = this.$refs.refs.offsetHeight - 100
       this.dataList = res.result.data.dataList
+      this.key = res.result.data.columnInfo.filter(i => i.COLUMN_KEY === 'PRI').map(o => o.COLUMN_NAME)
     },
     async startPage () {
       if (this.page !== 1) {
@@ -279,7 +273,7 @@ export default {
       const data = this.getCurrentData()
       if (this.key.length > 0) {
         for (let i = 0; i < this.key.length; i++) {
-          wh.push(this.key[i] + " = '" + data[this.key[i]] + "'")
+          wh.push(this.key[i] + ' = \'' + data[this.key[i]] + '\'')
         }
         where = ' WHERE ' + wh.join(' AND ')
       } else {
@@ -288,11 +282,11 @@ export default {
         for (let i = 0; i < this.columns.length; i++) {
           if (this.columns[i].colt.colType === 'datetime') {
             // `da` = Cast('2022-01-11' AS Binary(10))
-            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = Cast('" + data[this.columns[i].key] + "' AS Binary(19))") : (this.columns[i].key + ' IS NULL'))
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + ' = Cast(\'' + data[this.columns[i].key] + '\' AS Binary(19))') : (this.columns[i].key + ' IS NULL'))
           } else if (this.columns[i].colt.colType === 'date') {
-            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = Cast('" + data[this.columns[i].key] + "' AS Binary(10))") : (this.columns[i].key + ' IS NULL'))
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + ' = Cast(\'' + data[this.columns[i].key] + '\' AS Binary(10))') : (this.columns[i].key + ' IS NULL'))
           } else {
-            wh.push(data[this.columns[i].key] ? (this.columns[i].key + " = '" + data[this.columns[i].key] + "'") : (this.columns[i].key + ' IS NULL'))
+            wh.push(data[this.columns[i].key] ? (this.columns[i].key + ' = \'' + data[this.columns[i].key] + '\'') : (this.columns[i].key + ' IS NULL'))
           }
         }
         where = ' WHERE ' + wh.join(' AND ') + ' LIMIT 1'
@@ -312,7 +306,7 @@ export default {
           message: res.result.data.errorMessage
         })
       } else if (res.result.data.count >= 0) {
-        this.$refs.xTable.removeRadioRow()
+        await this.$refs.xTable.removeRadioRow()
         this.$message({
           type: 'success',
           message: '修改成功'
