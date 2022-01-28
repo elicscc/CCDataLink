@@ -138,16 +138,17 @@ export default {
       const database = JSON.stringify(this.databaseInfo)
       // console.log(database)
       // console.log(this.tableName)
-      const res = await son.send('getTablePage', {
+      const s = await son.send('getTablePage', {
         databaseInfo: database,
         tableName: this.tableName,
         num: ((this.page - 1) * this.pageSize),
         size: this.pageSize
       })
-      console.log(res.result.data)
-      this.columns = res.result.data.columnInfo.map(i => {
+      // console.log(s.result)
+      const { data } = JSON.parse(s.result)
+      this.columns = data.columnInfo.map(i => {
         let t, k, p
-        if (res.result.data.databaseType === '2') {
+        if (data.databaseType === '2') {
           t = i.name
           k = i.name
           p = i.type
@@ -164,8 +165,8 @@ export default {
         }
       })
       this.maxSize = this.$refs.refs.offsetHeight - 100
-      this.dataList = res.result.data.dataList
-      this.key = res.result.data.columnInfo.filter(i => i.COLUMN_KEY === 'PRI').map(o => o.COLUMN_NAME)
+      this.dataList = data.dataList
+      this.key = data.columnInfo.filter(i => i.COLUMN_KEY === 'PRI').map(o => o.COLUMN_NAME)
     },
     async startPage () {
       if (this.page !== 1) {

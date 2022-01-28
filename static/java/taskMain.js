@@ -126,7 +126,7 @@ function exeSql (databaseInfoStr, sql, id) {
 function getTablePage (databaseInfoStr, tableName, num, size) {
   const TableInputService = java.import('com.cc.dlt.db.TableInputService')
   const service = new TableInputService()
-  return JSON.parse(service.getTablePageSync(databaseInfoStr, tableName, num, size))
+  return service.getTablePageSync(databaseInfoStr, tableName, num, size)
 }
 
 function getTableCount (databaseInfoStr, tableName) {
