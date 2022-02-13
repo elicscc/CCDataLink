@@ -56,4 +56,5 @@ win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/
 ![](readmeimg/3.jpg)
 ![](readmeimg/6.jpg)
 ![](readmeimg/889.jpg)
+![](readmeimg/list.jpg)
 
