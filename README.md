@@ -6,7 +6,7 @@ CC数据库管理工具 一款为热门数据库系统打造的管理客户端�
 
 基于eletron + vue + node + ts + java
 
-v1.0.3 预览版已发布 （没买代码签名，安装报毒请忽略）
+v1.0.5 预览版已发布 （没买代码签名，安装报毒请忽略）
 
 目前支持mysql MariaDB oracle sqlserver
 
@@ -34,10 +34,10 @@ gitee: https://gitee.com/elicscc/ccdata-link
 
 
 #### 下载
+1.0.5-P 版本
+win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.5-alpha/CC.Setup.1.0.5.exe")
 
-win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.3-alpha/CC.Database_manage.Setup.1.0.3.exe)
-
-微云下载地址： https://share.weiyun.com/l8UQyMq4
+微云下载地址： https://share.weiyun.com/bcXERlnK
 
 #### 软件架构
 软件架构说明
