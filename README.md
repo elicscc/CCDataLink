@@ -35,7 +35,7 @@ gitee: https://gitee.com/elicscc/ccdata-link
 
 #### 下载
 1.0.5-P 版本
-win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.5-alpha/CC.Setup.1.0.5.exe")
+win64版本下载： [github下载链接](https://github.com/elicscc/CCDataLink/releases/download/v1.0.5-alpha/CC.Setup.1.0.5.exe)
 
 微云下载地址： https://share.weiyun.com/bcXERlnK
 
